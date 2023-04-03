@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../styles/components/InputSearch.module.scss";
 
 type InputSearchProps = {
@@ -7,23 +8,20 @@ type InputSearchProps = {
   borderColor: string;
 };
 
-export const InputSearch: React.FC<InputSearchProps> = ({
-  placeholder,
-  backgroundColor,
-  color,
-  borderColor,
-}) => {
-  return (
-    <>
-      <input
-        className={styles.inputSearch}
-        placeholder={placeholder}
-        style={{
-          backgroundColor: backgroundColor,
-          color: color,
-          border: `solid 1px ${borderColor}`,
-        }}
-      />
-    </>
-  );
-};
+export const InputSearch: React.FC<InputSearchProps> = React.memo(
+  ({ placeholder, backgroundColor, color, borderColor }) => {
+    return (
+      <>
+        <input
+          className={styles.inputSearch}
+          placeholder={placeholder}
+          style={{
+            backgroundColor: backgroundColor,
+            color: color,
+            border: `solid 1px ${borderColor}`,
+          }}
+        />
+      </>
+    );
+  }
+);

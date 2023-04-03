@@ -2,10 +2,11 @@ import { mockRepositories } from "@/mock/mockRepositories";
 import { mockTeams } from "@/mock/mockTeams";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 import styles from "../styles/components/SideBar.module.scss";
 import { InputSearch } from "./InputSearch";
 
-export const SideBar = () => {
+export const SideBar = React.memo(() => {
   return (
     <div className={styles.container}>
       <div className={styles.profileNameWrapper}>
@@ -86,4 +87,4 @@ export const SideBar = () => {
       </div>
     </div>
   );
-};
+});
