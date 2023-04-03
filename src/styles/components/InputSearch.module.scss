@@ -1,0 +1,10 @@
+.inputSearch {
+  display: block;
+  padding: 5px 12px;
+  width: 91%;
+  border-radius: 6px;
+  font-size: 14px;
+  &:focus {
+    outline: none;
+  }
+}
