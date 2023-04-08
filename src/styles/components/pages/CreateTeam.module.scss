@@ -1,0 +1,89 @@
+.layoutContainer {
+  margin: 64px auto;
+  width: 28%;
+}
+
+.pageTitle {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.formSection {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  &::after {
+    padding-left: 5px;
+    content: "*";
+    color: #d1242d;
+    top: 0;
+  }
+}
+
+.inputForm {
+  padding: 4px 12px;
+  width: 95%;
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  background-color: #f6f8f6;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: auto;
+}
+
+.teamNameContainer {
+  padding: 15px 0 50px 0;
+}
+
+.personalAccountWrapper {
+  padding: 15px 0;
+}
+
+.label {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.initializeText {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.fileButton {
+  display: inline-block;
+  margin-bottom: 50px;
+  padding: 5px 12px;
+  font-size: 14px;
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  background-color: #f6f8f6;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.formSectionTeam {
+  @extend .formSection;
+  &::after {
+    display: none;
+  }
+}
+
+.uploadIcon {
+  margin-right: 4px;
+}
+
+.createTeamButton {
+  text-align: center;
+  margin-top: 30px;
+  padding: 10.5px 21px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #2c8747;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+}

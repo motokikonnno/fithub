@@ -1,0 +1,41 @@
+.calendarContainer {
+  margin: 0 0 50px 0;
+  padding: 30px;
+  width: 90%;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  background-color: #fff;
+}
+
+.sectionTitle {
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  width: 96%;
+  border-bottom: 1px solid #d0d7de;
+  font-size: 16px;
+}
+
+.createdAt {
+  margin-bottom: 4px;
+  color: #656d76;
+  font-size: 14px;
+}
+
+.activityWrapper {
+  position: relative;
+  padding: 0 0 16px 30px;
+  border-left: 1px solid #d0d7de;
+  &::before {
+    position: absolute;
+    left: -5.5px;
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #d0d7de;
+    border-radius: 50%;
+  }
+}
+
+.activityContent {
+  letter-spacing: 1px;
+}

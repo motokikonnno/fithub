@@ -62,6 +62,9 @@
   color: #fff;
   border-radius: 6px;
   cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 .itemList {

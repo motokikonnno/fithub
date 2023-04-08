@@ -12,7 +12,7 @@ export const Header = React.memo(() => {
 
   const dropDownList = {
     newList: ["New repository", "New team"],
-    myProfile: ["Your profile", "Your repositories", "Your teams", "Sine out"],
+    myProfile: ["Your profile", "Your repositories", "Your teams", "Sign out"],
   };
 
   const toggleIsShow = () => {
@@ -99,7 +99,7 @@ export const Header = React.memo(() => {
             <Image src={"/logo.png"} width={20} height={20} alt="profile画像" />
             {isShowProfile && (
               <div className={styles.dropDownList}>
-                {dropDownList.newList.map((item, index) => (
+                {dropDownList.myProfile.map((item, index) => (
                   <DropDownList item={item} key={index} />
                 ))}
               </div>
