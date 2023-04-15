@@ -1,0 +1,108 @@
+.tabsContainer {
+  display: flex;
+  margin-top: 24px;
+  padding-left: 422px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.layoutContainer {
+  display: flex;
+  margin: 0 auto;
+  width: 85.4%;
+}
+
+.leftContainer {
+  margin-top: 24px;
+  width: 296px;
+}
+
+.icon {
+  border-radius: 50%;
+  border: 3px solid #d0d7de;
+}
+
+.userName {
+  margin: 0;
+  padding: 16px 0;
+  font-size: 24px;
+}
+
+.userBio {
+  margin-bottom: 16px;
+}
+
+.editButton {
+  margin-bottom: 16px;
+  padding: 5px 16px;
+  width: 100%;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f6f8fa;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.profileSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  font-size: 16px;
+  border-top: 1px solid #d0d7de;
+}
+
+.teamIconContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.teamIcon {
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  cursor: pointer;
+}
+
+.rightContainer {
+  margin-left: 24px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.title {
+  margin: 16px 0 8px 0;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.repositoriesContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.repositoryWrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  height: 80px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.repositoryName {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0969da;
+  text-decoration: none;
+}
+
+.repositoryType {
+  padding: 0 7px;
+  height: 24px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #656d76;
+  border: 1px solid #d0d7de;
+  border-radius: 2em;
+}

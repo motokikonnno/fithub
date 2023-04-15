@@ -3,6 +3,7 @@ import Image from "next/image";
 import { InputSearch } from "./InputSearch";
 import { DropDownList } from "./DropDownList";
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 export const Header = React.memo(() => {
   const [isShow, setIsShow] = useState(false);
@@ -61,7 +62,9 @@ export const Header = React.memo(() => {
 
   return (
     <div className={styles.container}>
-      <Image src={"/logo.png"} width={32} height={32} alt={"ロゴ画像"} />
+      <Link href={"/dashboard"}>
+        <Image src={"/logo.png"} width={32} height={32} alt={"ロゴ画像"} />
+      </Link>
       <div className={styles.contentsWrapper}>
         <div className={styles.inputSearchWrapper}>
           <InputSearch

@@ -24,16 +24,18 @@ export const SideBar = React.memo(() => {
       <div>
         <div className={styles.sectionTitleContainer}>
           <h2 className={styles.sectionTitle}>Top Repositories</h2>
-          <div className={styles.newRepositoryButton}>
-            <Image
-              src={"/icons/add-repository.svg"}
-              width={13}
-              height={13}
-              alt="repositoryアイコン"
-              className={styles.repositoryIcon}
-            />
-            New
-          </div>
+          <Link href={"/repository/new"}>
+            <div className={styles.newRepositoryButton}>
+              <Image
+                src={"/icons/add-repository.svg"}
+                width={13}
+                height={13}
+                alt="repositoryアイコン"
+                className={styles.repositoryIcon}
+              />
+              New
+            </div>
+          </Link>
         </div>
         <div className={styles.inputSearchWrapper}>
           <InputSearch
