@@ -13,6 +13,7 @@
 
 .leftContainer {
   margin-top: 24px;
+  margin-bottom: 40px;
   width: 296px;
 }
 
@@ -29,6 +30,20 @@
 
 .userBio {
   margin-bottom: 16px;
+}
+
+.userIcon {
+  position: relative;
+}
+
+.editIcon {
+  position: absolute;
+  right: 28px;
+  bottom: 16px;
+  padding: 10px;
+  background-color: #d0d7de;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .editButton {
@@ -105,4 +120,59 @@
   color: #656d76;
   border: 1px solid #d0d7de;
   border-radius: 2em;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.inputForm {
+  padding: 5px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+}
+
+.snsLinkContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.snsLinkInputForm {
+  @extend .inputForm;
+  width: 82%;
+}
+
+.updateButtonContainer {
+  display: flex;
+  gap: 4px;
+  margin-top: 16px;
+  margin-bottom: 32px;
+}
+
+.updateButton {
+  padding: 0 8px;
+  height: 28px;
+  border-radius: 6px;
+  background-color: #1f883d;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.cancelButton {
+  @extend .updateButton;
+  background-color: #f6f8fa;
+  color: #000;
+  border: 1px solid #d0d7de;
 }

@@ -8,6 +8,7 @@ import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
 import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
+import { Footer } from "../Footer";
 
 export type itemType = {
   name: string;
@@ -66,9 +67,14 @@ export const MyProfile = React.memo(() => {
   ];
 
   const [currentTab, setCurrentTab] = useState("1");
+  const [isToggle, setIsToggle] = useState(false);
 
   const handleCurrentTab = (id: string) => {
     setCurrentTab(id);
+  };
+
+  const handleIsToggle = () => {
+    setIsToggle(!isToggle);
   };
 
   return (
@@ -94,10 +100,85 @@ export const MyProfile = React.memo(() => {
               alt="user-icon"
               className={styles.icon}
             />
+            {isToggle && (
+              <Image
+                src={"/icons/edit.svg"}
+                width={25}
+                height={25}
+                alt="edit-icon"
+                className={styles.editIcon}
+              />
+            )}
           </div>
-          <h1 className={styles.userName}>{user.name}</h1>
-          <div className={styles.userBio}>{user.bio}</div>
-          <button className={styles.editButton}>Edit profile</button>
+          {!isToggle && (
+            <>
+              <h1 className={styles.userName}>{user.name}</h1>
+              <div className={styles.userBio}>{user.bio}</div>
+              <button className={styles.editButton} onClick={handleIsToggle}>
+                Edit profile
+              </button>
+            </>
+          )}
+          {isToggle && (
+            <>
+              <div className={styles.inputContainer}>
+                <label className={styles.label}>Name</label>
+                <input className={styles.inputForm} />
+              </div>
+              <div className={styles.inputContainer}>
+                <label className={styles.label}>Bio</label>
+                <textarea className={styles.inputForm} />
+              </div>
+              <div className={styles.inputContainer}>
+                <label className={styles.label}>Social accounts</label>
+                <div className={styles.snsLinkContainer}>
+                  <Image
+                    src={"/icons/sns-link.svg"}
+                    width={16}
+                    height={16}
+                    alt="sns-link-icon"
+                  />
+                  <input className={styles.snsLinkInputForm} />
+                </div>
+                <div className={styles.snsLinkContainer}>
+                  <Image
+                    src={"/icons/sns-link.svg"}
+                    width={16}
+                    height={16}
+                    alt="sns-link-icon"
+                  />
+                  <input className={styles.snsLinkInputForm} />
+                </div>
+                <div className={styles.snsLinkContainer}>
+                  <Image
+                    src={"/icons/sns-link.svg"}
+                    width={16}
+                    height={16}
+                    alt="sns-link-icon"
+                  />
+                  <input className={styles.snsLinkInputForm} />
+                </div>
+                <div className={styles.snsLinkContainer}>
+                  <Image
+                    src={"/icons/sns-link.svg"}
+                    width={16}
+                    height={16}
+                    alt="sns-link-icon"
+                  />
+                  <input className={styles.snsLinkInputForm} />
+                </div>
+              </div>
+              <div className={styles.updateButtonContainer}>
+                <button className={styles.updateButton}>Save</button>
+                <button
+                  className={styles.cancelButton}
+                  onClick={handleIsToggle}
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          )}
           <h2 className={styles.profileSection}>Teams</h2>
           <div className={styles.teamIconContainer}>
             {mockTeams.map(({ image }, index) => (
@@ -141,6 +222,7 @@ export const MyProfile = React.memo(() => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 });

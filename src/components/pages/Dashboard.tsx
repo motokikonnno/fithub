@@ -3,6 +3,7 @@ import { AppLayout } from "../AppLayout";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import styles from "../../styles/components/pages/Dashboard.module.scss";
+import { Footer } from "../Footer";
 
 type Activities = {
   name: string;
@@ -51,6 +52,7 @@ export const Dashboard = React.memo(() => {
       {activities.map((activity, index) => (
         <ActivityItem activity={activity} key={index} />
       ))}
+      <Footer />
     </AppLayout>
   );
 });
