@@ -4,7 +4,7 @@ import { itemType } from "./pages/MyProfile";
 
 type TabsProps = {
   item: itemType;
-  handleCurrentTab: (id: string) => void;
+  handleCurrentTab: (name: string) => void;
   currentTab: string;
 };
 
@@ -12,8 +12,10 @@ export const Tabs: FC<TabsProps> = React.memo(
   ({ item, handleCurrentTab, currentTab }) => {
     return (
       <div
-        className={`${styles.item} ${currentTab === item.id && styles.current}`}
-        onClick={() => handleCurrentTab(item.id)}
+        className={`${styles.item} ${
+          currentTab === item.name && styles.current
+        }`}
+        onClick={() => handleCurrentTab(item.name)}
       >
         {item.name}
       </div>

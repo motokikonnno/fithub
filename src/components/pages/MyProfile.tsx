@@ -1,5 +1,5 @@
 import { User } from "@/mock/mockUser";
-import React, { useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import styles from "../../styles/components/pages/MyProfile.module.scss";
 import { Header } from "../Header";
 import { Tabs } from "../Tabs";
@@ -9,10 +9,20 @@ import Link from "next/link";
 import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import { Footer } from "../Footer";
+import { useRouter } from "next/router";
+import { InputSearch } from "../InputSearch";
+import { RepositoryListItem } from "../RepositoryListItem";
+import { RepositoryCard } from "../RepositoryCard";
 
 export type itemType = {
   name: string;
   id: string;
+};
+
+type repositoriesType = {
+  name: string;
+  type: string;
+  updatedAt: string;
 };
 
 export const MyProfile = React.memo(() => {
@@ -39,39 +49,50 @@ export const MyProfile = React.memo(() => {
     ],
   };
 
-  const repositories = [
+  const repositories: repositoriesType[] = [
     {
       name: "fithub",
       type: "public",
+      updatedAt: "2 days ago",
     },
     {
       name: "git",
       type: "private",
+      updatedAt: "3 days ago",
     },
     {
       name: "google",
       type: "public",
+      updatedAt: "3 days ago",
     },
     {
       name: "google",
       type: "public",
+      updatedAt: "4 days ago",
     },
     {
       name: "google",
       type: "public",
+      updatedAt: "5 days ago",
     },
     {
       name: "google",
       type: "public",
+      updatedAt: "1 weeks ago",
     },
   ];
 
-  const [currentTab, setCurrentTab] = useState("1");
+  const router = useRouter();
+  const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
 
-  const handleCurrentTab = (id: string) => {
-    setCurrentTab(id);
-  };
+  const handleCurrentTab = useCallback(
+    (name: string) => {
+      setCurrentTab(name);
+      router.push(`/mypage/${name === "Repositories" ? `?tab=${name}` : ""}`);
+    },
+    [router]
+  );
 
   const handleIsToggle = () => {
     setIsToggle(!isToggle);
@@ -194,35 +215,79 @@ export const MyProfile = React.memo(() => {
             ))}
           </div>
         </div>
-        <div className={styles.rightContainer}>
-          <h2 className={styles.title}>Recent repositories</h2>
-          <div className={styles.repositoriesContainer}>
-            {repositories.map((repository, index) => (
-              <Link className={styles.repositoryName} href={"/"} key={index}>
-                <div className={styles.repositoryWrapper}>
-                  {repository.name}
-                  <span className={styles.repositoryType}>
-                    {repository.type}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <h2 className={styles.title}>317 contributions</h2>
-          <div className={styles.calendarContainer}>
-            <ReactCalendarHeatmap
-              startDate={new Date("2023-01-01")}
-              endDate={new Date("2023-12-31")}
-              values={[
-                { date: "2023-05-22", count: 12 },
-                { date: "2023-07-24", count: 12 },
-                { date: "2023-11-10", count: 12 },
-              ]}
-            />
-          </div>
-        </div>
+        {currentTab === "Overview" ? (
+          <Overview repositories={repositories} />
+        ) : (
+          <RepositoryList repositories={repositories} />
+        )}
       </div>
       <Footer />
     </>
   );
 });
+
+type MypageProps = {
+  repositories: repositoriesType[];
+};
+
+const Overview: FC<MypageProps> = ({ repositories }) => {
+  return (
+    <div className={styles.rightContainer}>
+      <h2 className={styles.title}>Recent repositories</h2>
+      <div className={styles.repositoriesContainer}>
+        {repositories.map((repository, index) => (
+          <RepositoryCard index={index} repository={repository} key={index} />
+        ))}
+      </div>
+      <h2 className={styles.title}>317 contributions</h2>
+      <div className={styles.calendarContainer}>
+        <ReactCalendarHeatmap
+          startDate={new Date("2023-01-01")}
+          endDate={new Date("2023-12-31")}
+          values={[
+            { date: "2023-05-22", count: 12 },
+            { date: "2023-07-24", count: 12 },
+            { date: "2023-11-10", count: 12 },
+          ]}
+        />
+      </div>
+    </div>
+  );
+};
+
+const RepositoryList: FC<MypageProps> = ({ repositories }) => {
+  return (
+    <div className={styles.repositoryListContainer}>
+      <div className={styles.actionContainer}>
+        <div className={styles.inputWrapper}>
+          <InputSearch
+            placeholder={"Find a repository..."}
+            backgroundColor={"#fff"}
+            color={"#656d76"}
+            borderColor={"#d0d7de"}
+          />
+        </div>
+        <Link href={"/repository/new"}>
+          <div className={styles.newRepositoryButton}>
+            <Image
+              src={"/icons/add-repository.svg"}
+              width={13}
+              height={13}
+              alt="repositoryアイコン"
+              className={styles.repositoryIcon}
+            />
+            New
+          </div>
+        </Link>
+      </div>
+      {repositories.map((repository, index) => (
+        <RepositoryListItem
+          repositories={repositories}
+          repository={repository}
+          index={index}
+          key={index}
+        />
+      ))}
+    </div>
+  );
+};
