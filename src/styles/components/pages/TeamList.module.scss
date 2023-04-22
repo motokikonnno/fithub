@@ -1,0 +1,102 @@
+.layoutContainer {
+  margin: 0 auto;
+  width: 70%;
+  padding-bottom: 40px;
+}
+
+.pageTitle {
+  font-weight: normal;
+}
+
+.teamListContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.newTeamButton {
+  padding: 3px 12px;
+  height: 28px;
+  background-color: #fff;
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.teamContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: #fff;
+  border: 1px solid #d0d7de;
+  border-bottom: none;
+}
+
+.teamName {
+  font-size: 14px;
+  font-weight: bold;
+  color: #0969da;
+  text-decoration: none;
+}
+
+.leaveButton {
+  padding: 3px 12px;
+  color: #cf222c;
+  background-color: #f6f8fa;
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.teamDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lastItem {
+  border: 1px solid #d0d7de;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.firstItem {
+  border: 1px solid #d0d7de;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-bottom: none;
+}
+
+.userLinkContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 40px 0;
+}
+
+.userDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profileButton {
+  padding: 6px 12px;
+  background-color: #fff;
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.userIcon {
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 50%;
+}
+
+.userName {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}

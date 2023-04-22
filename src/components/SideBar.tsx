@@ -24,7 +24,7 @@ export const SideBar = React.memo(() => {
       <div>
         <div className={styles.sectionTitleContainer}>
           <h2 className={styles.sectionTitle}>Top Repositories</h2>
-          <Link href={"/repository/new"}>
+          <Link href={"/repository/new"} className={styles.link}>
             <div className={styles.newRepositoryButton}>
               <Image
                 src={"/icons/add-repository.svg"}

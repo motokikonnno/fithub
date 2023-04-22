@@ -19,7 +19,7 @@ export const Header = React.memo(() => {
     myProfile: [
       { title: "Your profile", link: "/mypage" },
       { title: "Your repositories", link: "/mypage?tab=Repositories" },
-      { title: "Your teams", link: "/team/1" },
+      { title: "Your teams", link: "/team" },
       { title: "Sign out", link: "/" },
     ],
   };
