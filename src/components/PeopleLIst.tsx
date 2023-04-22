@@ -11,10 +11,11 @@ type PeopleListProps = {
   };
   index: number;
   peoples: any;
+  isInvite: boolean;
 };
 
 export const PeopleList: FC<PeopleListProps> = React.memo(
-  ({ people, index, peoples }) => {
+  ({ people, index, peoples, isInvite }) => {
     return (
       <div
         className={`${styles.peopleDetailContainer} ${
@@ -35,9 +36,13 @@ export const PeopleList: FC<PeopleListProps> = React.memo(
             {people.name}
           </Link>
         </div>
-        <span className={styles.teamNumber}>{`${people.teamNumber} ${
-          people.teamNumber === "1" ? "team" : "teams"
-        }`}</span>
+        {isInvite ? (
+          <button className={styles.inviteButton}>Invite</button>
+        ) : (
+          <span className={styles.teamNumber}>{`${people.teamNumber} ${
+            people.teamNumber === "1" ? "team" : "teams"
+          }`}</span>
+        )}
       </div>
     );
   }

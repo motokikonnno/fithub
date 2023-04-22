@@ -35,6 +35,10 @@ export const TeamProfile = React.memo(() => {
       id: "3",
       name: "People",
     },
+    {
+      id: "4",
+      name: "Invite",
+    },
   ];
 
   const team: Team = {
@@ -148,6 +152,8 @@ export const TeamProfile = React.memo(() => {
           return setCurrentTab("Repositories");
         case "People":
           return setCurrentTab("People");
+        case "Invite":
+          return setCurrentTab("Invite");
         default:
           return setCurrentTab("Overview");
       }
@@ -317,6 +323,35 @@ export const TeamProfile = React.memo(() => {
         )}
         {currentTab === "People" && (
           <div className={styles.tabPeopleContainer}>
+            <div className={styles.actionContainer}>
+              <div className={styles.inputSearchContainer}>
+                <InputSearch
+                  placeholder={"Find a member..."}
+                  backgroundColor={"#fff"}
+                  color={"#656d76"}
+                  borderColor={"#d0d7de"}
+                />
+              </div>
+              <Link href={"/team/1?tab=Invite"}>
+                <button className={styles.inviteButton}>Invite</button>
+              </Link>
+            </div>
+            <div className={styles.peopleListWrapper}>
+              <div className={styles.peopleNumber}>41 people</div>
+              {peopleDetail.map((people, index) => (
+                <PeopleList
+                  people={people}
+                  index={index}
+                  peoples={peopleDetail}
+                  key={index}
+                  isInvite={false}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {currentTab === "Invite" && (
+          <div className={styles.tabPeopleContainer}>
             <div className={styles.inputSearchContainer}>
               <InputSearch
                 placeholder={"Find a member..."}
@@ -333,6 +368,7 @@ export const TeamProfile = React.memo(() => {
                   index={index}
                   peoples={peopleDetail}
                   key={index}
+                  isInvite={true}
                 />
               ))}
             </div>

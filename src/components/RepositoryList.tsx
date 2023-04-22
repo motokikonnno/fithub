@@ -23,7 +23,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
               borderColor={"#d0d7de"}
             />
           </div>
-          <Link href={"/repository/new"}>
+          <Link href={"/repository/new"} className={styles.link}>
             <div className={styles.newRepositoryButton}>
               <Image
                 src={"/icons/add-repository.svg"}
