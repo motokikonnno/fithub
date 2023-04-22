@@ -4,6 +4,7 @@ import styles from "../styles/components/RepositoryCard.module.scss";
 
 type RepositoryCardProps = {
   index: number;
+  // TODO: anyを変える
   repository: any;
 };
 

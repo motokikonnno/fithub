@@ -1,0 +1,33 @@
+.inputWrapper {
+  width: 56%;
+}
+
+.actionContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.repositoryListContainer {
+  width: 100%;
+}
+
+.repositoryIcon {
+  display: inline-block;
+  vertical-align: text-top;
+  margin-right: 4px;
+}
+
+.newRepositoryButton {
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #2c8747;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+}

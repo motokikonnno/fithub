@@ -8,9 +8,9 @@ import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
 import { Footer } from "../Footer";
 import { useRouter } from "next/router";
-import { InputSearch } from "../InputSearch";
-import { RepositoryListItem } from "../RepositoryListItem";
 import { RepositoryCard } from "../RepositoryCard";
+import { ProfileProps } from "./MyProfile";
+import { RepositoryList } from "../RepositoryList";
 
 export type itemType = {
   name: string;
@@ -32,6 +32,10 @@ export const TeamProfile = React.memo(() => {
     {
       id: "2",
       name: "Repositories",
+    },
+    {
+      id: "3",
+      name: "People",
     },
   ];
 
@@ -109,7 +113,7 @@ export const TeamProfile = React.memo(() => {
     (name: string) => {
       setCurrentTab(name);
       router.push(
-        `/team/${teamId}/${name === "Repositories" ? `?tab=${name}` : ""}`
+        `/team/${teamId}/${name === "Overview" ? "" : `?tab=${name}`}`
       );
     },
     [router]
@@ -139,10 +143,10 @@ export const TeamProfile = React.memo(() => {
             : styles.tabRepositoryContainer
         }
       >
-        {currentTab === "Overview" ? (
+        {currentTab === "Overview" && (
           <>
             <div className={styles.leftContainer}>
-              <div className={styles.userIcon}>
+              <div className={styles.teamIcon}>
                 <Image
                   src={user.icon}
                   width={296}
@@ -162,8 +166,8 @@ export const TeamProfile = React.memo(() => {
               </div>
               {!isToggle && (
                 <>
-                  <h1 className={styles.userName}>{user.name}</h1>
-                  <div className={styles.userBio}>{user.bio}</div>
+                  <h1 className={styles.teamName}>{user.name}</h1>
+                  <div className={styles.teamBio}>{user.bio}</div>
                   <button
                     className={styles.editButton}
                     onClick={handleIsToggle}
@@ -233,15 +237,15 @@ export const TeamProfile = React.memo(() => {
                 </>
               )}
               <h2 className={styles.profileSection}>Members</h2>
-              <div className={styles.teamIconContainer}>
+              <div className={styles.memberIconContainer}>
                 {mockTeams.map(({ image }, index) => (
                   <Link href={"/"} key={index}>
                     <Image
                       src={image}
                       width={32}
                       height={32}
-                      className={styles.teamIcon}
-                      alt="team-icon"
+                      className={styles.memberIcon}
+                      alt="member-icon"
                     />
                   </Link>
                 ))}
@@ -249,20 +253,18 @@ export const TeamProfile = React.memo(() => {
             </div>
             <Overview repositories={repositories} />
           </>
-        ) : (
+        )}
+        {currentTab === "Repositories" && (
           <RepositoryList repositories={repositories} />
         )}
+        {currentTab === "People" && <div>あ</div>}
       </div>
       <Footer />
     </>
   );
 });
 
-type MypageProps = {
-  repositories: repositoriesType[];
-};
-
-const Overview: FC<MypageProps> = ({ repositories }) => {
+const Overview: FC<ProfileProps> = ({ repositories }) => {
   return (
     <div className={styles.rightContainer}>
       <h2 className={styles.title}>Recent repositories</h2>
@@ -271,43 +273,6 @@ const Overview: FC<MypageProps> = ({ repositories }) => {
           <RepositoryCard index={index} repository={repository} key={index} />
         ))}
       </div>
-    </div>
-  );
-};
-
-const RepositoryList: FC<MypageProps> = ({ repositories }) => {
-  return (
-    <div className={styles.repositoryListContainer}>
-      <div className={styles.actionContainer}>
-        <div className={styles.inputWrapper}>
-          <InputSearch
-            placeholder={"Find a repository..."}
-            backgroundColor={"#fff"}
-            color={"#656d76"}
-            borderColor={"#d0d7de"}
-          />
-        </div>
-        <Link href={"/repository/new"}>
-          <div className={styles.newRepositoryButton}>
-            <Image
-              src={"/icons/add-repository.svg"}
-              width={13}
-              height={13}
-              alt="repositoryアイコン"
-              className={styles.repositoryIcon}
-            />
-            New
-          </div>
-        </Link>
-      </div>
-      {repositories.map((repository, index) => (
-        <RepositoryListItem
-          repositories={repositories}
-          repository={repository}
-          index={index}
-          key={index}
-        />
-      ))}
     </div>
   );
 };

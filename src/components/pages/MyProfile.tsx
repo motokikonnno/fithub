@@ -10,16 +10,15 @@ import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import { Footer } from "../Footer";
 import { useRouter } from "next/router";
-import { InputSearch } from "../InputSearch";
-import { RepositoryListItem } from "../RepositoryListItem";
 import { RepositoryCard } from "../RepositoryCard";
+import { RepositoryList } from "../RepositoryList";
 
 export type itemType = {
   name: string;
   id: string;
 };
 
-type repositoriesType = {
+export type repositoriesType = {
   name: string;
   type: string;
   updatedAt: string;
@@ -226,11 +225,11 @@ export const MyProfile = React.memo(() => {
   );
 });
 
-type MypageProps = {
+export type ProfileProps = {
   repositories: repositoriesType[];
 };
 
-const Overview: FC<MypageProps> = ({ repositories }) => {
+const Overview: FC<ProfileProps> = ({ repositories }) => {
   return (
     <div className={styles.rightContainer}>
       <h2 className={styles.title}>Recent repositories</h2>
@@ -251,43 +250,6 @@ const Overview: FC<MypageProps> = ({ repositories }) => {
           ]}
         />
       </div>
-    </div>
-  );
-};
-
-const RepositoryList: FC<MypageProps> = ({ repositories }) => {
-  return (
-    <div className={styles.repositoryListContainer}>
-      <div className={styles.actionContainer}>
-        <div className={styles.inputWrapper}>
-          <InputSearch
-            placeholder={"Find a repository..."}
-            backgroundColor={"#fff"}
-            color={"#656d76"}
-            borderColor={"#d0d7de"}
-          />
-        </div>
-        <Link href={"/repository/new"}>
-          <div className={styles.newRepositoryButton}>
-            <Image
-              src={"/icons/add-repository.svg"}
-              width={13}
-              height={13}
-              alt="repositoryアイコン"
-              className={styles.repositoryIcon}
-            />
-            New
-          </div>
-        </Link>
-      </div>
-      {repositories.map((repository, index) => (
-        <RepositoryListItem
-          repositories={repositories}
-          repository={repository}
-          index={index}
-          key={index}
-        />
-      ))}
     </div>
   );
 };
