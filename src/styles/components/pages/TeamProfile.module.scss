@@ -1,6 +1,27 @@
+.backgroundColor {
+  background-color: #f6f8fa;
+}
+
+.teamIconHeader {
+  margin-left: 422px;
+  border: 1px solid #d0d7de;
+  border-radius: 50%;
+}
+
+.teamDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.teamNameHeader {
+  font-size: 24px;
+  font-weight: bold;
+}
+
 .tabsContainer {
   display: flex;
-  margin-top: 24px;
   padding-left: 422px;
   border-bottom: 1px solid #d0d7de;
 }

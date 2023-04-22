@@ -14,7 +14,12 @@ import { RepositoryList } from "../RepositoryList";
 import { InputSearch } from "../InputSearch";
 import { PeopleList } from "../PeopleLIst";
 
-export type currentTabType = "Overview" | "Repositories" | "People";
+type Team = {
+  name: string;
+  bio: string;
+  icon: string;
+  socialLink: string[];
+};
 
 export const TeamProfile = React.memo(() => {
   const items: itemType[] = [
@@ -32,7 +37,7 @@ export const TeamProfile = React.memo(() => {
     },
   ];
 
-  const user: User = {
+  const team: Team = {
     name: "FitHub",
     bio: "これはチームの説明欄です",
     icon: "/logo.png",
@@ -167,15 +172,27 @@ export const TeamProfile = React.memo(() => {
   return (
     <>
       <Header />
-      <div className={styles.tabsContainer}>
-        {items.map((item, index) => (
-          <Tabs
-            item={item}
-            handleCurrentTab={handleCurrentTab}
-            currentTab={currentTab}
-            key={index}
+      <div className={styles.backgroundColor}>
+        <div className={styles.teamDetailContainer}>
+          <Image
+            src={team.icon}
+            width={100}
+            height={100}
+            alt="team-icon"
+            className={styles.teamIconHeader}
           />
-        ))}
+          <span className={styles.teamNameHeader}>{team.name}</span>
+        </div>
+        <div className={styles.tabsContainer}>
+          {items.map((item, index) => (
+            <Tabs
+              item={item}
+              handleCurrentTab={handleCurrentTab}
+              currentTab={currentTab}
+              key={index}
+            />
+          ))}
+        </div>
       </div>
       <div
         className={
@@ -189,7 +206,7 @@ export const TeamProfile = React.memo(() => {
             <div className={styles.leftContainer}>
               <div className={styles.teamIcon}>
                 <Image
-                  src={user.icon}
+                  src={team.icon}
                   width={296}
                   height={296}
                   alt="user-icon"
@@ -207,8 +224,8 @@ export const TeamProfile = React.memo(() => {
               </div>
               {!isToggle && (
                 <>
-                  <h1 className={styles.teamName}>{user.name}</h1>
-                  <div className={styles.teamBio}>{user.bio}</div>
+                  <h1 className={styles.teamName}>{team.name}</h1>
+                  <div className={styles.teamBio}>{team.bio}</div>
                   <button
                     className={styles.editButton}
                     onClick={handleIsToggle}
