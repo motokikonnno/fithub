@@ -12,8 +12,16 @@ export const Header = React.memo(() => {
   const profileDropDownListRef = useRef<HTMLDivElement>(null);
 
   const dropDownList = {
-    newList: ["New repository", "New team"],
-    myProfile: ["Your profile", "Your repositories", "Your teams", "Sign out"],
+    newList: [
+      { title: "New repository", link: "/repository/new" },
+      { title: "New team", link: "/team/new" },
+    ],
+    myProfile: [
+      { title: "Your profile", link: "/mypage" },
+      { title: "Your repositories", link: "/mypage?tab=Repositories" },
+      { title: "Your teams", link: "/team/1" },
+      { title: "Sign out", link: "/" },
+    ],
   };
 
   const toggleIsShow = () => {

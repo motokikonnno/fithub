@@ -1,5 +1,6 @@
 .dropDownItem {
   padding: 6px 12px;
+  color: #000;
   border-radius: 2px;
   border: 2.5px solid #fff;
   background-color: #fff;
@@ -7,4 +8,8 @@
     background-color: #f6f8fa;
     border-color: #f6f8fa;
   }
+}
+
+.link {
+  text-decoration: none;
 }

@@ -1,5 +1,5 @@
 import { User } from "@/mock/mockUser";
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import styles from "../../styles/components/pages/MyProfile.module.scss";
 import { Header } from "../Header";
 import { Tabs } from "../Tabs";
@@ -14,8 +14,8 @@ import { RepositoryCard } from "../RepositoryCard";
 import { RepositoryList } from "../RepositoryList";
 
 export type itemType = {
-  name: string;
   id: string;
+  name: string;
 };
 
 export type repositoriesType = {
@@ -82,8 +82,17 @@ export const MyProfile = React.memo(() => {
   ];
 
   const router = useRouter();
+  const query = router.query.tab;
   const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
+
+  useEffect(() => {
+    if (query === "Repositories") {
+      setCurrentTab("Repositories");
+    } else {
+      setCurrentTab("Overview");
+    }
+  }, [query]);
 
   const handleCurrentTab = useCallback(
     (name: string) => {
@@ -217,7 +226,9 @@ export const MyProfile = React.memo(() => {
         {currentTab === "Overview" ? (
           <Overview repositories={repositories} />
         ) : (
-          <RepositoryList repositories={repositories} />
+          <div className={styles.repositoryComponentWrapper}>
+            <RepositoryList repositories={repositories} />
+          </div>
         )}
       </div>
       <Footer />

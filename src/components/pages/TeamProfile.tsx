@@ -1,5 +1,5 @@
 import { User } from "@/mock/mockUser";
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import styles from "../../styles/components/pages/TeamProfile.module.scss";
 import { Header } from "../Header";
 import { Tabs } from "../Tabs";
@@ -9,19 +9,12 @@ import Link from "next/link";
 import { Footer } from "../Footer";
 import { useRouter } from "next/router";
 import { RepositoryCard } from "../RepositoryCard";
-import { ProfileProps } from "./MyProfile";
+import { itemType, ProfileProps, repositoriesType } from "./MyProfile";
 import { RepositoryList } from "../RepositoryList";
+import { InputSearch } from "../InputSearch";
+import { PeopleList } from "../PeopleLIst";
 
-export type itemType = {
-  name: string;
-  id: string;
-};
-
-type repositoriesType = {
-  name: string;
-  type: string;
-  updatedAt: string;
-};
+export type currentTabType = "Overview" | "Repositories" | "People";
 
 export const TeamProfile = React.memo(() => {
   const items: itemType[] = [
@@ -104,10 +97,58 @@ export const TeamProfile = React.memo(() => {
     },
   ];
 
+  const peopleDetail = [
+    {
+      name: "motoki",
+      icon: "/logo.png",
+      teamNumber: "1",
+    },
+    {
+      name: "motoki",
+      icon: "/logo.png",
+      teamNumber: "2",
+    },
+    {
+      name: "motoki",
+      icon: "/logo.png",
+      teamNumber: "1",
+    },
+    {
+      name: "motoki",
+      icon: "/logo.png",
+      teamNumber: "2",
+    },
+    {
+      name: "motoki",
+      icon: "/logo.png",
+      teamNumber: "1",
+    },
+    {
+      name: "motoki",
+      icon: "/logo.png",
+      teamNumber: "2",
+    },
+  ];
+
   const router = useRouter();
+  const query = String(router.query.tab);
   const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
   const teamId = 1;
+
+  useEffect(() => {
+    const switchCurrentTab = (query: string) => {
+      switch (query) {
+        case "Repositories":
+          return setCurrentTab("Repositories");
+        case "People":
+          return setCurrentTab("People");
+        default:
+          return setCurrentTab("Overview");
+      }
+    };
+    switchCurrentTab(query);
+  }, [query]);
 
   const handleCurrentTab = useCallback(
     (name: string) => {
@@ -257,7 +298,29 @@ export const TeamProfile = React.memo(() => {
         {currentTab === "Repositories" && (
           <RepositoryList repositories={repositories} />
         )}
-        {currentTab === "People" && <div>あ</div>}
+        {currentTab === "People" && (
+          <div className={styles.tabPeopleContainer}>
+            <div className={styles.inputSearchContainer}>
+              <InputSearch
+                placeholder={"Find a member..."}
+                backgroundColor={"#fff"}
+                color={"#656d76"}
+                borderColor={"#d0d7de"}
+              />
+            </div>
+            <div className={styles.peopleListWrapper}>
+              <div className={styles.peopleNumber}>41 people</div>
+              {peopleDetail.map((people, index) => (
+                <PeopleList
+                  people={people}
+                  index={index}
+                  peoples={peopleDetail}
+                  key={index}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </>

@@ -5,7 +5,7 @@ import { itemType } from "./pages/MyProfile";
 type TabsProps = {
   item: itemType;
   handleCurrentTab: (name: string) => void;
-  currentTab: string;
+  currentTab: string | string[];
 };
 
 export const Tabs: FC<TabsProps> = React.memo(

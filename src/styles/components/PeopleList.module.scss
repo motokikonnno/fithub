@@ -1,0 +1,30 @@
+.peopleDetailContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+}
+
+.peopleDetailLast {
+  border-bottom: 1px solid #d0d7de;
+}
+
+.icon {
+  border-radius: 50%;
+}
+
+.peopleName {
+  color: #0969da;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.rightContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.teamNumber {
+  color: #656d76;
+}
