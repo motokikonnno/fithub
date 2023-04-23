@@ -1,0 +1,64 @@
+.backgroundColor {
+  background-color: #f6f8fa;
+}
+
+.teamIconHeader {
+  border: 1px solid #d0d7de;
+  border-radius: 50%;
+}
+
+.teamDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 48px;
+  padding: 16px 0;
+}
+
+.teamNameHeader {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0969da;
+}
+
+.tabsContainer {
+  display: flex;
+  padding-left: 48px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.sectionLine {
+  font-size: 20px;
+  color: #656d76;
+}
+
+.layoutContainer {
+  margin: 0 auto;
+  width: 70%;
+}
+
+.logListWrapper {
+  margin-top: 48px;
+  border: 1px solid #d0d7de;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.userInformationContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background-color: #f6f8fa;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.userIcon {
+  border-radius: 50%;
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: bold;
+}

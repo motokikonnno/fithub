@@ -11,7 +11,10 @@ type RepositoryListItemProps = {
 export const RepositoryListItem: FC<RepositoryListItemProps> = React.memo(
   ({ repositories, index, repository }) => {
     return (
-      <Link className={styles.repositoryName} href={"/"}>
+      <Link
+        className={styles.repositoryName}
+        href={`/repository/${repository.name}`}
+      >
         <div
           className={`${styles.repositoryItemWrapper} ${
             repositories.length - 1 === index && styles.lastItem
