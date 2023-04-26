@@ -62,3 +62,28 @@
   font-size: 14px;
   font-weight: bold;
 }
+
+.listWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-top: 1px solid #d0d7de;
+  &:hover {
+    background-color: #f6f8fa;
+  }
+}
+
+.folderOrFileName {
+  margin-left: 16px;
+  font-size: 14px;
+  cursor: pointer;
+  &:hover {
+    color: #0969da;
+  }
+}
+
+.updatedAt {
+  font-size: 14px;
+  color: #656d76;
+}

@@ -11,7 +11,11 @@ type RepositoryCardProps = {
 export const RepositoryCard: FC<RepositoryCardProps> = React.memo(
   ({ index, repository }) => {
     return (
-      <Link className={styles.repositoryName} href={"/"} key={index}>
+      <Link
+        className={styles.repositoryName}
+        href={`/repository/${repository.name}`}
+        key={index}
+      >
         <div className={styles.repositoryWrapper}>
           {repository.name}
           <span className={styles.repositoryType}>{repository.type}</span>

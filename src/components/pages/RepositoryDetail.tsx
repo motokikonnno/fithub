@@ -1,3 +1,7 @@
+import {
+  mockRepositoryFile,
+  mockRepositoryFolder,
+} from "@/mock/mockRepositoryDetail";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -21,7 +25,12 @@ export const RepositoryDetail = React.memo(() => {
 
   const router = useRouter();
   const query = String(router.query.tab);
+  const url = decodeURI(router.asPath);
   const [currentTab, setCurrentTab] = useState("Log");
+  const [currentUrl, setCurrentUrl] = useState("");
+  const userName = "motoki";
+  const repositoryName = "fithub";
+  const urlSlashNumber = 3;
 
   useEffect(() => {
     if (query === "Issue") {
@@ -31,13 +40,33 @@ export const RepositoryDetail = React.memo(() => {
     }
   }, [query]);
 
+  useEffect(() => {
+    const startNumber =
+      repositoryName.length + userName.length + urlSlashNumber;
+    const path = url.substring(startNumber);
+    setCurrentUrl(path);
+  }, [url]);
+
   const handleCurrentTab = useCallback(
     (name: string) => {
       setCurrentTab(name);
-      router.push(`/repository/fithub/${name === "Log" ? "" : `?tab=${name}`}`);
+      router.push(`/motoki/fithub/${name === "Log" ? "" : `?tab=${name}`}`);
     },
     [router]
   );
+
+  const handleChangeUrl = (name: string) => {
+    const path = currentUrl === "" ? name : `${currentUrl}/${name}`;
+    router.push({
+      pathname: `/[userName]/[repositoryName]/[path]`,
+      query: {
+        userName: "motoki",
+        repositoryName: "fithub",
+        path: path,
+      },
+    });
+    setCurrentUrl(path);
+  };
 
   return (
     <>
@@ -72,6 +101,39 @@ export const RepositoryDetail = React.memo(() => {
               />
               <span className={styles.userName}>motoki</span>
             </div>
+            {mockRepositoryFolder.map((folder, index) => (
+              <div className={styles.listWrapper} key={index}>
+                <div className={styles.leftContainer}>
+                  <Image
+                    src={"/icons/folder.svg"}
+                    width={16}
+                    height={14}
+                    alt="folder-icon"
+                  />
+                  <span
+                    className={styles.folderOrFileName}
+                    onClick={() => handleChangeUrl(folder.name)}
+                  >
+                    {folder.name}
+                  </span>
+                </div>
+                <span className={styles.updatedAt}>{folder.updatedAt}</span>
+              </div>
+            ))}
+            {mockRepositoryFile.map((file, index) => (
+              <div className={styles.listWrapper} key={index}>
+                <div className={styles.leftContainer}>
+                  <Image
+                    src={"/icons/file.svg"}
+                    width={16}
+                    height={14}
+                    alt="folder-icon"
+                  />
+                  <span className={styles.folderOrFileName}>{file.name}</span>
+                </div>
+                <span className={styles.updatedAt}>{file.updatedAt}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
