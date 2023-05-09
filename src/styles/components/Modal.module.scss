@@ -1,0 +1,30 @@
+.modalElem {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(25, 25, 16, 0.2);
+  z-index: 1000;
+  animation: 0.2s ease 0s 1 normal;
+
+  .modalInner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.modalContent {
+  background-color: #ffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.06);
+}
