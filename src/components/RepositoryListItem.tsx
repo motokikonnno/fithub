@@ -13,7 +13,7 @@ export const RepositoryListItem: FC<RepositoryListItemProps> = React.memo(
     return (
       <Link
         className={styles.repositoryName}
-        href={`/repository/${repository.name}`}
+        href={`/motoki/${repository.name}`}
       >
         <div
           className={`${styles.repositoryItemWrapper} ${
