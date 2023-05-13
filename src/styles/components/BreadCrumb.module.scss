@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 12px 0;
+  white-space: nowrap;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0969da;
+  cursor: pointer;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+}
+
+.slash {
+  margin: 0 4px;
+  color: #656d76;
+}
