@@ -34,11 +34,12 @@
 
 .layoutContainer {
   margin: 0 auto;
+  padding-top: 24px;
   width: 70%;
 }
 
 .logListWrapper {
-  margin-top: 48px;
+  margin-top: 8px;
   border: 1px solid #d0d7de;
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
@@ -86,4 +87,72 @@
 .updatedAt {
   font-size: 14px;
   color: #656d76;
+}
+
+.addFileOrFolderWrapper {
+  padding: 8px 16px;
+  border-top: 1px solid #d0d7de;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.createInputWrapper {
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
+  &:focus {
+    outline: none;
+  }
+}
+
+.dropdownWrapper {
+  margin: 0;
+  padding: 0;
+  border: 1px solid #656d76;
+}
+
+.dropdownItem {
+  padding: 8px 16px;
+  list-style: none;
+}
+
+.dropdownItemContainer {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  width: 100%;
+  border-top: 1px solid #d0d7de;
+  box-sizing: border-box;
+  &:hover {
+    background-color: #d0d7de;
+    cursor: pointer;
+  }
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border-top: 1px solid #d0d7de;
+}
+
+.modalBackground {
+  width: 1050px;
+  height: 500px;
+}
+
+.icon {
+  vertical-align: middle;
+}
+
+.header {
+  padding: 8px 16px;
+}
+
+.xmarkIcon {
+  border-radius: 50%;
+  background-color: #fc635c;
+  cursor: pointer;
 }
