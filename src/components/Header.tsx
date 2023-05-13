@@ -44,27 +44,18 @@ export const Header = React.memo(() => {
         return;
       }
       const element = dropDownListRef.current;
-      if (element && element?.contains(event.target)) return;
+      const profileElement = profileDropDownListRef.current;
+      if (
+        (element && element?.contains(event.target)) ||
+        (profileElement && profileElement?.contains(event.target))
+      )
+        return;
       setIsShow(false);
+      setIsShowProfile(false);
     };
     window.addEventListener("click", handleClickToCloseDropDown, true);
     return () => {
       window.removeEventListener("click", handleClickToCloseDropDown);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleClickToCloseProfileDropDown = (event: MouseEvent) => {
-      if (!(event.target instanceof HTMLElement)) {
-        return;
-      }
-      const element = profileDropDownListRef.current;
-      if (element && element?.contains(event.target)) return;
-      setIsShowProfile(false);
-    };
-    window.addEventListener("click", handleClickToCloseProfileDropDown, true);
-    return () => {
-      window.removeEventListener("click", handleClickToCloseProfileDropDown);
     };
   }, []);
 
