@@ -3,15 +3,25 @@ import {
   mockRepositoryFolder,
 } from "@/mock/mockRepositoryDetail";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/RepositoryDetail.module.scss";
 import { BreadCrumb } from "../BreadCrumb";
 import { Footer } from "../Footer";
 import { Header } from "../Header";
+import { InputSearch } from "../InputSearch";
 import { Modal } from "../Modal";
 import { Tabs } from "../Tabs";
 import { itemType } from "./MyProfile";
+
+type IssueType = {
+  id: string;
+  title: string;
+  createdAt: string;
+  createdUser: string;
+  close: boolean;
+};
 
 export const RepositoryDetail = React.memo(() => {
   const items: itemType[] = [
@@ -67,6 +77,58 @@ export const RepositoryDetail = React.memo(() => {
     },
   ];
 
+  const issueData = [
+    {
+      id: "1",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: false,
+    },
+    {
+      id: "2",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: false,
+    },
+    {
+      id: "3",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: false,
+    },
+    {
+      id: "4",
+      title: "closeのtitle",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: true,
+    },
+    {
+      id: "5",
+      title: "closeのtitle",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: true,
+    },
+    {
+      id: "6",
+      title: "closeのtitle",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: true,
+    },
+    {
+      id: "7",
+      title: "closeのtitle",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      close: true,
+    },
+  ];
+
   const router = useRouter();
   const query = String(router.query.tab);
   const [currentTab, setCurrentTab] = useState("Log");
@@ -86,6 +148,11 @@ export const RepositoryDetail = React.memo(() => {
   const [isHover, setIsHover] = useState(false);
   const [hoverValue, setHoverValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const openIssueData = issueData.filter(({ close }) => !close);
+  const openIssueDataNumber = openIssueData.length;
+  const closedIssueDataNumber = issueData.filter(({ close }) => close).length;
+  const [issues, setIssues] = useState(openIssueData);
+  const [currentIssueType, setCurrentIssueType] = useState(false);
 
   useEffect(() => {
     if (query === "Issue") {
@@ -113,6 +180,21 @@ export const RepositoryDetail = React.memo(() => {
       window.removeEventListener("click", handleClickToCloseInput);
     };
   }, []);
+
+  const handleIssuesData = useCallback(
+    (type: "closed" | "open") => {
+      if (type === "open") {
+        const openData = issueData.filter(({ close }) => !close);
+        setIssues(openData);
+        setCurrentIssueType(false);
+      } else if (type === "closed") {
+        const closedData = issueData.filter(({ close }) => close);
+        setIssues(closedData);
+        setCurrentIssueType(true);
+      }
+    },
+    [issueData]
+  );
 
   const handleCurrentTab = useCallback(
     (name: string) => {
@@ -432,7 +514,101 @@ export const RepositoryDetail = React.memo(() => {
           </div>
         </div>
       )}
+      {currentTab === "Issue" && (
+        <Issue
+          issues={issues}
+          currentIssueType={currentIssueType}
+          handleIssuesData={handleIssuesData}
+          openIssueDataNumber={openIssueDataNumber}
+          closedIssueDataNumber={closedIssueDataNumber}
+        />
+      )}
       <Footer />
     </>
   );
 });
+
+type IssuePropsType = {
+  issues: IssueType[];
+  currentIssueType: boolean;
+  handleIssuesData: (type: "open" | "closed") => void;
+  openIssueDataNumber: number;
+  closedIssueDataNumber: number;
+};
+
+const Issue: React.FC<IssuePropsType> = React.memo(
+  ({
+    issues,
+    currentIssueType,
+    handleIssuesData,
+    openIssueDataNumber,
+    closedIssueDataNumber,
+  }) => {
+    return (
+      <div className={styles.tabIssueContainer}>
+        <div className={styles.actionContainer}>
+          <div className={styles.inputSearchContainer}>
+            <InputSearch
+              placeholder={"Find a member..."}
+              backgroundColor={"#f6f8fa"}
+              color={"#656d76"}
+              borderColor={"#d0d7de"}
+            />
+          </div>
+          <Link href={"/team/1?tab=Invite"}>
+            <button className={styles.addIssueButton}>New issue</button>
+          </Link>
+        </div>
+        <div className={styles.issueListWrapper}>
+          <div className={styles.issueTypeContainer}>
+            <span
+              className={`${styles.openOrClosedNumber} ${
+                !currentIssueType && styles.changeColorBlack
+              }`}
+              onClick={() => handleIssuesData("open")}
+            >
+              {`${openIssueDataNumber} Open`}
+            </span>
+            <span
+              className={`${styles.openOrClosedNumber} ${
+                currentIssueType && styles.changeColorBlack
+              }`}
+              onClick={() => handleIssuesData("closed")}
+            >
+              {`${closedIssueDataNumber} Closed`}
+            </span>
+          </div>
+          {issues.map((issue, index) => (
+            <div
+              key={index}
+              className={`${styles.issueDetailContainer} ${
+                issues.length - 1 !== index && styles.issueDetailLast
+              }`}
+            >
+              <div className={styles.leftContainer}>
+                <Image
+                  src={
+                    currentIssueType
+                      ? "/icons/circle-check.svg"
+                      : "/icons/circle-dot.svg"
+                  }
+                  width={12}
+                  height={12}
+                  alt="circle-icon"
+                />
+                <Link href={"/dashboard"} className={styles.issueTitle}>
+                  {issue.title}
+                </Link>
+              </div>
+              <div className={styles.issueContent}>
+                {`#${issue.id} ${currentIssueType ? "closed" : "opened"} ${
+                  issue.createdAt
+                } by ${issue.createdUser}`}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+);
