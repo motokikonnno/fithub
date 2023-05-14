@@ -25,6 +25,48 @@ export const RepositoryDetail = React.memo(() => {
     },
   ];
 
+  const modalHeaderItems = [
+    {
+      name: "commit",
+    },
+    {
+      name: "merge",
+    },
+  ];
+
+  const commitData = [
+    {
+      id: "1",
+      message: "feat-ログイン機能",
+      userName: "motoki",
+      updatedAt: "2023/05/12",
+    },
+    {
+      id: "2",
+      message: "feat-ログイン機能",
+      userName: "motoki",
+      updatedAt: "2023/05/12",
+    },
+    {
+      id: "3",
+      message: "feat-ログイン機能",
+      userName: "motoki",
+      updatedAt: "2023/05/12",
+    },
+    {
+      id: "4",
+      message: "feat-ログイン機能",
+      userName: "motoki",
+      updatedAt: "2023/05/12",
+    },
+    {
+      id: "5",
+      message: "feat-ログイン機能",
+      userName: "motoki",
+      updatedAt: "2023/05/12",
+    },
+  ];
+
   const router = useRouter();
   const query = String(router.query.tab);
   const [currentTab, setCurrentTab] = useState("Log");
@@ -40,6 +82,9 @@ export const RepositoryDetail = React.memo(() => {
   const [toggleSelectType, setToggleSelectType] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currentFolderName, setCurrentFolderName] = useState<itemType[]>([]);
+  const [modalHeader, setModalHeader] = useState("commit");
+  const [isHover, setIsHover] = useState(false);
+  const [hoverValue, setHoverValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -114,6 +159,19 @@ export const RepositoryDetail = React.memo(() => {
 
   const handleModalClose = () => {
     setIsVisible(!isVisible);
+    setModalHeader("commit");
+  };
+
+  const handleMouseEnter = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    id: string
+  ) => {
+    const target = e.target as HTMLDivElement;
+    const elementId = target.getAttribute("id");
+    if (elementId === id) {
+      setHoverValue(elementId);
+      setIsHover(!isHover);
+    }
   };
 
   const submitEnter = (key: any) => {
@@ -201,15 +259,108 @@ export const RepositoryDetail = React.memo(() => {
                 {isVisible && (
                   <Modal isVisible={isVisible} handleClose={handleModalClose}>
                     <div className={styles.modalBackground}>
-                      <div className={styles.header}>
-                        <Image
-                          src={"/icons/xmark.svg"}
-                          width={20}
-                          height={20}
-                          alt="xmark-icon"
-                          className={styles.xmarkIcon}
-                        />
+                      <div className={styles.headerContainer}>
+                        <div className={styles.xmarkIconWrapper}>
+                          <Image
+                            src={"/icons/xmark.svg"}
+                            width={20}
+                            height={20}
+                            alt="xmark-icon"
+                            className={styles.xmarkIcon}
+                            onClick={handleModalClose}
+                          />
+                        </div>
+                        <div className={styles.headerItemContainer}>
+                          {modalHeaderItems.map(({ name }, index) => (
+                            <div
+                              className={`${styles.headerItem} ${
+                                modalHeader === name && styles.activeBackground
+                              }`}
+                              key={index}
+                              onClick={() => setModalHeader(name)}
+                            >
+                              <Image
+                                src={`/icons/${name}.svg`}
+                                width={12}
+                                height={12}
+                                alt="header-item-icon"
+                                className={styles.itemIcon}
+                              />
+                              <p className={styles.itemTitle}>{name}</p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
+                      {modalHeader === "commit" && (
+                        <>
+                          <div className={styles.commitBackground}>
+                            {commitData.map((commit, index) => (
+                              <ul
+                                key={index}
+                                className={styles.commitListContainer}
+                              >
+                                <li className={styles.commitMessage}>
+                                  {commit.message}
+                                </li>
+                                <li className={styles.rightContainer}>
+                                  <li className={styles.commitUser}>
+                                    {commit.userName}
+                                  </li>
+                                  <li className={styles.commitUpdatedAt}>
+                                    {commit.updatedAt}
+                                  </li>
+                                </li>
+                              </ul>
+                            ))}
+                          </div>
+                          <div className={styles.commitFormLayout}>
+                            <textarea
+                              placeholder="commit message"
+                              className={styles.textarea}
+                            ></textarea>
+                            <button className={styles.commitButton}>
+                              commit
+                            </button>
+                          </div>
+                        </>
+                      )}
+                      {modalHeader === "merge" && (
+                        <>
+                          <div className={styles.commitBackground}>
+                            {commitData.map((commit, index) => (
+                              <div
+                                key={index}
+                                className={styles.committedListContainer}
+                              >
+                                <div
+                                  className={styles.committedMessage}
+                                  id={commit.id}
+                                  onMouseEnter={(e) =>
+                                    handleMouseEnter(e, commit.id)
+                                  }
+                                  onMouseLeave={() => setIsHover(false)}
+                                >
+                                  {commit.message}
+                                  {isHover && hoverValue === commit.id && (
+                                    <Image
+                                      src={"/icons/trash.svg"}
+                                      width={16}
+                                      height={16}
+                                      alt="trash-icon"
+                                      className={styles.trashIcon}
+                                    />
+                                  )}
+                                </div>
+                                <input
+                                  type={"checkbox"}
+                                  className={styles.checkbox}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                          <button className={styles.mergeButton}>merge</button>
+                        </>
+                      )}
                     </div>
                   </Modal>
                 )}
@@ -222,7 +373,11 @@ export const RepositoryDetail = React.memo(() => {
                   onClick={() => setToggleSelectType(!toggleSelectType)}
                 >
                   <Image
-                    src={"/icons/plus-gray.svg"}
+                    src={
+                      toggleSelectType
+                        ? "/icons/minus.svg"
+                        : "/icons/plus-gray.svg"
+                    }
                     width={16}
                     height={16}
                     alt="plus-icon"
