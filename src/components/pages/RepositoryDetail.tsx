@@ -12,18 +12,22 @@ import { Header } from "../Header";
 import { Modal } from "../Modal";
 import { Tabs } from "../Tabs";
 import { itemType } from "./MyProfile";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import type { DropResult } from "react-beautiful-dnd";
+import { Issue } from "./Issue";
+import { FolderItem } from "../item/FolderItem";
+import { FileItem } from "../item/FileItem";
 
-type IssueType = {
+export type IssueStateType = {
   id: string;
   type: string;
-  issue: {
-    id: string;
-    title: string;
-    createdAt: string;
-    createdUser: string;
-  }[];
+  issues: IssueType[];
+};
+
+export type IssueType = {
+  id: string;
+  title: string;
+  createdAt: string;
+  createdUser: string;
+  type: string;
 };
 
 export const items: itemType[] = [
@@ -38,6 +42,54 @@ export const items: itemType[] = [
 ];
 
 export const RepositoryDetail = React.memo(() => {
+  const issueList = [
+    {
+      id: "1",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      type: "To do",
+    },
+    {
+      id: "2",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      type: "To do",
+    },
+    {
+      id: "3",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      type: "Doing",
+    },
+    {
+      id: "4",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      type: "Doing",
+    },
+    {
+      id: "5",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      type: "Done",
+    },
+    {
+      id: "6",
+      title: "記事が投稿されたら通知がいくようにする",
+      createdAt: "4 days ago",
+      createdUser: "motoki",
+      type: "Done",
+    },
+  ];
+  const issueTodo = issueList.filter(({ type }) => type === "To do");
+  const issueDoing = issueList.filter(({ type }) => type === "Doing");
+  const issueDone = issueList.filter(({ type }) => type === "Done");
+
   const modalHeaderItems = [
     {
       name: "commit",
@@ -84,56 +136,17 @@ export const RepositoryDetail = React.memo(() => {
     {
       id: "1",
       type: "To do",
-      issue: [
-        {
-          id: "1",
-          title: "記事が投稿されたら通知がいくようにする",
-          createdAt: "4 days ago",
-          createdUser: "motoki",
-        },
-        {
-          id: "2",
-          title: "記事が投稿されたら通知がいくようにする",
-          createdAt: "4 days ago",
-          createdUser: "motoki",
-        },
-      ],
+      issues: issueTodo,
     },
     {
       id: "2",
       type: "Doing",
-      issue: [
-        {
-          id: "3",
-          title: "記事が投稿されたら通知がいくようにする",
-          createdAt: "4 days ago",
-          createdUser: "motoki",
-        },
-        {
-          id: "4",
-          title: "記事が投稿されたら通知がいくようにする",
-          createdAt: "4 days ago",
-          createdUser: "motoki",
-        },
-      ],
+      issues: issueDoing,
     },
     {
       id: "3",
       type: "Done",
-      issue: [
-        {
-          id: "5",
-          title: "記事が投稿されたら通知がいくようにする",
-          createdAt: "4 days ago",
-          createdUser: "motoki",
-        },
-        {
-          id: "6",
-          title: "記事が投稿されたら通知がいくようにする",
-          createdAt: "4 days ago",
-          createdUser: "motoki",
-        },
-      ],
+      issues: issueDone,
     },
   ];
 
@@ -287,155 +300,126 @@ export const RepositoryDetail = React.memo(() => {
               <span className={styles.userName}>motoki</span>
             </div>
             {currentFolder.map((folder, index) => (
-              <div className={styles.listWrapper} key={index}>
-                <div className={styles.leftContainer}>
-                  <Image
-                    src={"/icons/folder.svg"}
-                    width={16}
-                    height={14}
-                    alt="folder-icon"
-                    className={styles.icon}
-                  />
-                  <span
-                    className={styles.folderOrFileName}
-                    onClick={() => handleCurrentFolder(folder.id, folder.name)}
-                  >
-                    {folder.name}
-                  </span>
-                </div>
-                <span className={styles.updatedAt}>{folder.updatedAt}</span>
-              </div>
+              <FolderItem
+                folder={folder}
+                handleCurrentFolder={handleCurrentFolder}
+                key={index}
+              />
             ))}
             {currentFile.map((file, index) => (
-              <div key={index}>
-                <div className={styles.listWrapper}>
-                  <div className={styles.leftContainer}>
-                    <Image
-                      src={"/icons/file.svg"}
-                      width={16}
-                      height={14}
-                      alt="folder-icon"
-                      className={styles.icon}
-                    />
-                    <span
-                      className={styles.folderOrFileName}
-                      onClick={handleModalClose}
-                    >
-                      {file.name}
-                    </span>
-                  </div>
-                  <span className={styles.updatedAt}>{file.updatedAt}</span>
-                </div>
-                {isVisible && (
-                  <Modal isVisible={isVisible} handleClose={handleModalClose}>
-                    <div className={styles.modalBackground}>
-                      <div className={styles.headerContainer}>
-                        <div className={styles.xmarkIconWrapper}>
-                          <Image
-                            src={"/icons/xmark.svg"}
-                            width={20}
-                            height={20}
-                            alt="xmark-icon"
-                            className={styles.xmarkIcon}
-                            onClick={handleModalClose}
-                          />
-                        </div>
-                        <div className={styles.headerItemContainer}>
-                          {modalHeaderItems.map(({ name }, index) => (
-                            <div
-                              className={`${styles.headerItem} ${
-                                modalHeader === name && styles.activeBackground
-                              }`}
-                              key={index}
-                              onClick={() => setModalHeader(name)}
-                            >
-                              <Image
-                                src={`/icons/${name}.svg`}
-                                width={12}
-                                height={12}
-                                alt="header-item-icon"
-                                className={styles.itemIcon}
-                              />
-                              <p className={styles.itemTitle}>{name}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      {modalHeader === "commit" && (
-                        <>
-                          <div className={styles.commitBackground}>
-                            {commitData.map((commit, index) => (
-                              <ul
-                                key={index}
-                                className={styles.commitListContainer}
-                              >
-                                <li className={styles.commitMessage}>
-                                  {commit.message}
-                                </li>
-                                <li className={styles.rightContainer}>
-                                  <li className={styles.commitUser}>
-                                    {commit.userName}
-                                  </li>
-                                  <li className={styles.commitUpdatedAt}>
-                                    {commit.updatedAt}
-                                  </li>
-                                </li>
-                              </ul>
-                            ))}
-                          </div>
-                          <div className={styles.commitFormLayout}>
-                            <textarea
-                              placeholder="commit message"
-                              className={styles.textarea}
-                            ></textarea>
-                            <button className={styles.commitButton}>
-                              commit
-                            </button>
-                          </div>
-                        </>
-                      )}
-                      {modalHeader === "merge" && (
-                        <>
-                          <div className={styles.commitBackground}>
-                            {commitData.map((commit, index) => (
-                              <div
-                                key={index}
-                                className={styles.committedListContainer}
-                              >
-                                <div
-                                  className={styles.committedMessage}
-                                  id={commit.id}
-                                  onMouseEnter={(e) =>
-                                    handleMouseEnter(e, commit.id)
-                                  }
-                                  onMouseLeave={() => setIsHover(false)}
-                                >
-                                  {commit.message}
-                                  {isHover && hoverValue === commit.id && (
-                                    <Image
-                                      src={"/icons/trash.svg"}
-                                      width={16}
-                                      height={16}
-                                      alt="trash-icon"
-                                      className={styles.trashIcon}
-                                    />
-                                  )}
-                                </div>
-                                <input
-                                  type={"checkbox"}
-                                  className={styles.checkbox}
-                                />
-                              </div>
-                            ))}
-                          </div>
-                          <button className={styles.mergeButton}>merge</button>
-                        </>
-                      )}
-                    </div>
-                  </Modal>
-                )}
-              </div>
+              <FileItem
+                file={file}
+                handleModalClose={handleModalClose}
+                key={index}
+              />
             ))}
+            {isVisible && (
+              <Modal isVisible={isVisible} handleClose={handleModalClose}>
+                <div className={styles.modalBackground}>
+                  <div className={styles.headerContainer}>
+                    <div className={styles.xmarkIconWrapper}>
+                      <Image
+                        src={"/icons/xmark.svg"}
+                        width={20}
+                        height={20}
+                        alt="xmark-icon"
+                        className={styles.xmarkIcon}
+                        onClick={handleModalClose}
+                      />
+                    </div>
+                    <div className={styles.headerItemContainer}>
+                      {modalHeaderItems.map(({ name }, index) => (
+                        <div
+                          className={`${styles.headerItem} ${
+                            modalHeader === name && styles.activeBackground
+                          }`}
+                          key={index}
+                          onClick={() => setModalHeader(name)}
+                        >
+                          <Image
+                            src={`/icons/${name}.svg`}
+                            width={12}
+                            height={12}
+                            alt="header-item-icon"
+                            className={styles.itemIcon}
+                          />
+                          <p className={styles.itemTitle}>{name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {modalHeader === "commit" && (
+                    <>
+                      <div className={styles.commitBackground}>
+                        {commitData.map((commit, index) => (
+                          <ul
+                            key={index}
+                            className={styles.commitListContainer}
+                          >
+                            <li className={styles.commitMessage}>
+                              {commit.message}
+                            </li>
+                            <li className={styles.rightContainer}>
+                              <li className={styles.commitUser}>
+                                {commit.userName}
+                              </li>
+                              <li className={styles.commitUpdatedAt}>
+                                {commit.updatedAt}
+                              </li>
+                            </li>
+                          </ul>
+                        ))}
+                      </div>
+                      <div className={styles.commitFormLayout}>
+                        <textarea
+                          placeholder="commit message"
+                          className={styles.textarea}
+                        ></textarea>
+                        <button className={styles.commitButton}>commit</button>
+                      </div>
+                    </>
+                  )}
+                  {modalHeader === "merge" && (
+                    <>
+                      <div className={styles.commitBackground}>
+                        {commitData.map((commit, index) => (
+                          <div
+                            key={index}
+                            className={styles.committedListContainer}
+                          >
+                            <div
+                              className={styles.committedMessage}
+                              id={commit.id}
+                              onMouseEnter={(e) =>
+                                handleMouseEnter(e, commit.id)
+                              }
+                              onMouseLeave={() => setIsHover(false)}
+                            >
+                              {commit.message}
+                              {isHover && hoverValue === commit.id && (
+                                <Image
+                                  src={"/icons/trash.svg"}
+                                  width={16}
+                                  height={16}
+                                  alt="trash-icon"
+                                  className={styles.trashIcon}
+                                />
+                              )}
+                            </div>
+                            <input
+                              type={"checkbox"}
+                              className={styles.checkbox}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <button className={styles.mergeButton}>merge</button>
+                    </>
+                  )}
+                </div>
+              </Modal>
+            )}
+
             {createType === "" ? (
               <>
                 <div
@@ -505,81 +489,5 @@ export const RepositoryDetail = React.memo(() => {
       {currentTab === "Issue" && <Issue issues={issueData} />}
       <Footer />
     </>
-  );
-});
-
-type IssuePropsType = {
-  issues: IssueType[];
-};
-
-const Issue: React.FC<IssuePropsType> = React.memo(({ issues }) => {
-  const [issueData, setIssueData] = useState(issues);
-
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-    // 別のカラムにタスクが移動した時
-    if (source.droppableId !== destination?.droppableId) {
-      const sourceIndex = issueData.findIndex(
-        (e) => e.id === source.droppableId
-      );
-      const destinationIndex = issueData.findIndex(
-        (e) => e.id === destination?.droppableId
-      );
-      const currentSourceIndex = issueData[sourceIndex];
-      const currentDestinationIndex = issueData[destinationIndex];
-      const sourceIssue = [...currentSourceIndex.issue];
-      const destinationIssue = [...currentDestinationIndex.issue];
-      const [removed] = sourceIssue.splice(source.index, 1);
-      destinationIssue.splice(destination!.index, 0, removed);
-      issueData[sourceIndex].issue = sourceIssue;
-      issueData[destinationIndex].issue = destinationIssue;
-      setIssueData(issueData);
-    } else {
-      // 同じカラム内でのタスクの入れ替え
-      const sourceIndex = issueData.findIndex(
-        (e) => e.id === source.droppableId
-      );
-      const currentSourceIndex = issueData[sourceIndex];
-      const sourceIssue = [...currentSourceIndex.issue];
-      const [removed] = sourceIssue.splice(source.index, 1);
-      sourceIssue.splice(destination.index, 0, removed);
-      issueData[sourceIndex].issue = sourceIssue;
-      setIssueData(issueData);
-    }
-  };
-  return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className={styles.issueTypeContainer}>
-        {issueData.map((issue) => (
-          <Droppable key={issue.id} droppableId={issue.id}>
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                <div>{issue.type}</div>
-                <div>
-                  {issue.issue.map((task, index) => (
-                    <Draggable
-                      draggableId={task.id}
-                      index={index}
-                      key={task.id}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.dragHandleProps}
-                          {...provided.draggableProps}
-                        >
-                          <div>{task.title}</div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              </div>
-            )}
-          </Droppable>
-        ))}
-      </div>
-    </DragDropContext>
   );
 });

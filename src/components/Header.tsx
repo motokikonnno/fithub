@@ -1,7 +1,7 @@
 import styles from "../styles/components/Header.module.scss";
 import Image from "next/image";
 import { InputSearch } from "./InputSearch";
-import { DropDownList } from "./DropDownList";
+import { DropDownList } from "./list/DropDownList";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 

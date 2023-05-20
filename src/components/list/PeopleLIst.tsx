@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import styles from "../styles/components/PeopleList.module.scss";
+import styles from "../../styles/components/list/PeopleList.module.scss";
 import Image from "next/image";
 import Link from "next/link";
 

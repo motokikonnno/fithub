@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React, { FC } from "react";
-import styles from "../styles/components/RepositoryCard.module.scss";
+import styles from "../../styles/components/card/RepositoryCard.module.scss";
 
 type RepositoryCardProps = {
   index: number;

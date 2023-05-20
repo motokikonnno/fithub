@@ -1,0 +1,74 @@
+.teamDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 48px;
+  padding: 16px 0;
+}
+
+.teamNameHeader {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0969da;
+}
+
+.tabsContainer {
+  display: flex;
+  padding-left: 48px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.sectionLine {
+  font-size: 20px;
+  color: #656d76;
+}
+
+.backgroundColor {
+  background-color: #f6f8fa;
+}
+
+.createIssueContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 24px auto 0 auto;
+  padding: 16px 8px;
+  width: 70%;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+}
+
+.titleInput {
+  margin: 0 auto;
+  padding: 5px 12px;
+  width: 95%;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 16px;
+  background-color: #f6f8fa;
+}
+
+.inputWrapper {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.submitButtonContainer {
+  display: flex;
+  justify-content: right;
+  margin-right: 24px;
+  margin-top: 8px;
+}
+
+.submitIssueButton {
+  padding: 5px 12px;
+  height: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #2c8747;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}

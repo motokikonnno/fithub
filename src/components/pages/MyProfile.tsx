@@ -10,8 +10,8 @@ import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import { Footer } from "../Footer";
 import { useRouter } from "next/router";
-import { RepositoryCard } from "../RepositoryCard";
-import { RepositoryList } from "../RepositoryList";
+import { RepositoryCard } from "../card/RepositoryCard";
+import { RepositoryList } from "../list/RepositoryList";
 
 export type itemType = {
   id: string;

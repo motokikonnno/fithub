@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React, { FC } from "react";
-import styles from "../styles/components/RepositoryListItem.module.scss";
+import styles from "../../styles/components/item/RepositoryListItem.module.scss";
 
 type RepositoryListItemProps = {
   repositories: any;

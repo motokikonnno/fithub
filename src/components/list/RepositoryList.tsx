@@ -1,10 +1,10 @@
 import React, { FC } from "react";
-import { repositoriesType } from "./pages/MyProfile";
-import styles from "../styles/components/RepositoryList.module.scss";
-import { InputSearch } from "./InputSearch";
+import { repositoriesType } from "../pages/MyProfile";
+import styles from "../../styles/components/list/RepositoryList.module.scss";
+import { InputSearch } from "../InputSearch";
 import Image from "next/image";
 import Link from "next/link";
-import { RepositoryListItem } from "./RepositoryListItem";
+import { RepositoryListItem } from "../item/RepositoryListItem";
 
 type RepositoryListProps = {
   repositories: repositoriesType[];

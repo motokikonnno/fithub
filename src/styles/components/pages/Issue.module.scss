@@ -1,0 +1,61 @@
+.issueTypeContainer {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 16px;
+  gap: 24px;
+}
+
+.issueStateContainer {
+  flex: 1;
+  min-width: 355px;
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+}
+
+.issueType {
+  margin-bottom: 8px;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.issueListWrapper {
+  padding: 0 8px 8px 8px;
+}
+
+.issueItem {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+}
+
+.issueLength {
+  margin-left: 8px;
+  padding: 4px;
+  background-color: #d0d7de;
+  border-radius: 6px;
+}
+
+.addIssueButton {
+  padding: 5px 12px;
+  height: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #2c8747;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: right;
+}
+
+.issueLayoutContainer {
+  margin: 32px 64px 0 64px;
+}

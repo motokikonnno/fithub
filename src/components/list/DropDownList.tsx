@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import styles from "../styles/components/DropDownList.module.scss";
+import styles from "../../styles/components/list/DropDownList.module.scss";
 
 type DropDownListProps = {
   item: {

@@ -8,11 +8,11 @@ import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
 import { Footer } from "../Footer";
 import { useRouter } from "next/router";
-import { RepositoryCard } from "../RepositoryCard";
+import { RepositoryCard } from "../card/RepositoryCard";
 import { itemType, ProfileProps, repositoriesType } from "./MyProfile";
-import { RepositoryList } from "../RepositoryList";
+import { RepositoryList } from "../list/RepositoryList";
 import { InputSearch } from "../InputSearch";
-import { PeopleList } from "../PeopleLIst";
+import { PeopleList } from "../list/PeopleLIst";
 
 type Team = {
   name: string;
