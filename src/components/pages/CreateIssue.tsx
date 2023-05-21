@@ -4,6 +4,7 @@ import styles from "../../styles/components/pages/CreateIssue.module.scss";
 import { Footer } from "../Footer";
 import { Header } from "../Header";
 import { Tabs } from "../Tabs";
+import { Tiptap } from "../Tiptap";
 import { items } from "./RepositoryDetail";
 
 export const CreateIssue = React.memo(() => {
@@ -45,6 +46,9 @@ export const CreateIssue = React.memo(() => {
             type={"text"}
             className={styles.titleInput}
           />
+        </div>
+        <div className={styles.tiptapWrapper}>
+          <Tiptap />
         </div>
         <div className={styles.submitButtonContainer}>
           <button className={styles.submitIssueButton}>Submit new issue</button>
