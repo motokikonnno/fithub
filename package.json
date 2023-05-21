@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@tiptap/extension-link": "2.0.0-beta.199",
-    "@tiptap/extension-task-item": "2.0.0-beta.199",
-    "@tiptap/extension-task-list": "2.0.0-beta.199",
     "@tiptap/extension-underline": "2.0.0-beta.202",
     "@tiptap/pm": "^2.0.0-beta.210",
     "@tiptap/react": "2.0.0-beta.199",

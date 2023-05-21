@@ -1,6 +1,4 @@
 import Link from "@tiptap/extension-link";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
 import Underline from "@tiptap/extension-underline";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -10,7 +8,7 @@ import styles from "../styles/components/Tiptap.module.scss";
 
 export const Tiptap = React.memo(() => {
   const editor = useEditor({
-    extensions: [StarterKit, TaskList, TaskItem, Link, Underline],
+    extensions: [StarterKit, Link, Underline],
     content: "<h1>Hello World</h1>",
     editorProps: {
       attributes: {
@@ -49,9 +47,7 @@ export const Tiptap = React.memo(() => {
       <div className={styles.headMenuWrapper}>
         <EditorHeadMenu editor={editor} handleSetLink={handleSetLink} />
       </div>
-      {/* <div> */}
       <EditorContent editor={editor} />
-      {/* </div> */}
     </>
   );
 });
@@ -109,19 +105,6 @@ const EditorHeadMenu: FC<EditorHeadMenuProps> = ({ editor, handleSetLink }) => {
           width={16}
           height={16}
           alt="underline-icon"
-        />
-      </div>
-      <div
-        onClick={() => editor.chain().focus().toggleTaskList().run()}
-        className={`${styles.headerMenu} ${
-          editor.isActive("taskList") && styles.backgroundGray
-        }`}
-      >
-        <Image
-          src={"/icons/list-check.svg"}
-          width={16}
-          height={16}
-          alt="list-check-icon"
         />
       </div>
       <div
