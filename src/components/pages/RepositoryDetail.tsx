@@ -15,6 +15,7 @@ import { itemType } from "./MyProfile";
 import { Issue } from "./Issue";
 import { FolderItem } from "../item/FolderItem";
 import { FileItem } from "../item/FileItem";
+import { Tiptap } from "../Tiptap";
 
 export type IssueStateType = {
   id: string;
@@ -483,6 +484,18 @@ export const RepositoryDetail = React.memo(() => {
                 />
               </div>
             )}
+          </div>
+          <div className={styles.readmeWrapper}>
+            <div className={styles.readmeContainer}>
+              <Image
+                src={"/icons/list-ul.svg"}
+                width={16}
+                height={16}
+                alt="list-ul-icon"
+              />
+              <div className={styles.readme}>README.md</div>
+            </div>
+            <Tiptap />
           </div>
         </div>
       )}

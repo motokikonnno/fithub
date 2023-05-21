@@ -286,3 +286,23 @@
   margin: 38px auto 0 auto;
   width: 10%;
 }
+
+.readmeWrapper {
+  margin-top: 24px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+}
+
+.readmeContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 16px;
+  background-color: #f6f8fa;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-bottom: 1px solid #d0d7de;
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
