@@ -1,0 +1,184 @@
+.teamDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 48px;
+  padding: 16px 0;
+}
+
+.teamNameHeader {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0969da;
+}
+
+.tabsContainer {
+  display: flex;
+  padding-left: 48px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.sectionLine {
+  font-size: 20px;
+  color: #656d76;
+}
+
+.backgroundColor {
+  background-color: #f6f8fa;
+}
+
+.layoutContainer {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 32px 0 8px 0;
+}
+
+.title {
+  font-size: 32px;
+}
+
+.issueNumber {
+  margin-left: 8px;
+  color: #656d76;
+  font-weight: normal;
+}
+
+.editButton {
+  margin-right: 8px;
+  padding: 4px 8px;
+  background-color: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.newIssueButton {
+  padding: 8px;
+  background-color: #1f883d;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.issueDetailContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #d0d7de;
+  font-size: 14px;
+}
+
+.issueTypeContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
+.purple {
+  background-color: #8250df;
+}
+
+.green {
+  background-color: #1f883d;
+}
+
+.issueType {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.createdUser {
+  margin-right: 8px;
+  color: #656d76;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.createdAt {
+  color: #656d76;
+}
+
+.tiptapContainer {
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+}
+
+.assignUser {
+  padding: 13px 16px;
+  background-color: #f6f8fa;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-bottom: 1px solid #d0d7de;
+  color: #656d76;
+}
+
+.assignUserName {
+  margin-right: 8px;
+  color: #000;
+  font-weight: bold;
+}
+
+.selectName {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  width: 200px;
+  border: 1px solid #d0d7de;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.memberNameWrapper {
+  width: 198px;
+  border: 1px solid #d0d7de;
+  border-top: none;
+  border-bottom: none;
+}
+
+.memberName {
+  padding: 8px 16px;
+  border-bottom: 1px solid #d0d7de;
+  cursor: pointer;
+  &:hover {
+    background-color: #f6f8fa;
+  }
+}
+
+.memberIcon {
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.selectNameContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 32px;
+  gap: 32px;
+}
+
+.assignButton {
+  padding: 8px;
+  color: #fff;
+  background-color: #1f883d;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}

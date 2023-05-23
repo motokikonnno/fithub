@@ -24,7 +24,7 @@ export const IssueItem: FC<IssueItemProps> = React.memo(({ task }) => {
             alt="circle-dot-icon"
           />
         </div>
-        <Link href={"/"} className={styles.issueTitle}>
+        <Link href={"/motoki/fithub/issue/1"} className={styles.issueTitle}>
           {task.title}
         </Link>
       </div>
