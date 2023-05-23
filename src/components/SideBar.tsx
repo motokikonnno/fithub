@@ -2,15 +2,26 @@ import { mockRepositories } from "@/mock/mockRepositories";
 import { mockTeams } from "@/mock/mockTeams";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import styles from "../styles/components/SideBar.module.scss";
 import { InputSearch } from "./InputSearch";
+import { ownerList, ownerType } from "./pages/CreateRepository";
 
 export const SideBar = React.memo(() => {
+  const [toggleOwnerList, setToggleOwnerList] = useState(false);
+  const [owner, setOwner] = useState({ name: "motoki", icon: "/logo.png" });
+
+  const handleSetOwner = (owner: ownerType) => {
+    setOwner(owner);
+    setToggleOwnerList(false);
+  };
   return (
     <div className={styles.container}>
       <div className={styles.profileNameWrapper}>
-        <div className={styles.contentWrap}>
+        <div
+          className={styles.contentWrap}
+          onClick={() => setToggleOwnerList(!toggleOwnerList)}
+        >
           <Image
             src={"/logo.png"}
             width={20}
@@ -18,8 +29,27 @@ export const SideBar = React.memo(() => {
             alt="profile画像"
             className={styles.avatar}
           />
-          <span className={styles.profileName}>motokikonnno</span>
+          <span className={styles.profileName}>{owner.name}</span>
         </div>
+        {toggleOwnerList && (
+          <ul className={styles.listWrapper}>
+            {ownerList.map((owner, index) => (
+              <li
+                onClick={() => handleSetOwner(owner)}
+                key={index}
+                className={styles.listItem}
+              >
+                <Image
+                  src={owner.icon}
+                  width={16}
+                  height={16}
+                  alt="owner-icon"
+                />
+                {owner.name}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div>
         <div className={styles.sectionTitleContainer}>
@@ -57,7 +87,7 @@ export const SideBar = React.memo(() => {
               />
             </div>
             <div className={styles.breakWord}>
-              <Link className={styles.itemName} href="/">
+              <Link className={styles.itemName} href="/dashboard">
                 {mockRepository.name}
               </Link>
             </div>

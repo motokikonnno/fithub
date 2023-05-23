@@ -1,9 +1,41 @@
 import { Header } from "../Header";
 import styles from "../../styles/components/pages/CreateRepository.module.scss";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+
+export type ownerType = {
+  name: string;
+  icon: string;
+};
+
+export const ownerList = [
+  {
+    name: "motoki",
+    icon: "/example.png",
+  },
+  {
+    name: "スダリオ",
+    icon: "/example.png",
+  },
+  {
+    name: "クレべル",
+    icon: "/example.png",
+  },
+  {
+    name: "牛久",
+    icon: "/example.png",
+  },
+];
 
 export const CreateRepository = React.memo(() => {
+  const [owner, setOwner] = useState({ name: "akito", icon: "/example.png" });
+  const [toggleOwnerList, setToggleOwnerList] = useState(false);
+
+  const handleSetOwner = (owner: ownerType) => {
+    setOwner(owner);
+    setToggleOwnerList(false);
+  };
+
   return (
     <>
       <Header />
@@ -12,7 +44,40 @@ export const CreateRepository = React.memo(() => {
         <div className={styles.nameFormContainer}>
           <div className={styles.ownerWrapper}>
             <div className={styles.formSection}>Owner</div>
-            <input className={styles.inputFormOwner} />
+            <div className={styles.relative}>
+              <div
+                className={styles.ownerContainer}
+                onClick={() => setToggleOwnerList(!toggleOwnerList)}
+              >
+                <Image
+                  src={owner.icon}
+                  width={16}
+                  height={16}
+                  alt="user-icon"
+                  className={styles.userIcon}
+                />
+                {owner.name}
+              </div>
+              {toggleOwnerList && (
+                <ul className={styles.listWrapper}>
+                  {ownerList.map((owner, index) => (
+                    <li
+                      onClick={() => handleSetOwner(owner)}
+                      key={index}
+                      className={styles.listItem}
+                    >
+                      <Image
+                        src={owner.icon}
+                        width={16}
+                        height={16}
+                        alt="owner-icon"
+                      />
+                      {owner.name}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
           <span className={styles.slash}>/</span>
           <div className={styles.repositoryWrapper}>
