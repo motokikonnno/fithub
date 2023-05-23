@@ -43,6 +43,7 @@ export const IssueDetail = React.memo(() => {
   const [currentTab, setCurrentTab] = useState("Issue");
   const [assignUser, setAssignUser] = useState(issueData.assignUser);
   const [toggleSelectUser, setToggleSelectUser] = useState(false);
+  const [toggleEdit, setToggleEdit] = useState(false);
 
   const handleCurrentTab = useCallback(
     (name: string) => {
@@ -79,19 +80,50 @@ export const IssueDetail = React.memo(() => {
       </div>
       <div className={styles.layoutContainer}>
         <div className={styles.titleContainer}>
-          <h1 className={styles.title}>
-            {issueData.title}
-            <span className={styles.issueNumber}>#{issueData.id}</span>
-          </h1>
-          <div className={styles.actionButtonContainer}>
-            <button className={styles.editButton}>Edit</button>
-            <Link
-              href={`/motoki/fithub/issue/new`}
-              className={styles.newIssueButton}
-            >
-              New issue
-            </Link>
-          </div>
+          {toggleEdit ? (
+            <>
+              <input
+                type={"text"}
+                value={issueData.title}
+                className={styles.titleEdit}
+              />
+              <div className={styles.actionButtonContainer}>
+                <button
+                  className={styles.saveButton}
+                  onClick={() => setToggleEdit(!toggleEdit)}
+                >
+                  Save
+                </button>
+                <button
+                  className={styles.cancelButton}
+                  onClick={() => setToggleEdit(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h1 className={styles.title}>
+                {issueData.title}
+                <span className={styles.issueNumber}>#{issueData.id}</span>
+              </h1>
+              <div className={styles.actionButtonContainer}>
+                <button
+                  className={styles.editButton}
+                  onClick={() => setToggleEdit(!toggleEdit)}
+                >
+                  Edit
+                </button>
+                <Link
+                  href={`/motoki/fithub/issue/new`}
+                  className={styles.newIssueButton}
+                >
+                  New issue
+                </Link>
+              </div>
+            </>
+          )}
         </div>
         <div className={styles.issueDetailContainer}>
           <div
