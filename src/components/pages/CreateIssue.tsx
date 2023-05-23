@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useState } from "react";
 import styles from "../../styles/components/pages/CreateIssue.module.scss";
@@ -24,9 +25,13 @@ export const CreateIssue = React.memo(() => {
       <Header />
       <div className={styles.backgroundColor}>
         <div className={styles.teamDetailContainer}>
-          <span className={styles.teamNameHeader}>motoki</span>
+          <Link href={`/mypage`} className={styles.teamNameHeader}>
+            motoki
+          </Link>
           <span className={styles.sectionLine}>/</span>
-          <span className={styles.teamNameHeader}>FitHub</span>
+          <Link href={`/motoki/fithub`} className={styles.teamNameHeader}>
+            FitHub
+          </Link>
         </div>
         <div className={styles.tabsContainer}>
           {items.map((item, index) => (

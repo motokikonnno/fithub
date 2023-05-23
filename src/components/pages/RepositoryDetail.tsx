@@ -16,6 +16,7 @@ import { Issue } from "./Issue";
 import { FolderItem } from "../item/FolderItem";
 import { FileItem } from "../item/FileItem";
 import { Tiptap } from "../Tiptap";
+import Link from "next/link";
 
 export type IssueStateType = {
   id: string;
@@ -267,9 +268,13 @@ export const RepositoryDetail = React.memo(() => {
       <Header />
       <div className={styles.backgroundColor}>
         <div className={styles.teamDetailContainer}>
-          <span className={styles.teamNameHeader}>motoki</span>
+          <Link href={`/mypage`} className={styles.teamNameHeader}>
+            motoki
+          </Link>
           <span className={styles.sectionLine}>/</span>
-          <span className={styles.teamNameHeader}>FitHub</span>
+          <Link href={`/motoki/fithub`} className={styles.teamNameHeader}>
+            FitHub
+          </Link>
         </div>
         <div className={styles.tabsContainer}>
           {items.map((item, index) => (
