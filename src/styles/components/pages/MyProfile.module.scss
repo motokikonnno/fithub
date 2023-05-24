@@ -18,6 +18,8 @@
 }
 
 .icon {
+  object-fit: cover;
+  object-position: center;
   border-radius: 50%;
   border: 3px solid #d0d7de;
 }
@@ -153,4 +155,41 @@
 .repositoryComponentWrapper {
   margin-left: 32px;
   width: 100%;
+}
+
+.skeltonImage {
+  position: relative;
+  width: 296px;
+  height: 296px;
+  background-color: #e4ebee;
+  border: 1px solid #d0d7de;
+  border-radius: 50%;
+  &::before {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(#fff, 0.5),
+      transparent
+    );
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-name: skelton;
+    animation-timing-function: linear;
+  }
+}
+
+@keyframes skelton {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

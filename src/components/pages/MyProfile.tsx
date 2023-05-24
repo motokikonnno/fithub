@@ -1,5 +1,5 @@
 import { User } from "@/mock/mockUser";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/MyProfile.module.scss";
 import { Header } from "../Header";
 import { Tabs } from "../Tabs";
@@ -12,6 +12,7 @@ import { Footer } from "../Footer";
 import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { RepositoryList } from "../list/RepositoryList";
+import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 
 export type itemType = {
   id: string;
@@ -23,6 +24,8 @@ export type repositoriesType = {
   type: string;
   updatedAt: string;
 };
+
+// TODO: 保存せずに戻った場合にstorageから削除する処理を作成する
 
 export const MyProfile = React.memo(() => {
   const items: itemType[] = [
@@ -39,7 +42,7 @@ export const MyProfile = React.memo(() => {
   const user: User = {
     name: "motoki",
     bio: "これはユーザーの説明欄です",
-    icon: "/logo.png",
+    icon: "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0",
     socialLink: [
       "https://youtube.com",
       "https://twitter.com",
@@ -85,6 +88,10 @@ export const MyProfile = React.memo(() => {
   const query = router.query.tab;
   const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
+  const [deleteFile, setDeleteFile] = useState<string[]>([user.icon]);
+  const [currentFile, setCurrentFile] = useState<string>(user.icon);
+  const [isLoading, setLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (query === "Repositories") {
@@ -106,6 +113,28 @@ export const MyProfile = React.memo(() => {
     setIsToggle(!isToggle);
   };
 
+  const handleLoadingFile = (flag: boolean) => {
+    setLoading(flag);
+  };
+
+  const handleSetFile = (deleteFile: string[], url: string) => {
+    setDeleteFile(deleteFile);
+    setCurrentFile(url);
+  };
+
+  const clickHiddenInput = () => {
+    if (inputRef.current === null) return;
+    inputRef.current.click();
+  };
+
+  const handleCloseAndDeleteFile = (
+    deleteFile: string[],
+    currentFile: string
+  ) => {
+    handleDeleteImage(deleteFile, currentFile);
+    setIsToggle(false);
+  };
+
   return (
     <>
       <Header />
@@ -122,21 +151,43 @@ export const MyProfile = React.memo(() => {
       <div className={styles.layoutContainer}>
         <div className={styles.leftContainer}>
           <div className={styles.userIcon}>
-            <Image
-              src={user.icon}
-              width={296}
-              height={296}
-              alt="user-icon"
-              className={styles.icon}
-            />
-            {isToggle && (
+            {isLoading ? (
+              <div className={styles.skeltonImage}></div>
+            ) : (
               <Image
-                src={"/icons/edit.svg"}
-                width={25}
-                height={25}
-                alt="edit-icon"
-                className={styles.editIcon}
+                src={currentFile}
+                width={296}
+                height={296}
+                alt="user-icon"
+                className={styles.icon}
               />
+            )}
+            {isToggle && (
+              <>
+                <Image
+                  src={"/icons/edit.svg"}
+                  width={25}
+                  height={25}
+                  alt="edit-icon"
+                  className={styles.editIcon}
+                  onClick={clickHiddenInput}
+                />
+                <input
+                  type={"file"}
+                  hidden
+                  accept=".png, .jpeg, .jpg"
+                  onChange={(e) =>
+                    onUploadToFireStorage(
+                      e,
+                      "user",
+                      deleteFile,
+                      handleLoadingFile,
+                      handleSetFile
+                    )
+                  }
+                  ref={inputRef}
+                />
+              </>
             )}
           </div>
           {!isToggle && (
@@ -198,7 +249,14 @@ export const MyProfile = React.memo(() => {
                 </div>
               </div>
               <div className={styles.updateButtonContainer}>
-                <button className={styles.updateButton}>Save</button>
+                <button
+                  className={styles.updateButton}
+                  onClick={() =>
+                    handleCloseAndDeleteFile(deleteFile, currentFile)
+                  }
+                >
+                  Save
+                </button>
                 <button
                   className={styles.cancelButton}
                   onClick={handleIsToggle}
