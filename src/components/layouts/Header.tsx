@@ -1,7 +1,7 @@
-import styles from "../styles/components/Header.module.scss";
+import styles from "../../styles/components/layouts/Header.module.scss";
 import Image from "next/image";
-import { InputSearch } from "./InputSearch";
-import { DropDownList } from "./list/DropDownList";
+import { InputSearch } from "../InputSearch";
+import { DropDownList } from "../list/DropDownList";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
@@ -20,7 +20,7 @@ export const Header = React.memo(() => {
       { title: "Your profile", link: "/mypage" },
       { title: "Your repositories", link: "/mypage?tab=Repositories" },
       { title: "Your teams", link: "/team" },
-      { title: "Sign out", link: "/" },
+      { title: "Sign out", link: "/sign_in" },
     ],
   };
 
@@ -61,7 +61,7 @@ export const Header = React.memo(() => {
 
   return (
     <div className={styles.container}>
-      <Link href={"/dashboard"}>
+      <Link href={"/"}>
         <Image src={"/logo.png"} width={32} height={32} alt={"ロゴ画像"} />
       </Link>
       <div className={styles.contentsWrapper}>

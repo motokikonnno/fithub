@@ -1,14 +1,14 @@
 import { User } from "@/mock/mockUser";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/MyProfile.module.scss";
-import { Header } from "../Header";
+import { Header } from "../layouts/Header";
 import { Tabs } from "../Tabs";
 import Image from "next/image";
 import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
 import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
-import { Footer } from "../Footer";
+import { Footer } from "../layouts/Footer";
 import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { RepositoryList } from "../list/RepositoryList";
@@ -110,6 +110,7 @@ export const MyProfile = React.memo(() => {
   );
 
   const handleIsToggle = () => {
+    setCurrentFile(user.icon);
     setIsToggle(!isToggle);
   };
 
@@ -206,10 +207,10 @@ export const MyProfile = React.memo(() => {
                 <input className={styles.inputForm} />
               </div>
               <div className={styles.inputContainer}>
-                <label className={styles.label}>Bio</label>
-                <textarea className={styles.inputForm} />
+                <label className={styles.label}>Email</label>
+                <input className={styles.inputForm} />
               </div>
-              <div className={styles.inputContainer}>
+              {/* <div className={styles.inputContainer}>
                 <label className={styles.label}>Social accounts</label>
                 <div className={styles.snsLinkContainer}>
                   <Image
@@ -247,7 +248,7 @@ export const MyProfile = React.memo(() => {
                   />
                   <input className={styles.snsLinkInputForm} />
                 </div>
-              </div>
+              </div> */}
               <div className={styles.updateButtonContainer}>
                 <button
                   className={styles.updateButton}

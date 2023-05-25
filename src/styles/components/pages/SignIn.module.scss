@@ -1,0 +1,73 @@
+.elem {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+  animation: 0.2s ease 0s 1 normal;
+}
+
+.inner {
+  position: absolute;
+  background-color: #f6f8fa;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.layoutContainer {
+  text-align: center;
+  padding: 32px;
+  min-width: 254px;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.06);
+  border: 1px solid #d0d7de;
+}
+
+.logoIcon {
+  border-radius: 50%;
+}
+
+.title {
+  margin-top: 16px;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.signInButtonContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f6f8fa;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+}
+
+.signInButton {
+  display: flex;
+  align-items: center;
+  margin: 8px;
+  padding: 8px 16px;
+  gap: 8px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 18px;
+  background-color: #fff;
+  box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+}

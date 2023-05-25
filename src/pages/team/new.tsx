@@ -1,6 +1,7 @@
 import { CreateTeam } from "@/components/pages/CreateTeam";
-import { NextPage } from "next";
+import { AuthNextPage } from "@/types/auth-next-page";
 
-const CreateTeamPage: NextPage = () => <CreateTeam />;
+const CreateTeamPage: AuthNextPage = () => <CreateTeam />;
 
 export default CreateTeamPage;
+CreateTeamPage.requireAuth = true;

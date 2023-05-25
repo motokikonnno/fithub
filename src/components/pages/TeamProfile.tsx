@@ -1,18 +1,18 @@
-import { User } from "@/mock/mockUser";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/TeamProfile.module.scss";
-import { Header } from "../Header";
+import { Header } from "../layouts/Header";
 import { Tabs } from "../Tabs";
 import Image from "next/image";
 import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
-import { Footer } from "../Footer";
+import { Footer } from "../layouts/Footer";
 import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { itemType, ProfileProps, repositoriesType } from "./MyProfile";
 import { RepositoryList } from "../list/RepositoryList";
 import { InputSearch } from "../InputSearch";
 import { PeopleList } from "../list/PeopleLIst";
+import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 
 type Team = {
   name: string;
@@ -20,6 +20,8 @@ type Team = {
   icon: string;
   socialLink: string[];
 };
+
+// TODO: 保存せずに戻った場合にstorageから削除する処理を作成する
 
 export const TeamProfile = React.memo(() => {
   const items: itemType[] = [
@@ -143,6 +145,10 @@ export const TeamProfile = React.memo(() => {
   const query = String(router.query.tab);
   const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
+  const [deleteFile, setDeleteFile] = useState<string[]>([team.icon]);
+  const [currentFile, setCurrentFile] = useState<string>(team.icon);
+  const [isLoading, setLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const teamId = 1;
 
   useEffect(() => {
@@ -172,7 +178,30 @@ export const TeamProfile = React.memo(() => {
   );
 
   const handleIsToggle = () => {
+    setCurrentFile(team.icon);
     setIsToggle(!isToggle);
+  };
+
+  const handleLoadingFile = (flag: boolean) => {
+    setLoading(flag);
+  };
+
+  const handleSetFile = (deleteFile: string[], url: string) => {
+    setDeleteFile(deleteFile);
+    setCurrentFile(url);
+  };
+
+  const clickHiddenInput = () => {
+    if (inputRef.current === null) return;
+    inputRef.current.click();
+  };
+
+  const handleCloseAndDeleteFile = (
+    deleteFile: string[],
+    currentFile: string
+  ) => {
+    handleDeleteImage(deleteFile, currentFile);
+    setIsToggle(false);
   };
 
   return (
@@ -212,20 +241,38 @@ export const TeamProfile = React.memo(() => {
             <div className={styles.leftContainer}>
               <div className={styles.teamIcon}>
                 <Image
-                  src={team.icon}
+                  src={currentFile}
                   width={296}
                   height={296}
-                  alt="user-icon"
+                  alt="team-icon"
                   className={styles.icon}
                 />
                 {isToggle && (
-                  <Image
-                    src={"/icons/edit.svg"}
-                    width={25}
-                    height={25}
-                    alt="edit-icon"
-                    className={styles.editIcon}
-                  />
+                  <>
+                    <Image
+                      src={"/icons/edit.svg"}
+                      width={25}
+                      height={25}
+                      alt="edit-icon"
+                      className={styles.editIcon}
+                      onClick={clickHiddenInput}
+                    />
+                    <input
+                      type={"file"}
+                      hidden
+                      accept=".png, .jpeg, .jpg"
+                      onChange={(e) =>
+                        onUploadToFireStorage(
+                          e,
+                          "user",
+                          deleteFile,
+                          handleLoadingFile,
+                          handleSetFile
+                        )
+                      }
+                      ref={inputRef}
+                    />
+                  </>
                 )}
               </div>
               {!isToggle && (
@@ -247,10 +294,10 @@ export const TeamProfile = React.memo(() => {
                     <input className={styles.inputForm} />
                   </div>
                   <div className={styles.inputContainer}>
-                    <label className={styles.label}>Bio</label>
-                    <textarea className={styles.inputForm} />
+                    <label className={styles.label}>Email</label>
+                    <input className={styles.inputForm} />
                   </div>
-                  <div className={styles.inputContainer}>
+                  {/* <div className={styles.inputContainer}>
                     <label className={styles.label}>Social accounts</label>
                     <div className={styles.snsLinkContainer}>
                       <Image
@@ -288,9 +335,16 @@ export const TeamProfile = React.memo(() => {
                       />
                       <input className={styles.snsLinkInputForm} />
                     </div>
-                  </div>
+                  </div> */}
                   <div className={styles.updateButtonContainer}>
-                    <button className={styles.updateButton}>Save</button>
+                    <button
+                      className={styles.updateButton}
+                      onClick={() =>
+                        handleCloseAndDeleteFile(deleteFile, currentFile)
+                      }
+                    >
+                      Save
+                    </button>
                     <button
                       className={styles.cancelButton}
                       onClick={handleIsToggle}

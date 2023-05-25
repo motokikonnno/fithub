@@ -1,9 +1,9 @@
 import React from "react";
-import { AppLayout } from "../AppLayout";
+import { AppLayout } from "../layouts/AppLayout";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import styles from "../../styles/components/pages/Dashboard.module.scss";
-import { Footer } from "../Footer";
+import { Footer } from "../layouts/Footer";
 
 type Activities = {
   name: string;

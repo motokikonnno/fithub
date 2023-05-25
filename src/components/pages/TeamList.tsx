@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import styles from "../../styles/components/pages/TeamList.module.scss";
-import { AppLayout } from "../AppLayout";
-import { Footer } from "../Footer";
+import { AppLayout } from "../layouts/AppLayout";
+import { Footer } from "../layouts/Footer";
 
 export const TeamList = React.memo(() => {
   const teams = [

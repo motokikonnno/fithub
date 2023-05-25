@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/components/Footer.module.scss";
+import styles from "../../styles/components/layouts/Footer.module.scss";
 import Image from "next/image";
 
 export const Footer = React.memo(() => {

@@ -1,5 +1,5 @@
 import { SideBar } from "./SideBar";
-import styles from "../styles/components/AppLayout.module.scss";
+import styles from "../../styles/components/layouts/AppLayout.module.scss";
 import { Header } from "./Header";
 import React from "react";
 

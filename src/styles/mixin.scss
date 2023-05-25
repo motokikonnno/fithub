@@ -1,0 +1,14 @@
+@mixin sp {
+  @media screen and (max-width: (1024px)) {
+    @content;
+  }
+}
+@mixin pc {
+  @media screen and (min-width: (1024px)) {
+    @content;
+  }
+}
+
+// @include sp {
+//   padding: 20px;
+// }

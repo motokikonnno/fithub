@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Header } from "../Header";
+import { Header } from "../layouts/Header";
 import styles from "../../styles/components/pages/CreateTeam.module.scss";
 import Image from "next/image";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";

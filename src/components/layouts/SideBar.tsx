@@ -3,9 +3,9 @@ import { mockTeams } from "@/mock/mockTeams";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import styles from "../styles/components/SideBar.module.scss";
-import { InputSearch } from "./InputSearch";
-import { ownerList, ownerType } from "./pages/CreateRepository";
+import styles from "../../styles/components/layouts/SideBar.module.scss";
+import { InputSearch } from "../InputSearch";
+import { ownerList, ownerType } from "../pages/CreateRepository";
 
 export const SideBar = React.memo(() => {
   const [toggleOwnerList, setToggleOwnerList] = useState(false);

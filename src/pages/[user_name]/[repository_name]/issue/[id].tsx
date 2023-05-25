@@ -1,8 +1,9 @@
 import { IssueDetail } from "@/components/pages/IssueDetail";
-import { NextPage } from "next";
+import { AuthNextPage } from "@/types/auth-next-page";
 
-const IssueDetailPage: NextPage = () => {
+const IssueDetailPage: AuthNextPage = () => {
   return <IssueDetail />;
 };
 
 export default IssueDetailPage;
+IssueDetailPage.requireAuth = true;

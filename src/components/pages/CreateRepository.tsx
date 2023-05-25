@@ -1,4 +1,4 @@
-import { Header } from "../Header";
+import { Header } from "../layouts/Header";
 import styles from "../../styles/components/pages/CreateRepository.module.scss";
 import Image from "next/image";
 import React, { useState } from "react";
