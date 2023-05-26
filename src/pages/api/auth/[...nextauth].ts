@@ -28,10 +28,6 @@ export const authOptions: NextAuthOptions = {
     updateAge: 60 * 60 * 24, // 24 hours
   },
 
-  pages: {
-    signIn: "/sign_in",
-  },
-
   callbacks: {
     async session({ session, user }) {
       if (session?.user) session.user.id = user.id;
