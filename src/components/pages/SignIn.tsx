@@ -28,22 +28,20 @@ export const SignIn: FC<SignInProps> = React.memo(({ providers }) => {
             {providers &&
               Object.values(providers).map((provider) => {
                 return (
-                  <>
-                    <button
-                      key={provider.id}
-                      className={styles.signInButton}
-                      onClick={() => signIn(provider.id, { callbackUrl: "/" })}
-                    >
-                      <Image
-                        src={`/icons/${provider.id}.svg`}
-                        width={24}
-                        height={24}
-                        alt="service-icon"
-                        className={styles.serviceIcon}
-                      />
-                      Sign in with {provider.name}
-                    </button>
-                  </>
+                  <button
+                    key={provider.id}
+                    className={styles.signInButton}
+                    onClick={() => signIn(provider.id, { callbackUrl: "/" })}
+                  >
+                    <Image
+                      src={`/icons/${provider.id}.svg`}
+                      width={24}
+                      height={24}
+                      alt="service-icon"
+                      className={styles.serviceIcon}
+                    />
+                    Sign in with {provider.name}
+                  </button>
                 );
               })}
           </div>

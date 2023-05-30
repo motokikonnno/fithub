@@ -23,14 +23,19 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.SECRET,
 
   session: {
-    strategy: "database",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    updateAge: 60 * 60 * 24, // 24 hours
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+
+  pages: {
+    signIn: "/sign_in",
   },
 
   callbacks: {
-    async session({ session, user }) {
-      if (session?.user) session.user.id = user.id;
+    async session({ session, token }) {
+      if (session.user != null && token.sub != null) {
+        session.user.id = token.sub;
+      }
       return session;
     },
   },
