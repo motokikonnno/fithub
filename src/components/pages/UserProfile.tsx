@@ -1,6 +1,6 @@
-import { User } from "@/mock/mockUser";
+// import { User } from "@/mock/mockUser";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import styles from "../../styles/components/pages/MyProfile.module.scss";
+import styles from "../../styles/components/pages/UserProfile.module.scss";
 import { Header } from "../layouts/Header";
 import { Tabs } from "../Tabs";
 import Image from "next/image";
@@ -13,6 +13,8 @@ import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { RepositoryList } from "../list/RepositoryList";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
+import { User } from "@/models/User";
+import { useForm } from "react-hook-form";
 
 export type itemType = {
   id: string;
@@ -25,9 +27,19 @@ export type repositoriesType = {
   updatedAt: string;
 };
 
+type updateUserType = {
+  name: string;
+  bio: string;
+  email: string;
+};
+
 // TODO: 保存せずに戻った場合にstorageから削除する処理を作成する
 
-export const MyProfile = React.memo(() => {
+export type UserProfileProps = {
+  user: User;
+};
+
+export const UserProfile: FC<UserProfileProps> = React.memo(({ user }) => {
   const items: itemType[] = [
     {
       id: "1",
@@ -38,18 +50,6 @@ export const MyProfile = React.memo(() => {
       name: "Repositories",
     },
   ];
-
-  const user: User = {
-    name: "motoki",
-    bio: "これはユーザーの説明欄です",
-    icon: "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0",
-    socialLink: [
-      "https://youtube.com",
-      "https://twitter.com",
-      "https://google.com",
-      "https://instagram.com",
-    ],
-  };
 
   const repositories: repositoriesType[] = [
     {
@@ -86,10 +86,25 @@ export const MyProfile = React.memo(() => {
 
   const router = useRouter();
   const query = router.query.tab;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<updateUserType>({
+    mode: "onChange",
+    defaultValues: { name: user.name, email: user.email, bio: user.bio },
+  });
+  const defaultImage =
+    "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
   const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
-  const [deleteFile, setDeleteFile] = useState<string[]>([user.icon]);
-  const [currentFile, setCurrentFile] = useState<string>(user.icon);
+  const [deleteFile, setDeleteFile] = useState<string[]>(
+    user.image ? [user.image] : []
+  );
+  const [currentFile, setCurrentFile] = useState<string>(
+    user.image ? user.image : defaultImage
+  );
   const [isLoading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -110,8 +125,9 @@ export const MyProfile = React.memo(() => {
   );
 
   const handleIsToggle = () => {
-    setCurrentFile(user.icon);
     setIsToggle(!isToggle);
+    if (user.image) setCurrentFile(user.image);
+    reset();
   };
 
   const handleLoadingFile = (flag: boolean) => {
@@ -136,6 +152,10 @@ export const MyProfile = React.memo(() => {
     setIsToggle(false);
   };
 
+  const onSubmit = (data: updateUserType) => {
+    console.log(data);
+  };
+
   return (
     <>
       <Header />
@@ -155,13 +175,15 @@ export const MyProfile = React.memo(() => {
             {isLoading ? (
               <div className={styles.skeltonImage}></div>
             ) : (
-              <Image
-                src={currentFile}
-                width={296}
-                height={296}
-                alt="user-icon"
-                className={styles.icon}
-              />
+              currentFile && (
+                <Image
+                  src={currentFile}
+                  width={296}
+                  height={296}
+                  alt="user-icon"
+                  className={styles.icon}
+                />
+              )
             )}
             {isToggle && (
               <>
@@ -173,21 +195,23 @@ export const MyProfile = React.memo(() => {
                   className={styles.editIcon}
                   onClick={clickHiddenInput}
                 />
-                <input
-                  type={"file"}
-                  hidden
-                  accept=".png, .jpeg, .jpg"
-                  onChange={(e) =>
-                    onUploadToFireStorage(
-                      e,
-                      "user",
-                      deleteFile,
-                      handleLoadingFile,
-                      handleSetFile
-                    )
-                  }
-                  ref={inputRef}
-                />
+                {deleteFile && (
+                  <input
+                    type={"file"}
+                    hidden
+                    accept=".png, .jpeg, .jpg"
+                    onChange={(e) =>
+                      onUploadToFireStorage(
+                        e,
+                        "user",
+                        deleteFile,
+                        handleLoadingFile,
+                        handleSetFile
+                      )
+                    }
+                    ref={inputRef}
+                  />
+                )}
               </>
             )}
           </div>
@@ -201,60 +225,32 @@ export const MyProfile = React.memo(() => {
             </>
           )}
           {isToggle && (
-            <>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className={styles.inputContainer}>
                 <label className={styles.label}>Name</label>
-                <input className={styles.inputForm} />
+                <input
+                  className={styles.inputForm}
+                  {...register("name", { required: "名前は必須です" })}
+                />
+              </div>
+              <div className={styles.inputContainer}>
+                <label className={styles.label}>Bio</label>
+                <textarea className={styles.inputForm} {...register("bio")} />
               </div>
               <div className={styles.inputContainer}>
                 <label className={styles.label}>Email</label>
-                <input className={styles.inputForm} />
+                <input
+                  className={styles.inputForm}
+                  {...register("email", { required: "emailは必須です" })}
+                />
               </div>
-              {/* <div className={styles.inputContainer}>
-                <label className={styles.label}>Social accounts</label>
-                <div className={styles.snsLinkContainer}>
-                  <Image
-                    src={"/icons/sns-link.svg"}
-                    width={16}
-                    height={16}
-                    alt="sns-link-icon"
-                  />
-                  <input className={styles.snsLinkInputForm} />
-                </div>
-                <div className={styles.snsLinkContainer}>
-                  <Image
-                    src={"/icons/sns-link.svg"}
-                    width={16}
-                    height={16}
-                    alt="sns-link-icon"
-                  />
-                  <input className={styles.snsLinkInputForm} />
-                </div>
-                <div className={styles.snsLinkContainer}>
-                  <Image
-                    src={"/icons/sns-link.svg"}
-                    width={16}
-                    height={16}
-                    alt="sns-link-icon"
-                  />
-                  <input className={styles.snsLinkInputForm} />
-                </div>
-                <div className={styles.snsLinkContainer}>
-                  <Image
-                    src={"/icons/sns-link.svg"}
-                    width={16}
-                    height={16}
-                    alt="sns-link-icon"
-                  />
-                  <input className={styles.snsLinkInputForm} />
-                </div>
-              </div> */}
               <div className={styles.updateButtonContainer}>
                 <button
                   className={styles.updateButton}
                   onClick={() =>
                     handleCloseAndDeleteFile(deleteFile, currentFile)
                   }
+                  type="submit"
                 >
                   Save
                 </button>
@@ -265,7 +261,7 @@ export const MyProfile = React.memo(() => {
                   Cancel
                 </button>
               </div>
-            </>
+            </form>
           )}
           <h2 className={styles.profileSection}>Teams</h2>
           <div className={styles.teamIconContainer}>

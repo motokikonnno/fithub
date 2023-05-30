@@ -4,8 +4,10 @@ import { InputSearch } from "../InputSearch";
 import { DropDownList } from "../list/DropDownList";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export const Header = React.memo(() => {
+  const { data: session } = useSession();
   const [isShow, setIsShow] = useState(false);
   const [isShowProfile, setIsShowProfile] = useState(false);
   const dropDownListRef = useRef<HTMLDivElement>(null);
@@ -17,8 +19,11 @@ export const Header = React.memo(() => {
       { title: "New team", link: "/team/new" },
     ],
     myProfile: [
-      { title: "Your profile", link: "/mypage" },
-      { title: "Your repositories", link: "/mypage?tab=Repositories" },
+      { title: "Your profile", link: `/user/${session?.user.id}` },
+      {
+        title: "Your repositories",
+        link: `/user/${session?.user.id}?tab=Repositories`,
+      },
       { title: "Your teams", link: "/team" },
       { title: "Sign out", link: "/sign_in" },
     ],
@@ -83,7 +88,7 @@ export const Header = React.memo(() => {
               src={"/icons/plus.svg"}
               width={20}
               height={20}
-              alt="profile画像"
+              alt="plus-icon"
             />
             {isShow && (
               <div className={styles.dropDownList}>
@@ -98,7 +103,16 @@ export const Header = React.memo(() => {
             onClick={toggleIsShowProfile}
             ref={profileDropDownListRef}
           >
-            <Image src={"/logo.png"} width={20} height={20} alt="profile画像" />
+            {session?.user.image && (
+              <Image
+                src={session.user.image}
+                width={20}
+                height={20}
+                alt="profile-image"
+                className={styles.userIcon}
+              />
+            )}
+
             {isShowProfile && (
               <div className={styles.dropDownList}>
                 {dropDownList.myProfile.map((item, index) => (

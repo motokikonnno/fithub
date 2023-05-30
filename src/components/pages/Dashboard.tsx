@@ -1,9 +1,10 @@
-import React from "react";
+import React, { FC } from "react";
 import { AppLayout } from "../layouts/AppLayout";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import styles from "../../styles/components/pages/Dashboard.module.scss";
 import { Footer } from "../layouts/Footer";
+import { DefaultUser } from "next-auth";
 
 type Activities = {
   name: string;
@@ -12,7 +13,15 @@ type Activities = {
   createdAt: string;
 };
 
-export const Dashboard = React.memo(() => {
+export type DashboardProps = {
+  user:
+    | (DefaultUser & {
+        id: string;
+      })
+    | undefined;
+};
+
+export const Dashboard: FC<DashboardProps> = React.memo(({ user }) => {
   const activities: Activities[] = [
     {
       name: "太郎",
