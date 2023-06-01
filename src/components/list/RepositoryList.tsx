@@ -1,13 +1,13 @@
 import React, { FC } from "react";
-import { repositoriesType } from "../pages/MyProfile";
 import styles from "../../styles/components/list/RepositoryList.module.scss";
 import { InputSearch } from "../InputSearch";
 import Image from "next/image";
 import Link from "next/link";
 import { RepositoryListItem } from "../item/RepositoryListItem";
+import { Repository } from "@/models/Repository";
 
 type RepositoryListProps = {
-  repositories: repositoriesType[];
+  repositories: Repository[];
 };
 
 export const RepositoryList: FC<RepositoryListProps> = React.memo(

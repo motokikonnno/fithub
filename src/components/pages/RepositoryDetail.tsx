@@ -11,7 +11,7 @@ import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
 import { Modal } from "../Modal";
 import { Tabs } from "../Tabs";
-import { itemType } from "./MyProfile";
+import { itemType } from "./UserProfile";
 import { Issue } from "./Issue";
 import { FolderItem } from "../item/FolderItem";
 import { FileItem } from "../item/FileItem";

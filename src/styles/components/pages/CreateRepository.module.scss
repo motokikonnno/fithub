@@ -149,6 +149,7 @@
   background-color: #2c8747;
   color: #fff;
   border-radius: 6px;
+  border: none;
   cursor: pointer;
   &:hover {
     opacity: 0.7;
@@ -168,4 +169,10 @@
 
 .initializeText {
   margin-bottom: 10px;
+}
+
+.errorMessage {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #dc143c;
 }
