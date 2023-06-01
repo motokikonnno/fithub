@@ -38,6 +38,7 @@ model User {
   image         String?
   accounts      Account[]
   repositories  Repository[]
+  team_members  TeamMember[]
 }
 
 model Repository {
@@ -49,13 +50,16 @@ model Repository {
   read_me       String?   @db.LongText
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
-  user_id       String
-  user          User      @relation(fields: [user_id], references: [id])
+  user_id       String?
+  team_id       String?
+  team          Team?     @relation(fields: [team_id], references: [id])
+  user          User?     @relation(fields: [user_id], references: [id])
   folders       Folder[]
   issues        Issue[]
   files         File[]
 
   @@index([user_id])
+  @@index([team_id])
 }
 
 model Folder {
@@ -63,7 +67,6 @@ model Folder {
   name          String
   parent_id     String
   created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
   repository_id String
   repository    Repository @relation(fields: [repository_id], references: [id])
   files         File[]
@@ -75,13 +78,12 @@ model File {
   id             String      @id @default(cuid())
   name           String
   created_at     DateTime    @default(now())
-  updated_at     DateTime    @updatedAt
   folder_id      String?
   repository_id  String?
   folder         Folder?     @relation(fields: [folder_id], references: [id])
   repository     Repository? @relation(fields: [repository_id], references: [id])
   commits        Commit[]
-  currentcommits CurrentCommit[]
+  current_commits CurrentCommit[]
 
   @@index([folder_id])
   @@index([repository_id])
@@ -90,6 +92,7 @@ model File {
 model Issue {
   id            Int        @id @default(autoincrement())
   title         String
+  type          String     @default("To do")
   issue         String     @db.LongText
   created_at    DateTime   @default(now())
   updated_at    DateTime   @updatedAt
@@ -106,7 +109,7 @@ model Commit {
   commit_user   String
   created_at    DateTime   @default(now())
   file_id       String
-  files         File      @relation(fields: [file_id], references: [id])
+  file          File      @relation(fields: [file_id], references: [id])
 
   @@index([file_id])
 }
@@ -114,9 +117,32 @@ model Commit {
 model CurrentCommit {
   id            String      @id @default(cuid())
   message       String
-  created_at    DateTime   @default(now())
+  created_at    DateTime    @default(now())
   file_id       String
-  files         File      @relation(fields: [file_id], references: [id])
+  file          File        @relation(fields: [file_id], references: [id])
 
   @@index([file_id])
+}
+
+model Team {
+  id            String         @id @default(cuid())
+  name          String
+  bio           String
+  image         String
+  created_at    DateTime       @default(now())
+  repositories  Repository[]
+  team_members  TeamMember[]
+}
+
+model TeamMember {
+  id             String         @id @default(cuid())
+  user_id        String
+  team_id        String
+  owner_id       String?
+  created_at     DateTime       @default(now())
+  user           User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  team           Team           @relation(fields: [team_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([team_id])
 }
