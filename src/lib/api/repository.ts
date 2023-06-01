@@ -49,6 +49,9 @@ export async function getRepository(
         is_read_me: true,
         read_me: true,
         created_at: true,
+        folders: true,
+        files: true,
+        issues: true,
       },
     });
     return res.status(200).json({ repository: repository });
