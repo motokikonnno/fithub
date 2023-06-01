@@ -25,22 +25,23 @@ export async function getUser(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<User>> {
-  const { id } = req.query;
+  const { user_id } = req.query;
 
-  if (typeof id !== "string") {
+  if (typeof user_id !== "string") {
     return res.status(400).json({ error: "Invalid user_id not string type" });
   }
 
   try {
     const user = await prisma.user.findFirst({
       where: {
-        id: id,
+        id: user_id,
       },
       select: {
         id: true,
         name: true,
         email: true,
         image: true,
+        bio: true,
       },
     });
     return res.status(200).json({ user: user });
@@ -52,10 +53,10 @@ export async function getUser(
 export async function updateUser(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | NextApiResponse<void>> {
+): Promise<void | NextApiResponse<User>> {
   const { user_id, name, email, image, bio } = req.body;
   try {
-    const response = await prisma.user.update({
+    const user = await prisma.user.update({
       where: {
         id: user_id,
       },
@@ -66,9 +67,7 @@ export async function updateUser(
         image,
       },
     });
-    return res.status(201).json({
-      userId: response.id,
-    });
+    return res.status(200).json({ user: user });
   } catch (error) {
     console.log(error);
     return res.status(500).end(error);

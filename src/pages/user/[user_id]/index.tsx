@@ -1,4 +1,5 @@
 import { UserProfile, UserProfileProps } from "@/components/pages/UserProfile";
+import { repositoryFactory } from "@/models/Repository";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -7,8 +8,11 @@ type PathParams = {
   user_id: string;
 };
 
-const UserProfilePage: AuthNextPage<UserProfileProps> = ({ user }) => {
-  return <UserProfile user={user} />;
+const UserProfilePage: AuthNextPage<UserProfileProps> = ({
+  userData,
+  repositories,
+}) => {
+  return <UserProfile userData={userData} repositories={repositories} />;
 };
 
 export default UserProfilePage;
@@ -28,7 +32,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const { user_id } = context.params as PathParams;
   const user = await userFactory().show(user_id);
+  const repositories = await repositoryFactory().index(user_id);
   return {
-    props: { user: user },
+    props: { userData: user, repositories: repositories },
   };
 };
