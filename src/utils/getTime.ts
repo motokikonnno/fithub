@@ -4,17 +4,17 @@ export const getTimeDiff = (createdAt: string) => {
   let progress = new Date(diff);
 
   if (progress.getUTCFullYear() - 1970) {
-    return progress.getUTCFullYear() - 1970 + "years ago";
+    return progress.getUTCFullYear() - 1970 + " years ago";
   } else if (progress.getUTCMonth()) {
-    return progress.getUTCMonth() + "month ago";
+    return progress.getUTCMonth() + " month ago";
   } else if (progress.getUTCDate() - 1) {
-    return progress.getUTCDate() - 1 + "days ago";
+    return progress.getUTCDate() - 1 + " days ago";
   } else if (progress.getUTCHours()) {
-    return progress.getUTCHours() + "hour ago";
+    return progress.getUTCHours() + " hour ago";
   } else if (progress.getUTCMinutes()) {
-    return progress.getUTCMinutes() + "minute ago";
+    return progress.getUTCMinutes() + " minute ago";
   } else {
-    return progress.getUTCSeconds() + "second ago";
+    return progress.getUTCSeconds() + " second ago";
   }
 };
 
