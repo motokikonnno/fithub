@@ -2,6 +2,8 @@ import {
   repositoryRepository,
   RepositoryRepository,
 } from "@/repositories/RepositoryRepository";
+import { Folder } from "./Folder";
+import { Issue } from "./Issue";
 
 export type Repository = {
   id: string;
@@ -12,6 +14,9 @@ export type Repository = {
   is_read_me: boolean;
   read_me?: string;
   created_at?: string;
+  folders?: Folder[];
+  files?: File[];
+  issues?: Issue[];
 };
 
 export const repositoryFactory = (rep?: RepositoryRepository) => {
