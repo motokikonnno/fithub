@@ -17,19 +17,12 @@ export type Repository = {
 export const repositoryFactory = (rep?: RepositoryRepository) => {
   const repo = rep ?? repositoryRepository;
   return {
-    getAll: async (): Promise<Repository[]> => {
-      const repositories = await repo.getAllRepositories();
+    index: async (): Promise<Repository[]> => {
+      const repositories = await repo.getRepositories();
       return repositories;
     },
-    index: async (user_id: string): Promise<Repository[]> => {
-      const repositories = await repo.getRepositories(user_id);
-      return repositories;
-    },
-    show: async (
-      user_id: string,
-      repository_id: string
-    ): Promise<Repository> => {
-      const repository = await repo.getRepository(user_id, repository_id);
+    show: async (id: string): Promise<Repository> => {
+      const repository = await repo.getRepository(id);
       return repository;
     },
     create: async (

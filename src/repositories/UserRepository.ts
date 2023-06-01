@@ -3,7 +3,7 @@ import { User } from "@/models/User";
 
 export type UserRepository = {
   getUsers: () => Promise<User[]>;
-  getUser: (user_id: string) => Promise<User>;
+  getUser: (id: string) => Promise<User>;
   updateUser: (params: User) => Promise<User>;
 };
 
@@ -12,8 +12,8 @@ const getUsers: UserRepository["getUsers"] = async () => {
   return response.data.users;
 };
 
-const getUser: UserRepository["getUser"] = async (user_id) => {
-  const response = await ApiClient.get(`/user/${user_id}`);
+const getUser: UserRepository["getUser"] = async (id) => {
+  const response = await ApiClient.get(`/user/${id}`);
   return response.data.user;
 };
 

@@ -1,4 +1,5 @@
 import { userRepository, UserRepository } from "@/repositories/UserRepository";
+import { Repository } from "./Repository";
 
 export type User = {
   id: string;
@@ -6,6 +7,7 @@ export type User = {
   email?: string;
   image?: string;
   bio?: string;
+  repositories?: Repository[];
 };
 
 export const userFactory = (rep?: UserRepository) => {

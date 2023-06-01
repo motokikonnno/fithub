@@ -38,7 +38,6 @@ model User {
   image         String?
   accounts      Account[]
   repositories  Repository[]
-  issues        Issue[]
 }
 
 model Repository {
@@ -89,7 +88,7 @@ model File {
 }
 
 model Issue {
-  id            String     @id @default(cuid())
+  id            Int        @id @default(autoincrement())
   title         String
   issue         String     @db.LongText
   created_at    DateTime   @default(now())
@@ -97,10 +96,8 @@ model Issue {
   repository_id String
   user_id       String
   repository    Repository @relation(fields: [repository_id], references: [id])
-  user          User       @relation(fields: [user_id], references: [id])
 
   @@index([repository_id])
-  @@index([user_id])
 }
 
 model Commit {

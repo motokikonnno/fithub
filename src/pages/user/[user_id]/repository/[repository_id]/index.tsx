@@ -1,16 +1,20 @@
-import { RepositoryDetail } from "@/components/pages/RepositoryDetail";
+import {
+  RepositoryDetail,
+  RepositoryDetailProps,
+} from "@/components/pages/RepositoryDetail";
 import { repositoryFactory } from "@/models/Repository";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 type PathParams = {
-  user_id: string;
   repository_id: string;
 };
 
-const RepositoryDetailPage: AuthNextPage = () => {
-  return <RepositoryDetail />;
+const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
+  repository,
+}) => {
+  return <RepositoryDetail repository={repository} />;
 };
 
 export default RepositoryDetailPage;
@@ -18,13 +22,7 @@ RepositoryDetailPage.requireAuth = true;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const users = await userFactory().index();
-  // const usersPath = users.map(({ id }) => ({
-  //   params: { user_id: id.toString() },
-  // }));
-  const repositories = await repositoryFactory().getAll();
-  // const repositoriesPath = repositories.map(({ id }) => ({
-  //   params: { repository_id: id.toString() },
-  // }));
+  const repositories = await repositoryFactory().index();
   const paths = users.flatMap((user) =>
     repositories.map((repository) => ({
       params: {
@@ -34,15 +32,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
     }))
   );
   return {
-    // paths: [...usersPath, ...repositoriesPath],
     paths: paths,
     fallback: false,
   };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const { user_id, repository_id } = context.params as PathParams;
-  const repository = await repositoryFactory().show(user_id, repository_id);
+  const { repository_id } = context.params as PathParams;
+  const repository = await repositoryFactory().show(
+    "clibs60je0001dms0x1fqz9ie"
+  );
   return {
     props: { repository: repository },
   };

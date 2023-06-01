@@ -8,11 +8,8 @@ type PathParams = {
   user_id: string;
 };
 
-const UserProfilePage: AuthNextPage<UserProfileProps> = ({
-  userData,
-  repositories,
-}) => {
-  return <UserProfile userData={userData} repositories={repositories} />;
+const UserProfilePage: AuthNextPage<UserProfileProps> = ({ userData }) => {
+  return <UserProfile userData={userData} />;
 };
 
 export default UserProfilePage;
@@ -32,8 +29,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const { user_id } = context.params as PathParams;
   const user = await userFactory().show(user_id);
-  const repositories = await repositoryFactory().index(user_id);
+  const repository = await repositoryFactory().show(
+    "clibs60je0001dms0x1fqz9ie"
+  );
+  console.log(repository);
   return {
-    props: { userData: user, repositories: repositories },
+    props: { userData: user },
   };
 };
