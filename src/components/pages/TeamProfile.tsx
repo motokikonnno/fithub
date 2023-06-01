@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Footer } from "../layouts/Footer";
 import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
-import { itemType, ProfileProps, repositoriesType } from "./MyProfile";
+import { itemType, ProfileProps } from "./UserProfile";
 import { RepositoryList } from "../list/RepositoryList";
 import { InputSearch } from "../InputSearch";
 import { PeopleList } from "../list/PeopleLIst";
@@ -297,45 +297,6 @@ export const TeamProfile = React.memo(() => {
                     <label className={styles.label}>Email</label>
                     <input className={styles.inputForm} />
                   </div>
-                  {/* <div className={styles.inputContainer}>
-                    <label className={styles.label}>Social accounts</label>
-                    <div className={styles.snsLinkContainer}>
-                      <Image
-                        src={"/icons/sns-link.svg"}
-                        width={16}
-                        height={16}
-                        alt="sns-link-icon"
-                      />
-                      <input className={styles.snsLinkInputForm} />
-                    </div>
-                    <div className={styles.snsLinkContainer}>
-                      <Image
-                        src={"/icons/sns-link.svg"}
-                        width={16}
-                        height={16}
-                        alt="sns-link-icon"
-                      />
-                      <input className={styles.snsLinkInputForm} />
-                    </div>
-                    <div className={styles.snsLinkContainer}>
-                      <Image
-                        src={"/icons/sns-link.svg"}
-                        width={16}
-                        height={16}
-                        alt="sns-link-icon"
-                      />
-                      <input className={styles.snsLinkInputForm} />
-                    </div>
-                    <div className={styles.snsLinkContainer}>
-                      <Image
-                        src={"/icons/sns-link.svg"}
-                        width={16}
-                        height={16}
-                        alt="sns-link-icon"
-                      />
-                      <input className={styles.snsLinkInputForm} />
-                    </div>
-                  </div> */}
                   <div className={styles.updateButtonContainer}>
                     <button
                       className={styles.updateButton}
