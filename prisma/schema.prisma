@@ -10,7 +10,7 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
+  id                 String   @id @default(cuid())
   userId             String
   type               String
   provider           String
@@ -37,4 +37,89 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
+  repositories  Repository[]
+  issues        Issue[]
+}
+
+model Repository {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  is_private    Int // 1: パブリック, 2: プライベート
+  is_read_me    Boolean
+  read_me       String?   @db.LongText
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  user_id       String
+  user          User      @relation(fields: [user_id], references: [id])
+  folders       Folder[]
+  issues        Issue[]
+  files         File[]
+
+  @@index([user_id])
+}
+
+model Folder {
+  id            String     @id @default(cuid())
+  name          String
+  parent_id     String
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  repository_id String
+  repository    Repository @relation(fields: [repository_id], references: [id])
+  files         File[]
+
+  @@index([repository_id])
+}
+
+model File {
+  id             String      @id @default(cuid())
+  name           String
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  folder_id      String?
+  repository_id  String?
+  folder         Folder?     @relation(fields: [folder_id], references: [id])
+  repository     Repository? @relation(fields: [repository_id], references: [id])
+  commits        Commit[]
+  currentcommits CurrentCommit[]
+
+  @@index([folder_id])
+  @@index([repository_id])
+}
+
+model Issue {
+  id            String     @id @default(cuid())
+  title         String
+  issue         String     @db.LongText
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  repository_id String
+  user_id       String
+  repository    Repository @relation(fields: [repository_id], references: [id])
+  user          User       @relation(fields: [user_id], references: [id])
+
+  @@index([repository_id])
+  @@index([user_id])
+}
+
+model Commit {
+  id            String     @id @default(cuid())
+  message       String
+  commit_user   String
+  created_at    DateTime   @default(now())
+  file_id       String
+  files         File      @relation(fields: [file_id], references: [id])
+
+  @@index([file_id])
+}
+
+model CurrentCommit {
+  id            String      @id @default(cuid())
+  message       String
+  created_at    DateTime   @default(now())
+  file_id       String
+  files         File      @relation(fields: [file_id], references: [id])
+
+  @@index([file_id])
 }
