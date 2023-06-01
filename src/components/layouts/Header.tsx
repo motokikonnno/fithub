@@ -2,16 +2,23 @@ import styles from "../../styles/components/layouts/Header.module.scss";
 import Image from "next/image";
 import { InputSearch } from "../InputSearch";
 import { DropDownList } from "../list/DropDownList";
-import React, { useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import useFetchUser from "@/hooks/useFetchUser";
 
-export const Header = React.memo(() => {
+type HeaderProps = {
+  image?: string;
+};
+
+export const Header: FC<HeaderProps> = React.memo(({ image }) => {
   const { data: session } = useSession();
   const [isShow, setIsShow] = useState(false);
   const [isShowProfile, setIsShowProfile] = useState(false);
   const dropDownListRef = useRef<HTMLDivElement>(null);
   const profileDropDownListRef = useRef<HTMLDivElement>(null);
+  const { user } = useFetchUser(session?.user.id ? session.user.id : null);
+  const [icon, setIcon] = useState(image);
 
   const dropDownList = {
     newList: [
@@ -19,10 +26,10 @@ export const Header = React.memo(() => {
       { title: "New team", link: "/team/new" },
     ],
     myProfile: [
-      { title: "Your profile", link: `/user/${session?.user.id}` },
+      { title: "Your profile", link: `/user/${user?.id}` },
       {
         title: "Your repositories",
-        link: `/user/${session?.user.id}?tab=Repositories`,
+        link: `/user/${user?.id}?tab=Repositories`,
       },
       { title: "Your teams", link: "/team" },
       { title: "Sign out", link: "/sign_in" },
@@ -64,6 +71,16 @@ export const Header = React.memo(() => {
     };
   }, []);
 
+  useEffect(() => {
+    setIcon(image);
+  }, [image]);
+
+  useEffect(() => {
+    if (!image) {
+      setIcon(user?.image);
+    }
+  }, [image, user?.image]);
+
   return (
     <div className={styles.container}>
       <Link href={"/"}>
@@ -103,9 +120,9 @@ export const Header = React.memo(() => {
             onClick={toggleIsShowProfile}
             ref={profileDropDownListRef}
           >
-            {session?.user.image && (
+            {icon && (
               <Image
-                src={session.user.image}
+                src={icon}
                 width={20}
                 height={20}
                 alt="profile-image"
