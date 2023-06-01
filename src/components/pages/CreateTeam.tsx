@@ -38,7 +38,11 @@ export const CreateTeam = React.memo(() => {
           <div className={styles.formSection}>Team name</div>
           <input className={styles.inputForm} />
         </div>
-        <div className={styles.formSectionTeam}>Team icon</div>
+        <div className={styles.teamBioContainer}>
+          <div className={styles.formSectionOptional}>Team bio（optional）</div>
+          <textarea className={styles.inputForm} />
+        </div>
+        <div className={styles.formSectionTeam}>Team image</div>
         <div className={styles.teamIconContainer}>
           {isLoading ? (
             <div className={styles.skeltonImage}></div>
@@ -61,9 +65,8 @@ export const CreateTeam = React.memo(() => {
               alt="upload-icon"
             />
           </span>
-          Upload a photo
+          Upload a image
         </button>
-
         <input
           type="file"
           accept=".png, .jpeg, .jpg"
@@ -79,15 +82,6 @@ export const CreateTeam = React.memo(() => {
             )
           }
         />
-        <div className={styles.initializeText}>This team belongs to:</div>
-        <div className={styles.personalAccountWrapper}>
-          <input type="radio" className={styles.radioForm} name="accountType" />
-          <label className={styles.label}>My personal account</label>
-        </div>
-        <div className={styles.businessAccountWrapper}>
-          <input type="radio" className={styles.radioForm} name="accountType" />
-          <label className={styles.label}>A business or institution</label>
-        </div>
         <button
           className={styles.createTeamButton}
           onClick={() => handleDeleteImage(deleteFile, currentFile)}
