@@ -62,13 +62,14 @@ export const CreateRepository = React.memo(() => {
         ...data,
         is_private: Number(data.is_private),
       };
-      await repositoryFactory().create({
+      const newRepository = await repositoryFactory().create({
         user_id: user.id,
         read_me: "",
         ...createData,
       });
-      // TODO: リダイレクト先をrepository詳細ページに変更する
-      router.push(`/user/${user?.id}?tab=Repositories`);
+      if (newRepository) {
+        router.push(`/user/${user?.id}/repository/${newRepository}`);
+      }
     }
   };
 

@@ -1,16 +1,32 @@
+import { fileRepository, FileRepository } from "@/repositories/FileRepository";
 import { Commit } from "./Commit";
 import { CurrentCommit } from "./CurrentCommit";
-import { Folder } from "./Folder";
 import { Repository } from "./Repository";
 
 export type File = {
   id: string;
   name: string;
+  parent_id: string;
   created_at: string;
-  folder_id?: string;
-  repository_id?: string;
-  folder: Folder;
+  repository_id: string;
   repository: Repository;
   commits?: Commit[];
   current_commits?: CurrentCommit[];
+};
+
+export const fileFactory = (rep?: FileRepository) => {
+  const repository = rep ?? fileRepository;
+  return {
+    create: async (
+      params: Pick<File, "name" | "repository_id" | "parent_id">
+    ): Promise<void> => {
+      await repository.createFile(params);
+    },
+    update: async (params: Pick<File, "id" | "name">): Promise<void> => {
+      await repository.updateFile(params);
+    },
+    delete: async (id: string): Promise<void> => {
+      await repository.deleteFile(id);
+    },
+  };
 };

@@ -69,23 +69,20 @@ model Folder {
   created_at    DateTime   @default(now())
   repository_id String
   repository    Repository @relation(fields: [repository_id], references: [id])
-  files         File[]
 
   @@index([repository_id])
 }
 
 model File {
-  id             String      @id @default(cuid())
-  name           String
-  created_at     DateTime    @default(now())
-  folder_id      String?
-  repository_id  String?
-  folder         Folder?     @relation(fields: [folder_id], references: [id])
-  repository     Repository? @relation(fields: [repository_id], references: [id])
-  commits        Commit[]
+  id              String      @id @default(cuid())
+  name            String
+  parent_id       String
+  created_at      DateTime    @default(now())
+  repository_id   String
+  repository      Repository  @relation(fields: [repository_id], references: [id])
+  commits         Commit[]
   current_commits CurrentCommit[]
 
-  @@index([folder_id])
   @@index([repository_id])
 }
 

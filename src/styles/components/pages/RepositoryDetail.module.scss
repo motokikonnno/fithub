@@ -50,13 +50,11 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px;
-  background-color: #f6f8fa;
-  border-top-right-radius: 6px;
-  border-top-left-radius: 6px;
 }
 
 .userIcon {
+  object-fit: cover;
+  object-position: center;
   border-radius: 50%;
 }
 
@@ -66,6 +64,7 @@
 }
 
 .addFileOrFolderWrapper {
+  display: flex;
   padding: 8px 16px;
   border-top: 1px solid #d0d7de;
   &:hover {
@@ -89,19 +88,20 @@
 }
 
 .dropdownItem {
-  padding: 8px 16px;
+  padding: 8px;
+  font-size: 14px;
   list-style: none;
 }
 
 .dropdownItemContainer {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: 0 8px;
   width: 100%;
   border-top: 1px solid #d0d7de;
   box-sizing: border-box;
   &:hover {
-    background-color: #d0d7de;
+    background-color: #f6f8fa;
     cursor: pointer;
   }
 }
@@ -306,4 +306,68 @@
   font-size: 14px;
   font-weight: bold;
   color: #000;
+}
+
+.repositoryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #f6f8fa;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.select {
+  padding: 4px 8px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.redColor {
+  color: #fc635c;
+}
+
+.confirmModalBackground {
+  padding: 64px;
+}
+
+.confirmText {
+  margin: 0 0 16px 0;
+  margin-bottom: 32px;
+  font-size: 32px;
+}
+
+.confirmContainer {
+  display: flex;
+  gap: 16px;
+}
+
+.deleteButton {
+  display: inline-block;
+  flex: 1;
+  padding: 8px 16px;
+  font-size: 24px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fc635c;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.backButton {
+  @extend .deleteButton;
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #d0d7de;
 }

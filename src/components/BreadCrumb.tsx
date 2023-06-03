@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import styles from "../styles/components/BreadCrumb.module.scss";
-import { itemType } from "./pages/MyProfile";
+import { itemType } from "./pages/UserProfile";
 
 type BreadCrumbProps = {
   folderTitle?: itemType[];

@@ -52,6 +52,7 @@ export async function getRepository(
         folders: true,
         files: true,
         issues: true,
+        user: true,
       },
     });
     return res.status(200).json({ repository: repository });
@@ -63,11 +64,11 @@ export async function getRepository(
 export async function createRepository(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | NextApiResponse<void>> {
+): Promise<void | NextApiResponse<Repository>> {
   const { user_id, name, description, is_private, read_me, is_read_me } =
     req.body;
   try {
-    const response = await prisma.repository.create({
+    const repository = await prisma.repository.create({
       data: {
         user_id,
         name,
@@ -77,7 +78,29 @@ export async function createRepository(
         is_read_me,
       },
     });
-    return res.status(200).json(response);
+    return res.status(200).json({ id: repository.id });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
+
+export async function deleteRepository(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<void>> {
+  const { id } = req.query;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
+
+  try {
+    const repository = await prisma.repository.delete({
+      where: {
+        id: id,
+      },
+    });
+    return res.status(200).json(repository);
   } catch (error) {
     return res.status(500).end(error);
   }

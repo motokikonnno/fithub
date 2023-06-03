@@ -1,15 +1,42 @@
-import { repositoryFile } from "@/mock/mockRepositoryDetail";
+import { File } from "@/models/File";
+import { getTimeDiff } from "@/utils/getTime";
 import Image from "next/image";
 import React, { FC } from "react";
 import styles from "../../styles/components/item/FolderWithFileItem.module.scss";
 
 type FileItemProps = {
-  file: repositoryFile;
+  file: File;
   handleModalClose: () => void;
+  toggleAction: boolean;
+  toggleInput: boolean;
+  defaultText: string;
+  currentFolderOrFileId: string;
+  inputRef: React.RefObject<HTMLInputElement>;
+  handleCurrentType: (type: "folder" | "file") => void;
+  handleConfirmModal: (id?: string) => void;
+  handleSetComposing: () => void;
+  handleSetDefaultText: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  toggleEditInput: (id: string, name: string, type: "folder" | "file") => void;
+  submitEditEnter: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export const FileItem: FC<FileItemProps> = React.memo(
-  ({ file, handleModalClose }) => {
+  ({
+    file,
+    toggleAction,
+    toggleInput,
+    defaultText,
+    currentFolderOrFileId,
+    inputRef,
+    handleCurrentType,
+    handleModalClose,
+    handleSetComposing,
+    handleConfirmModal,
+    handleSetDefaultText,
+    toggleEditInput,
+    submitEditEnter,
+  }) => {
+    const created_at = getTimeDiff(file.created_at);
     return (
       <div className={styles.listWrapper}>
         <div className={styles.leftContainer}>
@@ -20,11 +47,53 @@ export const FileItem: FC<FileItemProps> = React.memo(
             alt="folder-icon"
             className={styles.icon}
           />
-          <span className={styles.folderOrFileName} onClick={handleModalClose}>
-            {file.name}
-          </span>
+          {toggleInput && file.id === currentFolderOrFileId ? (
+            <input
+              type="text"
+              className={styles.editInput}
+              value={defaultText}
+              onChange={handleSetDefaultText}
+              autoFocus={true}
+              ref={inputRef}
+              onCompositionStart={handleSetComposing}
+              onCompositionEnd={handleSetComposing}
+              onKeyDown={(e) => submitEditEnter(e)}
+            />
+          ) : (
+            <span
+              className={styles.folderOrFileName}
+              onClick={handleModalClose}
+            >
+              {file.name}
+            </span>
+          )}
         </div>
-        <span className={styles.updatedAt}>{file.updatedAt}</span>
+        <div className={styles.rightContainer}>
+          <span className={styles.createdAt}>{created_at}</span>
+          {toggleAction && (
+            <div className={styles.actionContainer}>
+              <Image
+                src={"/icons/edit-gray.svg"}
+                width={14}
+                height={16}
+                alt="edit-icon"
+                className={styles.actionIcon}
+                onClick={() => toggleEditInput(file.id, file.name, "file")}
+              />
+              <Image
+                src={"/icons/trash.svg"}
+                width={14}
+                height={16}
+                alt="trash-icon"
+                className={styles.actionIcon}
+                onClick={() => {
+                  handleConfirmModal(file.id);
+                  handleCurrentType("file");
+                }}
+              />
+            </div>
+          )}
+        </div>
       </div>
     );
   }

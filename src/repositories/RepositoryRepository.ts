@@ -4,7 +4,10 @@ import { Repository } from "@/models/Repository";
 export type RepositoryRepository = {
   getRepositories: () => Promise<Repository[]>;
   getRepository: (id: string) => Promise<Repository>;
-  createRepository: (params: Omit<Repository, "id">) => Promise<void>;
+  createRepository: (
+    params: Omit<Repository, "id" | "created_at">
+  ) => Promise<{ id: string }>;
+  deleteRepository: (id: string) => Promise<void>;
 };
 
 const getRepositories: RepositoryRepository["getRepositories"] = async () => {
@@ -20,11 +23,19 @@ const getRepository: RepositoryRepository["getRepository"] = async (id) => {
 const createRepository: RepositoryRepository["createRepository"] = async (
   params
 ) => {
-  await ApiClient.post(`/repository`, params);
+  const response = await ApiClient.post(`/repository`, params);
+  return response.data.id;
+};
+
+const deleteRepository: RepositoryRepository["deleteRepository"] = async (
+  id
+) => {
+  await ApiClient.delete(`/repository/${id}`);
 };
 
 export const repositoryRepository: RepositoryRepository = {
   getRepositories,
   getRepository,
   createRepository,
+  deleteRepository,
 };

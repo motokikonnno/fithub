@@ -13,8 +13,18 @@ type PathParams = {
 
 const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
   repository,
+  folders,
+  files,
+  user,
 }) => {
-  return <RepositoryDetail repository={repository} />;
+  return (
+    <RepositoryDetail
+      repository={repository}
+      folders={folders}
+      files={files}
+      user={user}
+    />
+  );
 };
 
 export default RepositoryDetailPage;
@@ -39,10 +49,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { repository_id } = context.params as PathParams;
-  const repository = await repositoryFactory().show(
-    "clibs60je0001dms0x1fqz9ie"
-  );
+  const repository = await repositoryFactory().show(repository_id);
+  const folders =
+    repository.folders &&
+    repository.folders.filter(({ parent_id }) => parent_id === "");
+  const files =
+    repository.files &&
+    repository.files.filter(({ parent_id }) => parent_id === "");
+  const user = repository.user && repository.user;
   return {
-    props: { repository: repository },
+    props: {
+      repository: repository,
+      folders: folders,
+      files: files,
+      user: user,
+    },
   };
 };
