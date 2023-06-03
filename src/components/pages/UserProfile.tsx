@@ -28,8 +28,6 @@ type updateUserType = {
   email: string;
 };
 
-// TODO: 保存せずに戻った場合にstorageから削除する処理を作成する
-
 export type UserProfileProps = {
   userData: User;
 };
@@ -74,6 +72,18 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
   );
   const [isLoading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handlePopstate = () => {
+      if (deleteFile) handleDeleteImage(deleteFile, currentFile);
+      router.back();
+    };
+    history.pushState(null, "", null);
+    window.addEventListener("popstate", handlePopstate, false);
+    return () => {
+      removeEventListener("popstate", handlePopstate, false);
+    };
+  }, [currentFile, deleteFile, router]);
 
   useEffect(() => {
     if (query === "Repositories") {
@@ -251,7 +261,10 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
             <Overview repositories={userData.repositories} user={userData} />
           ) : (
             <div className={styles.repositoryComponentWrapper}>
-              <RepositoryList repositories={userData.repositories} />
+              <RepositoryList
+                repositories={userData.repositories}
+                user={userData}
+              />
             </div>
           ))}
       </div>
@@ -268,7 +281,7 @@ export type ProfileProps = {
 const Overview: FC<ProfileProps> = ({ repositories, user }) => {
   const { data: session } = useSession();
   const sortRepositories = [...repositories].sort((a, b) => {
-    return Number(b.created_at) - Number(a.created_at);
+    return Date.parse(b.created_at) - Date.parse(a.created_at);
   });
   const publicRepositories = sortRepositories.slice(0, 6);
   const privateRepositories = sortRepositories

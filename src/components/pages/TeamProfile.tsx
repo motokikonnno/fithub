@@ -21,8 +21,6 @@ type Team = {
   socialLink: string[];
 };
 
-// TODO: 保存せずに戻った場合にstorageから削除する処理を作成する
-
 export const TeamProfile = React.memo(() => {
   const items: itemType[] = [
     {
@@ -150,6 +148,18 @@ export const TeamProfile = React.memo(() => {
   const [isLoading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const teamId = 1;
+
+  useEffect(() => {
+    const handlePopstate = () => {
+      if (deleteFile) handleDeleteImage(deleteFile, currentFile);
+      router.back();
+    };
+    history.pushState(null, "", null);
+    window.addEventListener("popstate", handlePopstate, false);
+    return () => {
+      removeEventListener("popstate", handlePopstate, false);
+    };
+  }, [currentFile, deleteFile, router]);
 
   useEffect(() => {
     const switchCurrentTab = (query: string) => {
