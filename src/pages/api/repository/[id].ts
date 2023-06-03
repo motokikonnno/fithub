@@ -1,4 +1,4 @@
-import { createRepository, getRepository } from "@/lib/api/repository";
+import { deleteRepository, getRepository } from "@/lib/api/repository";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
@@ -9,8 +9,8 @@ const handleRepositoryAllRequest: NextApiHandler = async (
   switch (req.method) {
     case HttpMethod.GET:
       return getRepository(req, res);
-    case HttpMethod.POST:
-      return createRepository(req, res);
+    case HttpMethod.DELETE:
+      return deleteRepository(req, res);
     default:
       return res.status(405).end(`Method ${req.method} Not Allowed`);
   }

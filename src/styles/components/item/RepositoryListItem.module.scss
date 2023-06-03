@@ -26,8 +26,22 @@
   border-radius: 2em;
 }
 
-.updatedAt {
+.createdAt {
   font-size: 12px;
   color: #656d76;
   font-weight: normal;
+}
+
+.rightContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.trashIcon {
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  :hover {
+    opacity: 0.5;
+  }
 }
