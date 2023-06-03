@@ -7,7 +7,7 @@ const userFetcher = async (key: string): Promise<User> => {
 };
 
 const useFetchUser = (id: string | null) => {
-  const { data: user } = useSWR<User>(id ? `${id}` : null, userFetcher);
+  const { data: user } = useSWR<User>(id ? id : null, userFetcher);
   return { user };
 };
 
