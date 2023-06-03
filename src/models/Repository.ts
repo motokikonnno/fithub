@@ -2,8 +2,10 @@ import {
   repositoryRepository,
   RepositoryRepository,
 } from "@/repositories/RepositoryRepository";
+import { File } from "./File";
 import { Folder } from "./Folder";
 import { Issue } from "./Issue";
+import { User } from "./User";
 
 export type Repository = {
   id: string;
@@ -13,10 +15,11 @@ export type Repository = {
   is_private: Number;
   is_read_me: boolean;
   read_me?: string;
-  created_at?: string;
+  created_at: string;
   folders?: Folder[];
   files?: File[];
   issues?: Issue[];
+  user?: User;
 };
 
 export const repositoryFactory = (rep?: RepositoryRepository) => {
@@ -32,8 +35,12 @@ export const repositoryFactory = (rep?: RepositoryRepository) => {
     },
     create: async (
       params: Omit<Repository, "id" | "created_at">
-    ): Promise<void> => {
-      await repo.createRepository(params);
+    ): Promise<{ id: string } | void> => {
+      const repository = await repo.createRepository(params);
+      return repository;
+    },
+    delete: async (id: string): Promise<void> => {
+      await repo.deleteRepository(id);
     },
   };
 };
