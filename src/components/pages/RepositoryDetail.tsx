@@ -17,6 +17,7 @@ import { Repository, repositoryFactory } from "@/models/Repository";
 import { Folder, folderFactory } from "@/models/Folder";
 import { File, fileFactory } from "@/models/File";
 import { User } from "@/models/User";
+import { useSession } from "next-auth/react";
 
 export type IssueStateType = {
   id: string;
@@ -160,6 +161,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       },
     ];
 
+    const { data: session } = useSession();
     const router = useRouter();
     const query = String(router.query.tab);
     const [currentTab, setCurrentTab] = useState("Log");
@@ -182,6 +184,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     const [toggleInput, setToggleInput] = useState(false);
     const [defaultText, setDefaultText] = useState("");
     const [currentType, setCurrentType] = useState<"folder" | "file" | "">("");
+    const [isReadme, setIsReadme] = useState(repository.is_read_me);
 
     useEffect(() => {
       const handlePopstate = () => {
@@ -237,6 +240,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         if (inputElement && inputElement?.contains(event.target)) return;
         setCreateType("");
         setToggleInput(false);
+        setInputText("");
       };
       window.addEventListener("click", handleClickToCloseInput, true);
       return () => {
@@ -358,18 +362,22 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       if (e.key === "Enter") {
         if (isComposition) return;
         e.preventDefault();
-        if (createType === "folder") {
-          await folderFactory().create({
-            name: inputText,
-            parent_id: parentFolder,
-            repository_id: repository.id,
-          });
-        } else if (createType === "file") {
-          await fileFactory().create({
-            name: inputText,
-            parent_id: parentFolder,
-            repository_id: repository.id,
-          });
+        if (session?.user.id) {
+          if (createType === "folder") {
+            await folderFactory().create({
+              name: inputText,
+              parent_id: parentFolder,
+              repository_id: repository.id,
+              user_id: session.user.id,
+            });
+          } else if (createType === "file") {
+            await fileFactory().create({
+              name: inputText,
+              parent_id: parentFolder,
+              repository_id: repository.id,
+              user_id: session.user.id,
+            });
+          }
         }
         fetchRepository();
         setInputText("");
@@ -432,11 +440,19 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       setCurrentType(type);
     };
 
+    const handleUpdateReadme = async () => {
+      const updateIsReadme = await repositoryFactory().update({
+        id: repository.id,
+        is_read_me: true,
+      });
+      setIsReadme(updateIsReadme.is_read_me);
+    };
+
     return (
       <>
         <Header />
-        <div className={styles.backgroundColor}>
-          <div className={styles.teamDetailContainer}>
+        <nav className={styles.backgroundColor}>
+          <h1 className={styles.teamDetailContainer}>
             <Link href={`/user/${user.id}`} className={styles.teamNameHeader}>
               {repository.user?.name}
             </Link>
@@ -447,7 +463,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
             >
               {repository.name}
             </Link>
-          </div>
+          </h1>
           <div className={styles.tabsContainer}>
             {items.map((item, index) => (
               <Tabs
@@ -458,7 +474,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               />
             ))}
           </div>
-        </div>
+        </nav>
         {currentTab === "Log" && (
           <div className={styles.layoutContainer}>
             <BreadCrumb
@@ -466,7 +482,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               repository={repository.name}
               handleViewRepository={handleViewRepository}
             />
-            <div className={styles.logListWrapper}>
+            <section className={styles.logListWrapper}>
               <div className={styles.repositoryHeader}>
                 <div className={styles.userInformationContainer}>
                   {repository.user?.image && (
@@ -478,10 +494,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                       className={styles.userIcon}
                     />
                   )}
-
-                  <span className={styles.userName}>
-                    {repository.user?.name}
-                  </span>
+                  <h2 className={styles.userName}>{repository.user?.name}</h2>
                 </div>
                 <div
                   className={`${styles.select} ${
@@ -559,7 +572,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               {isVisible && (
                 <Modal isVisible={isVisible} handleClose={handleModalClose}>
                   <div className={styles.modalBackground}>
-                    <div className={styles.headerContainer}>
+                    <header className={styles.headerContainer}>
                       <div className={styles.headerItemContainer}>
                         {modalHeaderItems.map(({ name }, index) => (
                           <div
@@ -580,7 +593,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </header>
                     {modalHeader === "commit" && (
                       <>
                         <div className={styles.commitBackground}>
@@ -656,7 +669,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               )}
 
               {createType === "" ? (
-                <>
+                <section className={styles.addFolderOrFile}>
                   <div
                     className={styles.addFileOrFolderWrapper}
                     onClick={handleCloseCreateType}
@@ -701,7 +714,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                       </div>
                     </ul>
                   )}
-                </>
+                </section>
               ) : (
                 <div className={styles.inputContainer}>
                   <Image
@@ -722,19 +735,34 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                   />
                 </div>
               )}
-            </div>
-            <div className={styles.readmeWrapper}>
-              <div className={styles.readmeContainer}>
-                <Image
-                  src={"/icons/list-ul.svg"}
-                  width={16}
-                  height={16}
-                  alt="list-ul-icon"
+            </section>
+            {isReadme ? (
+              <section className={styles.readmeWrapper}>
+                <div className={styles.readmeContainer}>
+                  <Image
+                    src={"/icons/list-ul.svg"}
+                    width={16}
+                    height={16}
+                    alt="list-ul-icon"
+                  />
+                  <h2 className={styles.readme}>README.md</h2>
+                </div>
+                <Tiptap
+                  text={repository.read_me}
+                  repository={repository}
+                  type={"readme"}
                 />
-                <div className={styles.readme}>README.md</div>
+              </section>
+            ) : (
+              <div className={styles.createReadmeButtonContainer}>
+                <button
+                  className={styles.createReadmeButton}
+                  onClick={handleUpdateReadme}
+                >
+                  Create README.md
+                </button>
               </div>
-              <Tiptap />
-            </div>
+            )}
           </div>
         )}
         {currentTab === "Issue" && <Issue issues={issueData} />}

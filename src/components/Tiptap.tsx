@@ -1,56 +1,152 @@
+import { Repository, repositoryFactory } from "@/models/Repository";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "next/image";
-import React, { FC, useCallback } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
+import { Controller, FieldValues, useForm } from "react-hook-form";
 import styles from "../styles/components/Tiptap.module.scss";
+// import CodeBlock from "@tiptap/extension-code-block";
+// import Prism from "prismjs";
+// // import "prismjs/components/prism-html";
+// import "prismjs/themes/prism-tomorrow.css";
 
-export const Tiptap = React.memo(() => {
-  const editor = useEditor({
-    extensions: [StarterKit, Link, Underline],
-    content: "<h1>Hello World</h1>",
-    editorProps: {
-      attributes: {
-        class: styles.editorContent,
+type TiptapProps = {
+  text?: string;
+  repository: Repository;
+  type: "issue" | "readme";
+};
+
+export const Tiptap: FC<TiptapProps> = React.memo(
+  ({ text, repository, type }) => {
+    const [tiptapEditFlag, setTiptapEditFlag] = useState(false);
+    const editor = useEditor({
+      extensions: [StarterKit, Link, Underline],
+      content: text,
+      editorProps: {
+        attributes: {
+          class: styles.editorContent,
+        },
       },
-    },
-  });
+    });
+    const { handleSubmit, control, setValue } = useForm();
 
-  const handleSetLink = useCallback(() => {
-    if (!editor) return;
+    // useEffect(() => {
+    //   if (editor) {
+    //     editor.on("transaction", () => {
+    //       Prism.highlightAll();
+    //     });
+    //   }
+    // }, [editor]);
 
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("URL", previousUrl);
-    // cancelled
-    if (url === null) {
-      return;
+    useEffect(() => {
+      editor?.setEditable(tiptapEditFlag);
+    }, [editor, tiptapEditFlag]);
+
+    useEffect(() => {
+      if (editor) {
+        editor.on("update", () => {
+          setValue("content", editor.getHTML());
+        });
+      }
+    }, [editor, setValue]);
+
+    const handleCancel = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      e.preventDefault();
+      if (text) editor?.commands.setContent(text);
+      setTiptapEditFlag(!tiptapEditFlag);
+    };
+
+    const handleEdit = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      e.preventDefault();
+      setTiptapEditFlag(!tiptapEditFlag);
+    };
+
+    const onSubmit = async (data: FieldValues) => {
+      const readme = data.content as string;
+      if (type === "readme") {
+        await repositoryFactory().update({
+          read_me: readme,
+          is_read_me: true,
+          id: repository.id,
+        });
+      } else {
+      }
+      setTiptapEditFlag(false);
+    };
+
+    const handleSetLink = useCallback(() => {
+      if (!editor) return;
+
+      const previousUrl = editor.getAttributes("link").href;
+      const url = window.prompt("URL", previousUrl);
+      // cancelled
+      if (url === null) {
+        return;
+      }
+
+      // empty
+      if (url === "") {
+        editor.chain().focus().extendMarkRange("link").unsetLink().run();
+
+        return;
+      }
+
+      // update link
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: url })
+        .run();
+    }, [editor]);
+
+    if (!editor) {
+      return null;
     }
 
-    // empty
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    return (
+      <>
+        {tiptapEditFlag && (
+          <div className={styles.headMenuWrapper}>
+            <EditorHeadMenu editor={editor} handleSetLink={handleSetLink} />
+          </div>
+        )}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="content"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <EditorContent
+                editor={editor}
+                onChange={() => field.onChange(editor.getHTML)}
+              />
+            )}
+          />
 
-      return;
-    }
-
-    // update link
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-  }, [editor]);
-
-  if (!editor) {
-    return null;
+          <div className={styles.saveButtonContainer}>
+            {tiptapEditFlag ? (
+              <>
+                <button type="submit" className={styles.saveButton}>
+                  Save
+                </button>
+                <button onClick={handleCancel} className={styles.cancelButton}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button className={styles.editButton} onClick={handleEdit}>
+                Edit
+              </button>
+            )}
+          </div>
+        </form>
+      </>
+    );
   }
-
-  return (
-    <>
-      <div className={styles.headMenuWrapper}>
-        <EditorHeadMenu editor={editor} handleSetLink={handleSetLink} />
-      </div>
-      <EditorContent editor={editor} />
-    </>
-  );
-});
+);
 
 type EditorHeadMenuProps = {
   editor: Editor;

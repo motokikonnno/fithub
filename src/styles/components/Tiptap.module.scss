@@ -1,5 +1,6 @@
 .headMenuWrapper {
-  margin: 8px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #d0d7de;
 }
 
 .headerContainer {
@@ -9,15 +10,19 @@
 }
 
 .editorContent {
-  padding: 16px;
+  padding: 16px 32px;
   height: 500px;
   overflow-y: scroll;
-  border-top: 1px solid #d0d7de;
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
   font-size: 16px;
   &:focus {
     outline: 0;
+  }
+
+  u {
+    text-underline-offset: 8px;
+    text-decoration: underline #d0d7de solid;
   }
 }
 
@@ -34,4 +39,42 @@
 
 .backgroundGray {
   background-color: #d0d7de;
+}
+
+.saveButtonContainer {
+  display: flex;
+  justify-content: right;
+  padding: 8px 16px;
+  border-top: 1px solid #d0d7de;
+}
+
+.saveButton {
+  padding: 4px 8px;
+  color: #fff;
+  background-color: #1f883d;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  transition: 0.3s all ease-in-out;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.cancelButton {
+  @extend .saveButton;
+  margin-left: 8px;
+  background-color: #f6f8fa;
+  color: #000;
+}
+
+.editButton {
+  padding: 4px 8px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background-color: #f6f8fa;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
 }

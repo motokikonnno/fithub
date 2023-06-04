@@ -59,6 +59,7 @@
 }
 
 .userName {
+  margin: 0;
   font-size: 14px;
   font-weight: bold;
 }
@@ -288,6 +289,11 @@
   width: 10%;
 }
 
+.readme {
+  margin: 0;
+  font-size: 12px;
+}
+
 .readmeWrapper {
   margin-top: 24px;
   border: 1px solid #d0d7de;
@@ -297,14 +303,13 @@
 .readmeContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 13px 16px;
+  gap: 8px;
   background-color: #f6f8fa;
   border-top-right-radius: 6px;
   border-top-left-radius: 6px;
   border-bottom: 1px solid #d0d7de;
   font-size: 14px;
-  font-weight: bold;
   color: #000;
 }
 
@@ -370,4 +375,25 @@
   color: #000;
   background-color: #fff;
   border: 1px solid #d0d7de;
+}
+
+.createReadmeButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.createReadmeButton {
+  display: block;
+  padding: 8px 24px;
+  font-size: 16px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background-color: #2c8747;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.85;
+  }
 }
