@@ -3,7 +3,7 @@ import { File } from "@/models/File";
 
 export type FileRepository = {
   createFile: (
-    params: Pick<File, "name" | "repository_id" | "parent_id">
+    params: Pick<File, "name" | "repository_id" | "parent_id" | "user_id">
   ) => Promise<void>;
   updateFile: (params: Pick<File, "id" | "name">) => Promise<void>;
   deleteFile: (id: string) => Promise<void>;

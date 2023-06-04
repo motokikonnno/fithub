@@ -49,3 +49,31 @@
   border: 1px solid #d0d7de;
   border-radius: 6px;
 }
+
+.createBy {
+  font-size: 14px;
+  color: #656d76;
+}
+
+.userName {
+  margin-left: 4px;
+  color: #656d76;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  &:hover {
+    border-bottom: 1px solid #656d76;
+  }
+}
+
+.userIcon {
+  margin-left: 8px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+.createUserWrapper {
+  display: flex;
+  align-items: center;
+}

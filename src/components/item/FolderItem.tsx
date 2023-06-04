@@ -1,6 +1,8 @@
+import useFetchUser from "@/hooks/useFetchUser";
 import { Folder } from "@/models/Folder";
 import { getTimeDiff } from "@/utils/getTime";
 import Image from "next/image";
+import Link from "next/link";
 import React, { FC } from "react";
 import styles from "../../styles/components/item/FolderWithFileItem.module.scss";
 
@@ -35,6 +37,7 @@ export const FolderItem: FC<FolderItemProps> = React.memo(
     submitEditEnter,
   }) => {
     const created_at = getTimeDiff(folder.created_at);
+    const { user } = useFetchUser(folder.user_id);
     return (
       <div className={styles.listWrapper}>
         <div className={styles.leftContainer}>
@@ -67,7 +70,22 @@ export const FolderItem: FC<FolderItemProps> = React.memo(
           )}
         </div>
         <div className={styles.rightContainer}>
-          <span className={styles.createdAt}>{created_at}</span>
+          <div className={styles.createUserWrapper}>
+            <span className={styles.createBy}>created by</span>
+            {user?.image && (
+              <Image
+                src={user?.image}
+                width={14}
+                height={14}
+                alt="user-icon"
+                className={styles.userIcon}
+              />
+            )}
+            <Link href={`/user/${folder.user_id}`} className={styles.userName}>
+              {user?.name}
+            </Link>
+          </div>
+          <time className={styles.createdAt}>{created_at}</time>
           {toggleAction && (
             <div className={styles.actionContainer}>
               <Image

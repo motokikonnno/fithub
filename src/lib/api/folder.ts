@@ -5,7 +5,7 @@ export async function createFolder(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<void>> {
-  const { name, parent_id, repository_id } = req.body;
+  const { name, parent_id, repository_id, user_id } = req.body;
 
   try {
     const response = await prisma.folder.create({
@@ -13,6 +13,7 @@ export async function createFolder(
         name,
         repository_id,
         parent_id,
+        user_id,
       },
     });
     return res.status(200).json(response);

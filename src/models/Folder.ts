@@ -3,6 +3,7 @@ import {
   FolderRepository,
 } from "@/repositories/FolderRepository";
 import { Repository } from "./Repository";
+import { User } from "./User";
 
 export type Folder = {
   id: string;
@@ -10,14 +11,16 @@ export type Folder = {
   parent_id: string;
   created_at: string;
   repository_id: string;
+  user_id: string;
   repository: Repository;
+  user: User;
 };
 
 export const folderFactory = (rep?: FolderRepository) => {
   const repository = rep ?? folderRepository;
   return {
     create: async (
-      params: Omit<Folder, "id" | "created_at" | "files" | "repository">
+      params: Pick<Folder, "name" | "parent_id" | "user_id" | "repository_id">
     ): Promise<void> => {
       await repository.createFolder(params);
     },

@@ -22,7 +22,6 @@ model Account {
   scope              String?
   id_token           String?  @db.Text
   session_state      String?
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
@@ -39,6 +38,8 @@ model User {
   accounts      Account[]
   repositories  Repository[]
   team_members  TeamMember[]
+  folders       Folder[]
+  files         File[]
 }
 
 model Repository {
@@ -68,22 +69,28 @@ model Folder {
   parent_id     String
   created_at    DateTime   @default(now())
   repository_id String
+  user_id       String
   repository    Repository @relation(fields: [repository_id], references: [id])
+  user          User       @relation(fields: [user_id], references: [id])
 
   @@index([repository_id])
+  @@index([user_id])
 }
 
 model File {
-  id              String      @id @default(cuid())
+  id              String          @id @default(cuid())
   name            String
   parent_id       String
-  created_at      DateTime    @default(now())
+  created_at      DateTime        @default(now())
   repository_id   String
-  repository      Repository  @relation(fields: [repository_id], references: [id])
+  user_id         String
+  repository      Repository      @relation(fields: [repository_id], references: [id])
   commits         Commit[]
   current_commits CurrentCommit[]
+  user            User            @relation(fields: [user_id], references: [id])
 
   @@index([repository_id])
+  @@index([user_id])
 }
 
 model Issue {

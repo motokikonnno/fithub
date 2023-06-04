@@ -5,7 +5,7 @@ export async function createFile(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<void>> {
-  const { name, repository_id, parent_id } = req.body;
+  const { name, repository_id, parent_id, user_id } = req.body;
 
   try {
     const response = await prisma.file.create({
@@ -13,6 +13,7 @@ export async function createFile(
         name,
         repository_id,
         parent_id,
+        user_id,
       },
     });
     return res.status(200).json(response);

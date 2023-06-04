@@ -3,7 +3,7 @@ import { Folder } from "@/models/Folder";
 
 export type FolderRepository = {
   createFolder: (
-    params: Omit<Folder, "id" | "created_at" | "files" | "repository">
+    params: Pick<Folder, "name" | "parent_id" | "user_id" | "repository_id">
   ) => Promise<void>;
   updateFolder: (params: Pick<Folder, "id" | "name">) => Promise<void>;
   deleteFolder: (id: string) => Promise<void>;
