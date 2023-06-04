@@ -8,7 +8,6 @@ import { Header } from "../layouts/Header";
 import { Modal } from "../Modal";
 import { Tabs } from "../Tabs";
 import { itemType } from "./UserProfile";
-import { Issue } from "./Issue";
 import { FolderItem } from "../item/FolderItem";
 import { FileItem } from "../item/FileItem";
 import { Tiptap } from "../Tiptap";
@@ -18,26 +17,15 @@ import { Folder, folderFactory } from "@/models/Folder";
 import { File, fileFactory } from "@/models/File";
 import { User } from "@/models/User";
 import { useSession } from "next-auth/react";
-
-export type IssueStateType = {
-  id: string;
-  type: string;
-  issues: IssueType[];
-};
-
-export type IssueType = {
-  id: string;
-  title: string;
-  createdAt: string;
-  createdUser: string;
-  type: string;
-};
+import { Issue } from "@/models/Issue";
+import { IssueList } from "./IssueList";
 
 export type RepositoryDetailProps = {
   repository: Repository;
   folders: Folder[];
   files: File[];
   user: User;
+  issues: Issue[];
 };
 
 export const items: itemType[] = [
@@ -52,55 +40,7 @@ export const items: itemType[] = [
 ];
 
 export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
-  ({ repository, folders, files, user }) => {
-    const issueList = [
-      {
-        id: "1",
-        title: "記事が投稿されたら通知がいくようにする",
-        createdAt: "4 days ago",
-        createdUser: "motoki",
-        type: "To do",
-      },
-      {
-        id: "2",
-        title: "記事が投稿されたら通知がいくようにする",
-        createdAt: "4 days ago",
-        createdUser: "motoki",
-        type: "To do",
-      },
-      {
-        id: "3",
-        title: "記事が投稿されたら通知がいくようにする",
-        createdAt: "4 days ago",
-        createdUser: "motoki",
-        type: "Doing",
-      },
-      {
-        id: "4",
-        title: "記事が投稿されたら通知がいくようにする",
-        createdAt: "4 days ago",
-        createdUser: "motoki",
-        type: "Doing",
-      },
-      {
-        id: "5",
-        title: "記事が投稿されたら通知がいくようにする",
-        createdAt: "4 days ago",
-        createdUser: "motoki",
-        type: "Done",
-      },
-      {
-        id: "6",
-        title: "記事が投稿されたら通知がいくようにする",
-        createdAt: "4 days ago",
-        createdUser: "motoki",
-        type: "Done",
-      },
-    ];
-    const issueTodo = issueList.filter(({ type }) => type === "To do");
-    const issueDoing = issueList.filter(({ type }) => type === "Doing");
-    const issueDone = issueList.filter(({ type }) => type === "Done");
-
+  ({ repository, folders, files, user, issues }) => {
     const modalHeaderItems = [
       {
         name: "commit",
@@ -140,24 +80,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         message: "feat-ログイン機能",
         userName: "motoki",
         updatedAt: "2023/05/12",
-      },
-    ];
-
-    const issueData = [
-      {
-        id: "1",
-        type: "To do",
-        issues: issueTodo,
-      },
-      {
-        id: "2",
-        type: "Doing",
-        issues: issueDoing,
-      },
-      {
-        id: "3",
-        type: "Done",
-        issues: issueDone,
       },
     ];
 
@@ -765,7 +687,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
             )}
           </div>
         )}
-        {currentTab === "Issue" && <Issue issues={issueData} />}
+        {currentTab === "Issue" && (
+          <IssueList issues={issues} repository={repository} user={user} />
+        )}
         <Footer />
       </>
     );
