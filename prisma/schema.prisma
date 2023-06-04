@@ -40,6 +40,7 @@ model User {
   team_members  TeamMember[]
   folders       Folder[]
   files         File[]
+  issues        Issue[]
 }
 
 model Repository {
@@ -99,12 +100,13 @@ model Issue {
   type          String     @default("To do")
   issue         String     @db.LongText
   created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
   repository_id String
   user_id       String
+  user          User       @relation(fields: [user_id], references: [id])
   repository    Repository @relation(fields: [repository_id], references: [id])
 
   @@index([repository_id])
+  @@index([user_id])
 }
 
 model Commit {
