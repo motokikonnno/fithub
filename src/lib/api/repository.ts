@@ -64,7 +64,7 @@ export async function getRepository(
 export async function createRepository(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | NextApiResponse<Repository>> {
+): Promise<void | NextApiResponse<{ id: string }>> {
   const { user_id, name, description, is_private, read_me, is_read_me } =
     req.body;
   try {
