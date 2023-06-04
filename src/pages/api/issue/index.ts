@@ -1,4 +1,4 @@
-import { createIssue } from "@/lib/api/issue";
+import { createIssue, getIssues } from "@/lib/api/issue";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
@@ -7,6 +7,8 @@ const handleCreateIssueRequest: NextApiHandler = async (
   res: NextApiResponse
 ) => {
   switch (req.method) {
+    case HttpMethod.GET:
+      return getIssues(req, res);
     case HttpMethod.POST:
       return createIssue(req, res);
     default:

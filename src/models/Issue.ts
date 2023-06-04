@@ -27,6 +27,10 @@ export type updateIssue = {
 export const issueFactory = (rep?: IssueRepository) => {
   const repository = rep ?? issueRepository;
   return {
+    index: async (): Promise<Issue[]> => {
+      const issues = await repository.getIssues();
+      return issues;
+    },
     create: async (
       params: Omit<Issue, "id" | "created_at" | "user" | "repository" | "type">
     ): Promise<{ id: string } | void> => {

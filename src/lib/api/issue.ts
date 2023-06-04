@@ -1,5 +1,30 @@
+import { Issue } from "@/models/Issue";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../prisma";
+
+export async function getIssues(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<Issue[]>> {
+  try {
+    const issues = await prisma.issue.findMany({
+      select: {
+        id: true,
+        user_id: true,
+        title: true,
+        issue: true,
+        type: true,
+        user: true,
+        repository: true,
+        created_at: true,
+        repository_id: true,
+      },
+    });
+    return res.status(200).json({ issues: issues });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
 
 export async function createIssue(
   req: NextApiRequest,
