@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import styles from "../../styles/components/list/RepositoryList.module.scss";
 import { InputSearch } from "../InputSearch";
 import Image from "next/image";
@@ -30,13 +30,16 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
       setIsDisabled(currentRepository !== deleteText);
     }, [deleteText, currentRepository]);
 
-    const handleClose = (name?: string, id?: string) => {
-      if (name && id) {
-        setRepositoryId(id);
-        setCurrentRepository(name);
-      }
-      setIsVisible(!isVisible);
-    };
+    const handleClose = useCallback(
+      (name?: string, id?: string) => {
+        if (name && id) {
+          setRepositoryId(id);
+          setCurrentRepository(name);
+        }
+        setIsVisible(!isVisible);
+      },
+      [isVisible]
+    );
 
     const deleteRepository = async () => {
       await repositoryFactory().delete(repositoryId);
