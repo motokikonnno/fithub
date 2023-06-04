@@ -84,6 +84,29 @@ export async function createRepository(
   }
 }
 
+export async function updateRepository(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<
+  Pick<Repository, "id" | "is_read_me" | "read_me">
+>> {
+  const { id, read_me, is_read_me } = req.body;
+  try {
+    const repository = await prisma.repository.update({
+      where: {
+        id: id,
+      },
+      data: {
+        read_me,
+        is_read_me,
+      },
+    });
+    return res.status(200).json({ repository: repository });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
+
 export async function deleteRepository(
   req: NextApiRequest,
   res: NextApiResponse

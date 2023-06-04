@@ -39,6 +39,12 @@ export const repositoryFactory = (rep?: RepositoryRepository) => {
       const repository = await repo.createRepository(params);
       return repository;
     },
+    update: async (
+      params: Pick<Repository, "id" | "is_read_me" | "read_me">
+    ): Promise<Pick<Repository, "id" | "is_read_me" | "read_me">> => {
+      const repository = await repo.updateRepository(params);
+      return repository;
+    },
     delete: async (id: string): Promise<void> => {
       await repo.deleteRepository(id);
     },

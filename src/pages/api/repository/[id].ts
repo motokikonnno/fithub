@@ -1,4 +1,8 @@
-import { deleteRepository, getRepository } from "@/lib/api/repository";
+import {
+  deleteRepository,
+  getRepository,
+  updateRepository,
+} from "@/lib/api/repository";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
@@ -9,6 +13,8 @@ const handleRepositoryAllRequest: NextApiHandler = async (
   switch (req.method) {
     case HttpMethod.GET:
       return getRepository(req, res);
+    case HttpMethod.PUT:
+      return updateRepository(req, res);
     case HttpMethod.DELETE:
       return deleteRepository(req, res);
     default:

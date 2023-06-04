@@ -7,6 +7,9 @@ export type RepositoryRepository = {
   createRepository: (
     params: Omit<Repository, "id" | "created_at">
   ) => Promise<{ id: string }>;
+  updateRepository: (
+    params: Pick<Repository, "id" | "is_read_me" | "read_me">
+  ) => Promise<Pick<Repository, "id" | "is_read_me" | "read_me">>;
   deleteRepository: (id: string) => Promise<void>;
 };
 
@@ -27,6 +30,13 @@ const createRepository: RepositoryRepository["createRepository"] = async (
   return response.data.id;
 };
 
+const updateRepository: RepositoryRepository["updateRepository"] = async (
+  params
+) => {
+  const response = await ApiClient.put(`/repository/${params.id}`, params);
+  return response.data.repository;
+};
+
 const deleteRepository: RepositoryRepository["deleteRepository"] = async (
   id
 ) => {
@@ -37,5 +47,6 @@ export const repositoryRepository: RepositoryRepository = {
   getRepositories,
   getRepository,
   createRepository,
+  updateRepository,
   deleteRepository,
 };
