@@ -1,14 +1,16 @@
+import useFetchUser from "@/hooks/useFetchUser";
+import { Issue } from "@/models/Issue";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
 import styles from "../../styles/components/item/IssueItem.module.scss";
-import { IssueType } from "../pages/RepositoryDetail";
 
 type IssueItemProps = {
-  task: IssueType;
+  task: Issue;
 };
 
 export const IssueItem: FC<IssueItemProps> = React.memo(({ task }) => {
+  const { user } = useFetchUser(task.user_id);
   return (
     <>
       <div className={styles.issueTitleContainer}>
@@ -30,7 +32,7 @@ export const IssueItem: FC<IssueItemProps> = React.memo(({ task }) => {
       </div>
       <p
         className={styles.createUser}
-      >{`#${task.id} opened by ${task.createdUser}`}</p>
+      >{`#${task.id} opened by ${user?.name}`}</p>
     </>
   );
 });
