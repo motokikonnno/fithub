@@ -82,7 +82,7 @@ export const Header: FC<HeaderProps> = React.memo(({ image }) => {
   }, [image, user?.image]);
 
   return (
-    <div className={styles.container}>
+    <header className={styles.container}>
       <Link href={"/"}>
         <Image src={"/logo.png"} width={32} height={32} alt={"ロゴ画像"} />
       </Link>
@@ -140,6 +140,6 @@ export const Header: FC<HeaderProps> = React.memo(({ image }) => {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 });

@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const Footer = React.memo(() => {
   return (
-    <div className={styles.footerContainer}>
+    <footer className={styles.footerContainer}>
       <Image
         src={"/logo.png"}
         width={24}
@@ -13,6 +13,6 @@ export const Footer = React.memo(() => {
         className={styles.logoIcon}
       />
       <span className={styles.text}>&copy; 2023 FitHub, Inc.</span>
-    </div>
+    </footer>
   );
 });
