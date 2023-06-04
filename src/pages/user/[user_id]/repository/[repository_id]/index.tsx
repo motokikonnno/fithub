@@ -18,6 +18,7 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
   folders,
   files,
   user,
+  issues,
 }) => {
   const router = useRouter();
 
@@ -31,6 +32,7 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       folders={folders}
       files={files}
       user={user}
+      issues={issues}
     />
   );
 };
@@ -66,12 +68,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
       repository.files &&
       repository.files.filter(({ parent_id }) => parent_id === "");
     const user = repository.user && repository.user;
+    const issues = repository.issues && repository.issues;
     return {
       props: {
         repository: repository,
         folders: folders,
         files: files,
         user: user,
+        issues: issues,
       },
     };
   } catch {

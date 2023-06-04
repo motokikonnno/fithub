@@ -1,12 +1,40 @@
+import {
+  issueRepository,
+  IssueRepository,
+} from "@/repositories/IssueRepository";
 import { Repository } from "./Repository";
+import { User } from "./User";
 
 export type Issue = {
   id: number;
   title: string;
   issue: string;
+  type: string;
   created_at: string;
-  updated_at: string;
   repository_id: string;
   user_id: string;
   repository: Repository;
+  user: User;
+};
+
+export type updateIssue = {
+  id: number;
+  title?: string;
+  issue?: string;
+  type?: string;
+};
+
+export const issueFactory = (rep?: IssueRepository) => {
+  const repository = rep ?? issueRepository;
+  return {
+    create: async (
+      params: Omit<Issue, "id" | "created_at" | "user" | "repository" | "type">
+    ): Promise<{ id: string } | void> => {
+      const issue = await repository.createIssue(params);
+      return issue;
+    },
+    update: async (params: updateIssue): Promise<void> => {
+      await repository.updateIssue(params);
+    },
+  };
 };
