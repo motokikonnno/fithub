@@ -1,25 +1,28 @@
+import { issueFactory } from "@/models/Issue";
 import { Repository, repositoryFactory } from "@/models/Repository";
+import { User } from "@/models/User";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import styles from "../styles/components/Tiptap.module.scss";
-// import CodeBlock from "@tiptap/extension-code-block";
-// import Prism from "prismjs";
-// // import "prismjs/components/prism-html";
-// import "prismjs/themes/prism-tomorrow.css";
 
 type TiptapProps = {
   text?: string;
   repository: Repository;
-  type: "issue" | "readme";
+  type: "issue" | "readme" | "createIssue";
+  handleTitleText?: () => void;
+  titleText?: string;
+  user?: User;
 };
 
 export const Tiptap: FC<TiptapProps> = React.memo(
-  ({ text, repository, type }) => {
+  ({ text, repository, type, handleTitleText, titleText, user }) => {
+    const router = useRouter();
     const [tiptapEditFlag, setTiptapEditFlag] = useState(false);
     const editor = useEditor({
       extensions: [StarterKit, Link, Underline],
@@ -32,17 +35,9 @@ export const Tiptap: FC<TiptapProps> = React.memo(
     });
     const { handleSubmit, control, setValue } = useForm();
 
-    // useEffect(() => {
-    //   if (editor) {
-    //     editor.on("transaction", () => {
-    //       Prism.highlightAll();
-    //     });
-    //   }
-    // }, [editor]);
-
     useEffect(() => {
       editor?.setEditable(tiptapEditFlag);
-    }, [editor, tiptapEditFlag]);
+    }, [editor, tiptapEditFlag, type]);
 
     useEffect(() => {
       if (editor) {
@@ -71,9 +66,37 @@ export const Tiptap: FC<TiptapProps> = React.memo(
           is_read_me: true,
           id: repository.id,
         });
-      } else {
+        setTiptapEditFlag(false);
+      } else if (type === "issue") {
+        setTiptapEditFlag(false);
+      } else if (type === "createIssue") {
+        if (titleText && user?.id) {
+          const newIssue = await issueFactory().create({
+            title: titleText,
+            issue: readme,
+            repository_id: repository.id,
+            user_id: user.id,
+          });
+        }
+        if (handleTitleText) handleTitleText();
+        // TODO: リダイレクト先をissue詳細ページに変更する
+        router.push(`/user/${user?.id}/repository/${repository.id}?tab=Issue`);
       }
-      setTiptapEditFlag(false);
+    };
+
+    const onCreateSubmit = async (data: FieldValues) => {
+      const readme = data.content as string;
+      if (titleText && user?.id) {
+        const newIssue = await issueFactory().create({
+          title: titleText,
+          issue: readme,
+          repository_id: repository.id,
+          user_id: user.id,
+        });
+      }
+      if (handleTitleText) handleTitleText();
+      // TODO: リダイレクト先をissue詳細ページに変更する
+      router.push(`/user/${user?.id}/repository/${repository.id}?tab=Issue`);
     };
 
     const handleSetLink = useCallback(() => {
@@ -89,7 +112,6 @@ export const Tiptap: FC<TiptapProps> = React.memo(
       // empty
       if (url === "") {
         editor.chain().focus().extendMarkRange("link").unsetLink().run();
-
         return;
       }
 
@@ -106,12 +128,22 @@ export const Tiptap: FC<TiptapProps> = React.memo(
       return null;
     }
 
+    if (type === "createIssue") {
+      editor.setEditable(true);
+    }
+
     return (
       <>
-        {tiptapEditFlag && (
+        {type === "createIssue" ? (
           <div className={styles.headMenuWrapper}>
             <EditorHeadMenu editor={editor} handleSetLink={handleSetLink} />
           </div>
+        ) : (
+          tiptapEditFlag && (
+            <div className={styles.headMenuWrapper}>
+              <EditorHeadMenu editor={editor} handleSetLink={handleSetLink} />
+            </div>
+          )
         )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <Controller
@@ -127,7 +159,11 @@ export const Tiptap: FC<TiptapProps> = React.memo(
           />
 
           <div className={styles.saveButtonContainer}>
-            {tiptapEditFlag ? (
+            {type === "createIssue" ? (
+              <button className={styles.submitIssueButton} type="submit">
+                Submit new issue
+              </button>
+            ) : tiptapEditFlag ? (
               <>
                 <button type="submit" className={styles.saveButton}>
                   Save
@@ -202,14 +238,6 @@ const EditorHeadMenu: FC<EditorHeadMenuProps> = ({ editor, handleSetLink }) => {
           height={16}
           alt="underline-icon"
         />
-      </div>
-      <div
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={`${styles.headerMenu} ${
-          editor.isActive("codeBlock") && styles.backgroundGray
-        }`}
-      >
-        <Image src={"/icons/code.svg"} width={16} height={16} alt="code-icon" />
       </div>
       <div
         onClick={() => editor.chain().focus().toggleBulletList().run()}
