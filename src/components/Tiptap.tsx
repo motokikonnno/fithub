@@ -1,6 +1,5 @@
 import { issueFactory } from "@/models/Issue";
 import { Repository, repositoryFactory } from "@/models/Repository";
-import { User } from "@/models/User";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
@@ -17,11 +16,12 @@ type TiptapProps = {
   type: "issue" | "readme" | "createIssue";
   handleTitleText?: () => void;
   titleText?: string;
-  user?: User;
+  userId?: string;
+  issueId?: number;
 };
 
 export const Tiptap: FC<TiptapProps> = React.memo(
-  ({ text, repository, type, handleTitleText, titleText, user }) => {
+  ({ text, repository, type, handleTitleText, titleText, userId, issueId }) => {
     const router = useRouter();
     const [tiptapEditFlag, setTiptapEditFlag] = useState(false);
     const editor = useEditor({
@@ -59,44 +59,32 @@ export const Tiptap: FC<TiptapProps> = React.memo(
     };
 
     const onSubmit = async (data: FieldValues) => {
-      const readme = data.content as string;
+      const content = data.content as string;
       if (type === "readme") {
         await repositoryFactory().update({
-          read_me: readme,
+          read_me: content,
           is_read_me: true,
           id: repository.id,
         });
         setTiptapEditFlag(false);
       } else if (type === "issue") {
+        if (issueId)
+          await issueFactory().update({ id: issueId, issue: content });
         setTiptapEditFlag(false);
       } else if (type === "createIssue") {
-        if (titleText && user?.id) {
+        if (titleText && userId) {
           const newIssue = await issueFactory().create({
             title: titleText,
-            issue: readme,
+            issue: content,
             repository_id: repository.id,
-            user_id: user.id,
+            user_id: userId,
           });
+          if (handleTitleText) handleTitleText();
+          router.push(
+            `/user/${userId}/repository/${repository.id}/issue/${newIssue}`
+          );
         }
-        if (handleTitleText) handleTitleText();
-        // TODO: リダイレクト先をissue詳細ページに変更する
-        router.push(`/user/${user?.id}/repository/${repository.id}?tab=Issue`);
       }
-    };
-
-    const onCreateSubmit = async (data: FieldValues) => {
-      const readme = data.content as string;
-      if (titleText && user?.id) {
-        const newIssue = await issueFactory().create({
-          title: titleText,
-          issue: readme,
-          repository_id: repository.id,
-          user_id: user.id,
-        });
-      }
-      if (handleTitleText) handleTitleText();
-      // TODO: リダイレクト先をissue詳細ページに変更する
-      router.push(`/user/${user?.id}/repository/${repository.id}?tab=Issue`);
     };
 
     const handleSetLink = useCallback(() => {
