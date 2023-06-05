@@ -136,7 +136,11 @@ export const IssueList: React.FC<IssuePropsType> = React.memo(
                                 opacity: snapshot.isDragging ? "0.5" : "1",
                               }}
                             >
-                              <IssueItem task={task} />
+                              <IssueItem
+                                task={task}
+                                user={user}
+                                repository={repository}
+                              />
                             </div>
                           )}
                         </Draggable>

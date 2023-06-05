@@ -31,6 +31,10 @@ export const issueFactory = (rep?: IssueRepository) => {
       const issues = await repository.getIssues();
       return issues;
     },
+    show: async (id: string): Promise<Issue> => {
+      const issue = await repository.getIssue(id);
+      return issue;
+    },
     create: async (
       params: Omit<Issue, "id" | "created_at" | "user" | "repository" | "type">
     ): Promise<{ id: string } | void> => {
@@ -38,7 +42,11 @@ export const issueFactory = (rep?: IssueRepository) => {
       return issue;
     },
     update: async (params: updateIssue): Promise<void> => {
-      await repository.updateIssue(params);
+      const issue = await repository.updateIssue(params);
+      return issue;
+    },
+    delete: async (id: string): Promise<void> => {
+      await repository.deleteIssue(id);
     },
   };
 };

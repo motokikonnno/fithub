@@ -4,7 +4,6 @@ import { User } from "@/models/User";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC, useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
 import styles from "../../styles/components/pages/CreateIssue.module.scss";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
@@ -83,7 +82,7 @@ export const CreateIssue: FC<CreateIssueProps> = React.memo(
               repository={repository}
               handleTitleText={handleTitleText}
               titleText={titleText}
-              user={owner}
+              userId={owner.id}
             />
           </div>
         </div>

@@ -26,6 +26,36 @@ export async function getIssues(
   }
 }
 
+export async function getIssue(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<Issue>> {
+  const { id } = req.query;
+  const issueId = Number(id);
+
+  try {
+    const issue = await prisma.issue.findUnique({
+      where: {
+        id: issueId,
+      },
+      select: {
+        id: true,
+        user_id: true,
+        title: true,
+        issue: true,
+        type: true,
+        user: true,
+        repository: true,
+        created_at: true,
+        repository_id: true,
+      },
+    });
+    return res.status(200).json({ issue: issue });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
+
 export async function createIssue(
   req: NextApiRequest,
   res: NextApiResponse
@@ -62,6 +92,25 @@ export async function updateIssue(
         title,
         issue,
         type,
+      },
+    });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
+
+export async function deleteIssue(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<void>> {
+  const { id } = req.query;
+  const issueId = Number(id);
+
+  try {
+    const response = await prisma.issue.delete({
+      where: {
+        id: issueId,
       },
     });
     return res.status(200).json(response);
