@@ -7,10 +7,11 @@ import { RepositoryListItem } from "../item/RepositoryListItem";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import { Modal } from "../Modal";
 import { User, userFactory } from "@/models/User";
+import { Team } from "@/models/Team";
 
 type RepositoryListProps = {
   repositories: Repository[];
-  user: User;
+  user: User | Team;
 };
 
 export const RepositoryList: FC<RepositoryListProps> = React.memo(

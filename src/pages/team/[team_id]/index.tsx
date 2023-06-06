@@ -9,13 +9,13 @@ type PathParams = {
   team_id: string;
 };
 
-const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({ team }) => {
+const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({ teamData }) => {
   const router = useRouter();
 
   if (router.isFallback) {
     return <Loading />;
   }
-  return <TeamProfile team={team} />;
+  return <TeamProfile teamData={teamData} />;
 };
 
 export default TeamProfilePage;
@@ -35,10 +35,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async (context) => {
   const { team_id } = context.params as PathParams;
   try {
-    const team = await teamFactory().show(team_id);
+    const teamData = await teamFactory().show(team_id);
 
     return {
-      props: { team: team },
+      props: { teamData: teamData },
       revalidate: 60,
     };
   } catch {

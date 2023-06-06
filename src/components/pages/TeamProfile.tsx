@@ -13,15 +13,19 @@ import { RepositoryList } from "../list/RepositoryList";
 import { InputSearch } from "../InputSearch";
 import { PeopleList } from "../list/PeopleLIst";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
+import { Team, teamFactory } from "@/models/Team";
+import { useForm } from "react-hook-form";
 
-type Team = {
-  name: string;
-  bio: string;
-  icon: string;
-  socialLink: string[];
+export type TeamProfileProps = {
+  teamData: Team;
 };
 
-export const TeamProfile = React.memo(() => {
+type editTeamRepositoryType = {
+  name: string;
+  bio: string;
+};
+
+export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
   const items: itemType[] = [
     {
       id: "1",
@@ -38,71 +42,6 @@ export const TeamProfile = React.memo(() => {
     {
       id: "4",
       name: "Invite",
-    },
-  ];
-
-  const team: Team = {
-    name: "FitHub",
-    bio: "これはチームの説明欄です",
-    icon: "/logo.png",
-    socialLink: [
-      "https://youtube.com",
-      "https://twitter.com",
-      "https://google.com",
-      "https://instagram.com",
-    ],
-  };
-
-  const repositories: repositoriesType[] = [
-    {
-      name: "fithub",
-      type: "public",
-      updatedAt: "2 days ago",
-    },
-    {
-      name: "git",
-      type: "private",
-      updatedAt: "3 days ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "3 days ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "4 days ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "5 days ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "1 weeks ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "1 weeks ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "1 weeks ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "1 weeks ago",
-    },
-    {
-      name: "google",
-      type: "public",
-      updatedAt: "1 weeks ago",
     },
   ];
 
@@ -141,13 +80,32 @@ export const TeamProfile = React.memo(() => {
 
   const router = useRouter();
   const query = String(router.query.tab);
+  const defaultImage =
+    "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
   const [currentTab, setCurrentTab] = useState("Overview");
   const [isToggle, setIsToggle] = useState(false);
-  const [deleteFile, setDeleteFile] = useState<string[]>([team.icon]);
-  const [currentFile, setCurrentFile] = useState<string>(team.icon);
+  const [team, setTeam] = useState(teamData);
+  const [deleteFile, setDeleteFile] = useState<string[]>(
+    team.image &&
+      !team.image.includes("lh3.googleusercontent.com") &&
+      !team.image.includes("avatars.githubusercontent.com")
+      ? [team.image]
+      : []
+  );
+  const [currentFile, setCurrentFile] = useState<string>(
+    team.image ? team.image : defaultImage
+  );
   const [isLoading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const teamId = 1;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<editTeamRepositoryType>({
+    mode: "onChange",
+    defaultValues: { name: team.name, bio: team.bio },
+  });
 
   useEffect(() => {
     const handlePopstate = () => {
@@ -181,15 +139,17 @@ export const TeamProfile = React.memo(() => {
     (name: string) => {
       setCurrentTab(name);
       router.push(
-        `/team/${teamId}/${name === "Overview" ? "" : `?tab=${name}`}`
+        `/team/${team.id}/${name === "Overview" ? "" : `?tab=${name}`}`
       );
     },
-    [router]
+    [router, team.id]
   );
 
-  const handleIsToggle = () => {
-    setCurrentFile(team.icon);
+  const handleIsToggle = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.preventDefault();
+    if (team.image) setCurrentFile(team.image);
     setIsToggle(!isToggle);
+    reset();
   };
 
   const handleLoadingFile = (flag: boolean) => {
@@ -206,10 +166,14 @@ export const TeamProfile = React.memo(() => {
     inputRef.current.click();
   };
 
-  const handleCloseAndDeleteFile = (
-    deleteFile: string[],
-    currentFile: string
-  ) => {
+  const onSubmit = async (data: editTeamRepositoryType) => {
+    const updateTeam = await teamFactory().update({
+      id: team.id,
+      image: currentFile,
+      ...data,
+    });
+    console.log(updateTeam);
+    setTeam(updateTeam);
     handleDeleteImage(deleteFile, currentFile);
     setIsToggle(false);
   };
@@ -219,14 +183,16 @@ export const TeamProfile = React.memo(() => {
       <Header />
       <div className={styles.backgroundColor}>
         <div className={styles.teamDetailContainer}>
-          <Image
-            src={team.icon}
-            width={100}
-            height={100}
-            alt="team-icon"
-            className={styles.teamIconHeader}
-          />
-          <span className={styles.teamNameHeader}>{team.name}</span>
+          {team.image && (
+            <Image
+              src={team.image}
+              width={50}
+              height={50}
+              alt="team-icon"
+              className={styles.teamIconHeader}
+            />
+          )}
+          <span className={styles.teamNameHeader}>{teamData.name}</span>
         </div>
         <div className={styles.tabsContainer}>
           {items.map((item, index) => (
@@ -289,31 +255,29 @@ export const TeamProfile = React.memo(() => {
                 <>
                   <h1 className={styles.teamName}>{team.name}</h1>
                   <div className={styles.teamBio}>{team.bio}</div>
-                  <button
-                    className={styles.editButton}
-                    onClick={handleIsToggle}
-                  >
+                  <div className={styles.editButton} onClick={handleIsToggle}>
                     Edit profile
-                  </button>
+                  </div>
                 </>
               )}
               {isToggle && (
-                <>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className={styles.inputContainer}>
                     <label className={styles.label}>Name</label>
-                    <input className={styles.inputForm} />
+                    <input
+                      className={styles.inputForm}
+                      {...register("name", { required: "※ Name is required" })}
+                    />
+                    <p className={styles.errorMessage}>
+                      {errors.name?.message}
+                    </p>
                   </div>
                   <div className={styles.inputContainer}>
-                    <label className={styles.label}>Email</label>
-                    <input className={styles.inputForm} />
+                    <label className={styles.label}>Bio</label>
+                    <input className={styles.inputForm} {...register("bio")} />
                   </div>
                   <div className={styles.updateButtonContainer}>
-                    <button
-                      className={styles.updateButton}
-                      onClick={() =>
-                        handleCloseAndDeleteFile(deleteFile, currentFile)
-                      }
-                    >
+                    <button className={styles.updateButton} type="submit">
                       Save
                     </button>
                     <button
@@ -323,7 +287,7 @@ export const TeamProfile = React.memo(() => {
                       Cancel
                     </button>
                   </div>
-                </>
+                </form>
               )}
               <h2 className={styles.profileSection}>Members</h2>
               <div className={styles.memberIconContainer}>
@@ -340,11 +304,13 @@ export const TeamProfile = React.memo(() => {
                 ))}
               </div>
             </div>
-            <Overview repositories={repositories} />
+            {team.repositories && (
+              <Overview repositories={team.repositories} user={team} />
+            )}
           </>
         )}
-        {currentTab === "Repositories" && (
-          <RepositoryList repositories={repositories} />
+        {currentTab === "Repositories" && team.repositories && (
+          <RepositoryList repositories={team.repositories} user={team} />
         )}
         {currentTab === "People" && (
           <div className={styles.tabPeopleContainer}>
