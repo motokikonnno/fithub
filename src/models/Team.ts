@@ -14,6 +14,13 @@ export type Team = {
   commits?: Commit[];
 };
 
+export type createTeamType = {
+  name: string;
+  bio: string;
+  image: string;
+  user_id: string;
+};
+
 export const teamFactory = (rep?: TeamRepository) => {
   const repository = rep ?? teamRepository;
   return {
@@ -25,10 +32,14 @@ export const teamFactory = (rep?: TeamRepository) => {
       const team = await repository.getTeam(id);
       return team;
     },
-    create: async (
-      params: Pick<Team, "name" | "bio" | "image">
-    ): Promise<{ id: string }> => {
+    create: async (params: createTeamType): Promise<{ id: string }> => {
       const team = await repository.createTeam(params);
+      return team;
+    },
+    update: async (
+      params: Pick<Team, "id" | "name" | "bio" | "image">
+    ): Promise<Team> => {
+      const team = await repository.updateTeam(params);
       return team;
     },
   };

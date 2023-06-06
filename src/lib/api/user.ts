@@ -42,7 +42,21 @@ export async function getUser(
         email: true,
         image: true,
         bio: true,
-        repositories: true,
+        team_members: {
+          select: {
+            owner: true,
+            created_at: true,
+            team: {
+              select: {
+                id: true,
+                name: true,
+                bio: true,
+                image: true,
+                created_at: true,
+              },
+            },
+          },
+        },
       },
     });
     return res.status(200).json({ user: user });

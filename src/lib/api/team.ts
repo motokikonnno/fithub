@@ -1,5 +1,6 @@
 import { Team } from "@/models/Team";
 import { NextApiRequest, NextApiResponse } from "next";
+import { TRUE } from "sass";
 import prisma from "../prisma";
 
 export async function getTeams(
@@ -59,7 +60,7 @@ export async function createTeam(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<{ id: string }>> {
-  const { name, bio, image } = req.body;
+  const { name, bio, image, user_id } = req.body;
 
   try {
     const team = await prisma.team.create({
@@ -69,7 +70,39 @@ export async function createTeam(
         image,
       },
     });
+
+    await prisma.teamMember.create({
+      data: {
+        team_id: team.id,
+        user_id: user_id,
+        owner: true,
+      },
+    });
+
     return res.status(200).json({ id: team.id });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
+
+export async function updateTeam(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<Team>> {
+  const { id, name, bio, image } = req.body;
+
+  try {
+    const team = await prisma.team.update({
+      where: {
+        id: id,
+      },
+      data: {
+        name,
+        bio,
+        image,
+      },
+    });
+    return res.status(200).json({ team: team });
   } catch (error) {
     return res.status(500).end(error);
   }

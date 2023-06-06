@@ -1,8 +1,8 @@
-import { getTeam } from "@/lib/api/team";
+import { getTeam, updateTeam } from "@/lib/api/team";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleRepositoryAllRequest: NextApiHandler = async (
+const handleTeamRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -10,7 +10,7 @@ const handleRepositoryAllRequest: NextApiHandler = async (
     case HttpMethod.GET:
       return getTeam(req, res);
     case HttpMethod.PUT:
-    // return updateTeam(req, res);
+      return updateTeam(req, res);
     case HttpMethod.DELETE:
     // return deleteTeam(req, res);
     default:
@@ -18,4 +18,4 @@ const handleRepositoryAllRequest: NextApiHandler = async (
   }
 };
 
-export default handleRepositoryAllRequest;
+export default handleTeamRequest;

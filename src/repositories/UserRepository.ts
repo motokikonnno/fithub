@@ -1,9 +1,9 @@
 import { ApiClient } from "@/lib/api-client";
-import { User } from "@/models/User";
+import { User, UserBelongsToTeam } from "@/models/User";
 
 export type UserRepository = {
   getUsers: () => Promise<User[]>;
-  getUser: (id: string) => Promise<User>;
+  getUser: (id: string) => Promise<UserBelongsToTeam>;
   updateUser: (params: User) => Promise<User>;
 };
 

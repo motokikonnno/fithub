@@ -1,6 +1,5 @@
 import { userRepository, UserRepository } from "@/repositories/UserRepository";
 import { Repository } from "./Repository";
-import { TeamMember } from "./TeamMember";
 
 export type User = {
   id: string;
@@ -9,7 +8,20 @@ export type User = {
   image?: string;
   bio?: string;
   repositories?: Repository[];
-  team_members?: TeamMember[];
+};
+
+export type UserBelongsToTeam = User & {
+  team_members: {
+    owner: boolean;
+    created_at: string;
+    team: {
+      id: string;
+      name: string;
+      bio: string;
+      image: string;
+      created_at: string;
+    };
+  };
 };
 
 export const userFactory = (rep?: UserRepository) => {
@@ -19,7 +31,7 @@ export const userFactory = (rep?: UserRepository) => {
       const users = await repository.getUsers();
       return users;
     },
-    show: async (id: string): Promise<User> => {
+    show: async (id: string): Promise<UserBelongsToTeam> => {
       const user = await repository.getUser(id);
       return user;
     },

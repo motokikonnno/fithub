@@ -6,6 +6,7 @@ import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { teamFactory } from "@/models/Team";
+import { useSession } from "next-auth/react";
 
 type createTeam = {
   name: string;
@@ -17,6 +18,7 @@ export const CreateTeam = React.memo(() => {
   const router = useRouter();
   const defaultImage =
     "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
+  const { data: session } = useSession();
   const [deleteFile, setDeleteFile] = useState<string[]>([]);
   const [currentFile, setCurrentFile] = useState<string>(defaultImage);
   const [isLoading, setLoading] = useState(false);
@@ -55,8 +57,14 @@ export const CreateTeam = React.memo(() => {
   };
 
   const onSubmit = async (data: createTeam) => {
-    const newTeam = await teamFactory().create({ image: currentFile, ...data });
-    if (newTeam) router.push(`/team/${newTeam}`);
+    if (session?.user.id) {
+      const newTeam = await teamFactory().create({
+        user_id: session.user.id,
+        image: currentFile,
+        ...data,
+      });
+      if (newTeam) router.push(`/team/${newTeam}`);
+    }
   };
 
   return (

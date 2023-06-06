@@ -2,7 +2,7 @@ import { deleteIssue, getIssue, updateIssue } from "@/lib/api/issue";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleRepositoryAllRequest: NextApiHandler = async (
+const handleIssueRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -18,4 +18,4 @@ const handleRepositoryAllRequest: NextApiHandler = async (
   }
 };
 
-export default handleRepositoryAllRequest;
+export default handleIssueRequest;

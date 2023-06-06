@@ -1,11 +1,17 @@
+import { UserBelongsToTeam } from "@/models/User";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { FC } from "react";
 import styles from "../../styles/components/pages/TeamList.module.scss";
 import { AppLayout } from "../layouts/AppLayout";
 import { Footer } from "../layouts/Footer";
 
-export const TeamList = React.memo(() => {
+export type TeamListProps = {
+  user: UserBelongsToTeam;
+};
+
+export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
+  console.log(user);
   const teams = [
     {
       name: "FitHub",
@@ -21,11 +27,6 @@ export const TeamList = React.memo(() => {
     },
   ];
 
-  const user = {
-    name: "motoki",
-    icon: "/logo.png",
-  };
-
   return (
     <>
       <AppLayout>
@@ -33,7 +34,7 @@ export const TeamList = React.memo(() => {
           <div className={styles.userLinkContainer}>
             <div className={styles.userDetailContainer}>
               <Image
-                src={user.icon}
+                src={user.image}
                 width={48}
                 height={48}
                 alt="user-icon"
