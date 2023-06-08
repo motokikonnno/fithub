@@ -46,6 +46,7 @@ model User {
 
 model Repository {
   id            String    @id @default(cuid())
+  next_issue_id Int       @default(1)
   name          String
   description   String?
   is_private    Int // 1: パブリック, 2: プライベート
@@ -96,7 +97,8 @@ model File {
 }
 
 model Issue {
-  id            Int        @id @default(autoincrement())
+  id            String     @id @default(cuid())
+  issue_number  Int
   title         String
   type          String     @default("To do")
   issue         String     @db.LongText
@@ -105,7 +107,7 @@ model Issue {
   user_id       String
   user          User       @relation(fields: [user_id], references: [id])
   repository    Repository @relation(fields: [repository_id], references: [id])
-  mention       Mention[]
+  mention       Mention?
 
   @@index([repository_id])
   @@index([user_id])
@@ -161,10 +163,10 @@ model TeamMember {
 
 model Mention {
   id                       String         @id @default(cuid())
-  mentioned_user_id        String
-  issue_id                 Int
+  issue_id                 String         @unique
   mentioner_id             String
   created_at               DateTime       @default(now())
+  mentioned_user_id        String
   user                     User           @relation(fields: [mentioned_user_id], references: [id])
   issue                    Issue          @relation(fields: [issue_id], references: [id])
 
