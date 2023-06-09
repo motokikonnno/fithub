@@ -3,7 +3,6 @@ import styles from "../../styles/components/pages/TeamProfile.module.scss";
 import { Header } from "../layouts/Header";
 import { Tabs } from "../Tabs";
 import Image from "next/image";
-import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
 import { Footer } from "../layouts/Footer";
 import { useRouter } from "next/router";
@@ -15,6 +14,10 @@ import { PeopleList } from "../list/PeopleLIst";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 import { Team, teamFactory } from "@/models/Team";
 import { useForm } from "react-hook-form";
+import { recentSortRepositories } from "@/services/recentSortRepositories";
+import { useSession } from "next-auth/react";
+import { Repository } from "@/models/Repository";
+import { TeamMember } from "@/models/TeamMember";
 
 export type TeamProfileProps = {
   teamData: Team;
@@ -26,58 +29,6 @@ type editTeamRepositoryType = {
 };
 
 export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
-  const items: itemType[] = [
-    {
-      id: "1",
-      name: "Overview",
-    },
-    {
-      id: "2",
-      name: "Repositories",
-    },
-    {
-      id: "3",
-      name: "People",
-    },
-    {
-      id: "4",
-      name: "Invite",
-    },
-  ];
-
-  const peopleDetail = [
-    {
-      name: "motoki",
-      icon: "/logo.png",
-      teamNumber: "1",
-    },
-    {
-      name: "motoki",
-      icon: "/logo.png",
-      teamNumber: "2",
-    },
-    {
-      name: "motoki",
-      icon: "/logo.png",
-      teamNumber: "1",
-    },
-    {
-      name: "motoki",
-      icon: "/logo.png",
-      teamNumber: "2",
-    },
-    {
-      name: "motoki",
-      icon: "/logo.png",
-      teamNumber: "1",
-    },
-    {
-      name: "motoki",
-      icon: "/logo.png",
-      teamNumber: "2",
-    },
-  ];
-
   const router = useRouter();
   const query = String(router.query.tab);
   const defaultImage =
@@ -96,6 +47,10 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
     team.image ? team.image : defaultImage
   );
   const [isLoading, setLoading] = useState(false);
+  const { data: session } = useSession();
+  const isTeamMember = team.team_members?.find(
+    ({ user }) => user.id === session?.user.id
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const {
     register,
@@ -107,6 +62,38 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
     defaultValues: { name: team.name, bio: team.bio },
   });
 
+  let items: itemType[];
+  if (isTeamMember) {
+    items = [
+      {
+        id: "1",
+        name: "Overview",
+      },
+      {
+        id: "2",
+        name: "Repositories",
+      },
+      {
+        id: "3",
+        name: "People",
+      },
+      {
+        id: "4",
+        name: "Invite",
+      },
+    ];
+  } else {
+    items = [
+      {
+        id: "1",
+        name: "Overview",
+      },
+      {
+        id: "3",
+        name: "People",
+      },
+    ];
+  }
   useEffect(() => {
     const handlePopstate = () => {
       if (deleteFile) handleDeleteImage(deleteFile, currentFile);
@@ -172,7 +159,6 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
       image: currentFile,
       ...data,
     });
-    console.log(updateTeam);
     setTeam(updateTeam);
     handleDeleteImage(deleteFile, currentFile);
     setIsToggle(false);
@@ -251,7 +237,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
                   </>
                 )}
               </div>
-              {!isToggle && (
+              {!isToggle && isTeamMember && (
                 <>
                   <h1 className={styles.teamName}>{team.name}</h1>
                   <div className={styles.teamBio}>{team.bio}</div>
@@ -291,26 +277,37 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
               )}
               <h2 className={styles.profileSection}>Members</h2>
               <div className={styles.memberIconContainer}>
-                {mockTeams.map(({ image }, index) => (
-                  <Link href={"/"} key={index}>
-                    <Image
-                      src={image}
-                      width={32}
-                      height={32}
-                      className={styles.memberIcon}
-                      alt="member-icon"
-                    />
-                  </Link>
-                ))}
+                {team.team_members &&
+                  team.team_members.map(
+                    ({ user }, index) =>
+                      user.image && (
+                        <Link href={`/user/${user.id}`} key={index}>
+                          <Image
+                            src={user.image}
+                            width={32}
+                            height={32}
+                            className={styles.memberIcon}
+                            alt="member-icon"
+                          />
+                        </Link>
+                      )
+                  )}
               </div>
             </div>
             {team.repositories && (
-              <Overview repositories={team.repositories} user={team} />
+              <Overview
+                repositories={team.repositories}
+                isTeamMember={isTeamMember}
+              />
             )}
           </>
         )}
         {currentTab === "Repositories" && team.repositories && (
-          <RepositoryList repositories={team.repositories} user={team} />
+          <RepositoryList
+            repositories={team.repositories}
+            owner={team}
+            type={"team"}
+          />
         )}
         {currentTab === "People" && (
           <div className={styles.tabPeopleContainer}>
@@ -323,27 +320,34 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
                   borderColor={"#d0d7de"}
                 />
               </div>
-              <Link href={"/team/1?tab=Invite"}>
-                <button className={styles.inviteButton}>Invite</button>
-              </Link>
+              {isTeamMember && (
+                <Link href={`/team/${team.id}?tab=Invite`}>
+                  <button className={styles.inviteButton}>Invite</button>
+                </Link>
+              )}
             </div>
             <div className={styles.peopleListWrapper}>
-              <div className={styles.peopleNumber}>41 people</div>
-              {peopleDetail.map((people, index) => (
-                <PeopleList
-                  people={people}
-                  index={index}
-                  peoples={peopleDetail}
-                  key={index}
-                  isInvite={false}
-                />
-              ))}
+              <div
+                className={styles.peopleNumber}
+              >{`${team.team_members?.length} people`}</div>
+              {team.team_members &&
+                team.team_members.map(
+                  ({ user }, index) =>
+                    team.team_members && (
+                      <PeopleList
+                        people={user}
+                        index={index}
+                        peoples={team.team_members}
+                        key={index}
+                      />
+                    )
+                )}
             </div>
           </div>
         )}
         {currentTab === "Invite" && (
           <div className={styles.tabPeopleContainer}>
-            <div className={styles.inputSearchContainer}>
+            {/* <div className={styles.inputSearchContainer}>
               <InputSearch
                 placeholder={"Find a member..."}
                 backgroundColor={"#fff"}
@@ -352,17 +356,20 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
               />
             </div>
             <div className={styles.peopleListWrapper}>
-              <div className={styles.peopleNumber}>41 people</div>
-              {peopleDetail.map((people, index) => (
-                <PeopleList
-                  people={people}
-                  index={index}
-                  peoples={peopleDetail}
-                  key={index}
-                  isInvite={true}
-                />
-              ))}
-            </div>
+              <div
+                className={styles.peopleNumber}
+              >{`${peopleDetail.length} people`}</div>
+              {team.team_members &&
+                team.team_members.map(({ user }, index) => (
+                  <PeopleList
+                    people={user}
+                    index={index}
+                    peoples={peopleDetail}
+                    key={index}
+                    isInvite={true}
+                  />
+                ))}
+            </div> */}
           </div>
         )}
       </div>
@@ -371,14 +378,38 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(({ teamData }) => {
   );
 });
 
-const Overview: FC<ProfileProps> = ({ repositories }) => {
+type OverviewProps = {
+  repositories: Repository[];
+  isTeamMember: TeamMember | undefined;
+};
+
+const Overview: FC<OverviewProps> = ({ repositories, isTeamMember }) => {
+  const sortRepositories = recentSortRepositories(repositories);
+  const privateRepositories = sortRepositories.slice(0, 10);
+  const publicRepositories = sortRepositories
+    .filter(({ is_private }) => is_private === 2)
+    .slice(0, 10);
   return (
     <div className={styles.rightContainer}>
       <h2 className={styles.title}>Recent repositories</h2>
       <div className={styles.repositoriesContainer}>
-        {repositories.map((repository, index) => (
-          <RepositoryCard index={index} repository={repository} key={index} />
-        ))}
+        {isTeamMember
+          ? privateRepositories.map((repository, index) => (
+              <RepositoryCard
+                index={index}
+                repository={repository}
+                key={index}
+                type={"team"}
+              />
+            ))
+          : publicRepositories.map((repository, index) => (
+              <RepositoryCard
+                index={index}
+                repository={repository}
+                key={index}
+                type={"team"}
+              />
+            ))}
       </div>
     </div>
   );

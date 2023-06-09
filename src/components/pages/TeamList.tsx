@@ -11,40 +11,26 @@ export type TeamListProps = {
 };
 
 export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
-  console.log(user);
-  const teams = [
-    {
-      name: "FitHub",
-      icon: "/logo.png",
-    },
-    {
-      name: "hoge",
-      icon: "/logo.png",
-    },
-    {
-      name: "huga",
-      icon: "/logo.png",
-    },
-  ];
-
   return (
     <>
-      <AppLayout>
+      <AppLayout user={user}>
         <div className={styles.layoutContainer}>
           <div className={styles.userLinkContainer}>
             <div className={styles.userDetailContainer}>
-              <Image
-                src={user.image}
-                width={48}
-                height={48}
-                alt="user-icon"
-                className={styles.userIcon}
-              />
-              <Link href={"/mypage"} className={styles.userName}>
+              {user.image && (
+                <Image
+                  src={user.image}
+                  width={48}
+                  height={48}
+                  alt="user-icon"
+                  className={styles.userIcon}
+                />
+              )}
+              <Link href={`/user/${user.id}`} className={styles.userName}>
                 {user.name}
               </Link>
             </div>
-            <Link href={"/mypage"}>
+            <Link href={`/user/${user.id}`}>
               <button className={styles.profileButton}>
                 Go to your profile
               </button>
@@ -52,26 +38,38 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
           </div>
           <div className={styles.teamListContainer}>
             <h1 className={styles.pageTitle}>Teams</h1>
-            <Link href={"/team/new"}>
-              <button className={styles.newTeamButton}>New team</button>
+            <Link href={"/team/new"} className={styles.newTeamButton}>
+              New team
             </Link>
           </div>
-          {teams.map((team, index) => (
-            <div
-              key={index}
-              className={`${styles.teamContainer} ${
-                teams.length - 1 === index && styles.lastItem
-              } ${index === 0 && styles.firstItem}`}
-            >
-              <div className={styles.teamDetailContainer}>
-                <Image src={team.icon} width={20} height={20} alt="team-icon" />
-                <Link href={`team/${team.name}`} className={styles.teamName}>
-                  {team.name}
-                </Link>
+          {user.team_members &&
+            user.team_members.map((team, index) => (
+              <div
+                key={index}
+                className={`${styles.teamContainer} ${
+                  user.team_members &&
+                  user.team_members.length - 1 === index &&
+                  styles.lastItem
+                } ${index === 0 && styles.firstItem}`}
+              >
+                <div className={styles.teamDetailContainer}>
+                  <Image
+                    src={team.team.image}
+                    width={20}
+                    height={20}
+                    alt="team-icon"
+                    className={styles.teamImage}
+                  />
+                  <Link
+                    href={`team/${team.team.id}`}
+                    className={styles.teamName}
+                  >
+                    {team.team.name}
+                  </Link>
+                </div>
+                <button className={styles.leaveButton}>Leave</button>
               </div>
-              <button className={styles.leaveButton}>Leave</button>
-            </div>
-          ))}
+            ))}
         </div>
         <Footer />
       </AppLayout>
