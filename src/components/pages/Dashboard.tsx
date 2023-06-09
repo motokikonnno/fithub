@@ -4,7 +4,7 @@ import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import styles from "../../styles/components/pages/Dashboard.module.scss";
 import { Footer } from "../layouts/Footer";
-import { DefaultUser } from "next-auth";
+import { UserBelongsToTeam } from "@/models/User";
 
 type Activities = {
   name: string;
@@ -14,11 +14,7 @@ type Activities = {
 };
 
 export type DashboardProps = {
-  user:
-    | (DefaultUser & {
-        id: string;
-      })
-    | undefined;
+  user: UserBelongsToTeam;
 };
 
 export const Dashboard: FC<DashboardProps> = React.memo(({ user }) => {
@@ -44,7 +40,7 @@ export const Dashboard: FC<DashboardProps> = React.memo(({ user }) => {
   ];
 
   return (
-    <AppLayout>
+    <AppLayout user={user}>
       <h2 className={styles.sectionTitle}>Contributions</h2>
       <div className={styles.calendarContainer}>
         <CalendarHeatmap
