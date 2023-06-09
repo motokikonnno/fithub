@@ -1,5 +1,6 @@
 import { Loading } from "@/components/Loading";
 import { TeamProfile, TeamProfileProps } from "@/components/pages/TeamProfile";
+import { itemType } from "@/components/pages/UserProfile";
 import { teamFactory } from "@/models/Team";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
@@ -16,6 +17,38 @@ const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({ teamData }) => {
   const isSessionUser = teamData.team_members
     ? teamData.team_members.some(({ user }) => user.id === session?.user.id)
     : false;
+  let items: itemType[];
+  if (isSessionUser) {
+    items = [
+      {
+        id: "1",
+        name: "Overview",
+      },
+      {
+        id: "2",
+        name: "Repositories",
+      },
+      {
+        id: "3",
+        name: "People",
+      },
+      {
+        id: "4",
+        name: "Invite",
+      },
+    ];
+  } else {
+    items = [
+      {
+        id: "1",
+        name: "Overview",
+      },
+      {
+        id: "3",
+        name: "People",
+      },
+    ];
+  }
 
   if (router.isFallback) {
     return <Loading />;
@@ -25,6 +58,7 @@ const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({ teamData }) => {
       teamData={teamData}
       router={router}
       isSessionUser={isSessionUser}
+      items={items}
     />
   );
 };

@@ -25,7 +25,6 @@ export type itemType = {
 type updateUserType = {
   name: string;
   bio: string;
-  email: string;
 };
 
 export type UserProfileProps = {
@@ -56,7 +55,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
       formState: { errors },
     } = useForm<updateUserType>({
       mode: "onChange",
-      defaultValues: { name: user.name, email: user.email, bio: user.bio },
+      defaultValues: { name: user.name, bio: user.bio },
     });
     const defaultImage =
       "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
@@ -195,16 +194,21 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
                 </>
               )}
             </div>
-            {!isToggle && isSessionUser && (
+            {!isToggle && (
               <>
                 <h1 className={styles.userName}>{user.name}</h1>
                 <div className={styles.userBio}>{user.bio}</div>
-                <button
-                  className={styles.editButton}
-                  onClick={() => setIsToggle(true)}
-                >
-                  Edit profile
-                </button>
+                {isSessionUser && (
+                  <>
+                    <div className={styles.userEmail}>{user.email}</div>
+                    <button
+                      className={styles.editButton}
+                      onClick={() => setIsToggle(true)}
+                    >
+                      Edit profile
+                    </button>
+                  </>
+                )}
               </>
             )}
             {isToggle && (
@@ -220,14 +224,6 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
                 <div className={styles.inputContainer}>
                   <label className={styles.label}>Bio</label>
                   <textarea className={styles.inputForm} {...register("bio")} />
-                </div>
-                <div className={styles.inputContainer}>
-                  <label className={styles.label}>Email</label>
-                  <input
-                    className={styles.inputForm}
-                    {...register("email", { required: "Email is required" })}
-                  />
-                  <p className={styles.errorMessage}>{errors.email?.message}</p>
                 </div>
                 <div className={styles.updateButtonContainer}>
                   <button className={styles.updateButton} type="submit">

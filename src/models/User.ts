@@ -26,7 +26,7 @@ export const userFactory = (rep?: UserRepository) => {
       const user = await repository.getUser(id);
       return user;
     },
-    update: async (params: User): Promise<User> => {
+    update: async (params: Omit<User, "email">): Promise<User> => {
       const user = await repository.updateUser(params);
       return user;
     },

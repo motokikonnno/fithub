@@ -22,6 +22,7 @@ export type TeamProfileProps = {
   teamData: Team;
   isSessionUser: boolean;
   router: NextRouter;
+  items: itemType[];
 };
 
 type editTeamRepositoryType = {
@@ -30,7 +31,7 @@ type editTeamRepositoryType = {
 };
 
 export const TeamProfile: FC<TeamProfileProps> = React.memo(
-  ({ teamData, isSessionUser, router }) => {
+  ({ teamData, isSessionUser, router, items }) => {
     const query = String(router.query.tab);
     const defaultImage =
       "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
@@ -61,38 +62,6 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
       defaultValues: { name: team.name, bio: team.bio },
     });
 
-    let items: itemType[];
-    if (isSessionUser) {
-      items = [
-        {
-          id: "1",
-          name: "Overview",
-        },
-        {
-          id: "2",
-          name: "Repositories",
-        },
-        {
-          id: "3",
-          name: "People",
-        },
-        {
-          id: "4",
-          name: "Invite",
-        },
-      ];
-    } else {
-      items = [
-        {
-          id: "1",
-          name: "Overview",
-        },
-        {
-          id: "3",
-          name: "People",
-        },
-      ];
-    }
     useEffect(() => {
       const handlePopstate = () => {
         if (deleteFile) handleDeleteImage(deleteFile, currentFile);
@@ -253,13 +222,18 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
                     </>
                   )}
                 </div>
-                {!isToggle && isSessionUser && (
+                {!isToggle && (
                   <>
                     <h1 className={styles.teamName}>{team.name}</h1>
                     <div className={styles.teamBio}>{team.bio}</div>
-                    <div className={styles.editButton} onClick={handleIsToggle}>
-                      Edit profile
-                    </div>
+                    {isSessionUser && (
+                      <div
+                        className={styles.editButton}
+                        onClick={handleIsToggle}
+                      >
+                        Edit profile
+                      </div>
+                    )}
                   </>
                 )}
                 {isToggle && (

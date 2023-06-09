@@ -59,7 +59,7 @@ export async function updateUser(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<User>> {
-  const { id, name, email, image, bio } = req.body;
+  const { id, name, image, bio } = req.body;
   try {
     const user = await prisma.user.update({
       where: {
@@ -68,7 +68,6 @@ export async function updateUser(
       data: {
         name,
         bio,
-        email,
         image,
       },
     });

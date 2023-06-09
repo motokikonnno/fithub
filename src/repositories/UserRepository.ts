@@ -4,7 +4,7 @@ import { User, UserBelongsToTeam } from "@/models/User";
 export type UserRepository = {
   getUsers: () => Promise<User[]>;
   getUser: (id: string) => Promise<UserBelongsToTeam>;
-  updateUser: (params: User) => Promise<User>;
+  updateUser: (params: Omit<User, "email">) => Promise<User>;
 };
 
 const getUsers: UserRepository["getUsers"] = async () => {
