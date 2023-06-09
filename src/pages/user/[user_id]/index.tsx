@@ -3,6 +3,7 @@ import { UserProfile, UserProfileProps } from "@/components/pages/UserProfile";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 type PathParams = {
@@ -11,11 +12,19 @@ type PathParams = {
 
 const UserProfilePage: AuthNextPage<UserProfileProps> = ({ userData }) => {
   const router = useRouter();
+  const { data: session } = useSession();
+  const isSessionUser = session?.user.id === userData.id;
 
   if (router.isFallback) {
     return <Loading />;
   }
-  return <UserProfile userData={userData} />;
+  return (
+    <UserProfile
+      userData={userData}
+      router={router}
+      isSessionUser={isSessionUser}
+    />
+  );
 };
 
 export default UserProfilePage;

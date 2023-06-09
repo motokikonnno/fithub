@@ -30,6 +30,7 @@ export type RepositoryDetailProps = {
   type: "user" | "team";
   router: NextRouter;
   items: itemType[];
+  isSessionUser: boolean;
 };
 
 export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
@@ -43,6 +44,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     sessionUserId,
     router,
     items,
+    isSessionUser,
   }) => {
     const modalHeaderItems = [
       {
@@ -607,52 +609,54 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               )}
 
               {createType === "" ? (
-                <section className={styles.addFolderOrFile}>
-                  <div
-                    className={styles.addFileOrFolderWrapper}
-                    onClick={handleCloseCreateType}
-                  >
-                    <Image
-                      src={
-                        toggleSelectType
-                          ? "/icons/minus.svg"
-                          : "/icons/plus-gray.svg"
-                      }
-                      width={16}
-                      height={16}
-                      alt="plus-icon"
-                      className={styles.icon}
-                    />
-                  </div>
-                  {toggleSelectType && (
-                    <ul className={styles.dropdownWrapper}>
-                      <div
-                        className={styles.dropdownItemContainer}
-                        onClick={() => handleSelectType("folder")}
-                      >
-                        <Image
-                          src={"/icons/folder.svg"}
-                          width={16}
-                          height={14}
-                          alt="folder-icon"
-                        />
-                        <li className={styles.dropdownItem}>Add folder</li>
-                      </div>
-                      <div
-                        className={styles.dropdownItemContainer}
-                        onClick={() => handleSelectType("file")}
-                      >
-                        <Image
-                          src={"/icons/file.svg"}
-                          width={16}
-                          height={14}
-                          alt="file-icon"
-                        />
-                        <li className={styles.dropdownItem}>Add File</li>
-                      </div>
-                    </ul>
-                  )}
-                </section>
+                isSessionUser && (
+                  <section className={styles.addFolderOrFile}>
+                    <div
+                      className={styles.addFileOrFolderWrapper}
+                      onClick={handleCloseCreateType}
+                    >
+                      <Image
+                        src={
+                          toggleSelectType
+                            ? "/icons/minus.svg"
+                            : "/icons/plus-gray.svg"
+                        }
+                        width={16}
+                        height={16}
+                        alt="plus-icon"
+                        className={styles.icon}
+                      />
+                    </div>
+                    {toggleSelectType && (
+                      <ul className={styles.dropdownWrapper}>
+                        <div
+                          className={styles.dropdownItemContainer}
+                          onClick={() => handleSelectType("folder")}
+                        >
+                          <Image
+                            src={"/icons/folder.svg"}
+                            width={16}
+                            height={14}
+                            alt="folder-icon"
+                          />
+                          <li className={styles.dropdownItem}>Add folder</li>
+                        </div>
+                        <div
+                          className={styles.dropdownItemContainer}
+                          onClick={() => handleSelectType("file")}
+                        >
+                          <Image
+                            src={"/icons/file.svg"}
+                            width={16}
+                            height={14}
+                            alt="file-icon"
+                          />
+                          <li className={styles.dropdownItem}>Add File</li>
+                        </div>
+                      </ul>
+                    )}
+                  </section>
+                )
               ) : (
                 <div className={styles.inputContainer}>
                   <Image

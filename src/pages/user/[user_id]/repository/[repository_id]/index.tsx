@@ -24,6 +24,7 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
 }) => {
   const router = useRouter();
   const { data: session } = useSession();
+  const isSessionUser = session?.user.id === owner.id;
   let items: itemType[];
   if (owner.id === session?.user.id) {
     items = [
@@ -60,6 +61,7 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       router={router}
       sessionUserId={session?.user.id}
       items={items}
+      isSessionUser={isSessionUser}
     />
   );
 };

@@ -22,10 +22,11 @@ const IssueDetailPage: AuthNextPage<IssueDetailProps> = ({
 }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const isTeamMember =
-    team && team.team_members?.find(({ user }) => user.id === session?.user.id);
+  const isSessionUser = team?.team_members
+    ? team.team_members.some(({ user }) => user.id === session?.user.id)
+    : false;
 
-  if (!isTeamMember) {
+  if (!isSessionUser) {
     return <ErrorPage />;
   }
 

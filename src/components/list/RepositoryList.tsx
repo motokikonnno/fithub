@@ -13,13 +13,17 @@ type RepositoryListProps = {
   repositories: Repository[];
   owner: User | Team;
   type: "user" | "team";
+  isSessionUser: boolean;
 };
 
 export const RepositoryList: FC<RepositoryListProps> = React.memo(
-  ({ repositories, owner, type }) => {
+  ({ repositories, owner, type, isSessionUser }) => {
     const sortRepositories = [...repositories].sort((a, b) => {
       return Date.parse(b.created_at) - Date.parse(a.created_at);
     });
+    const privateRepositories = sortRepositories.filter(
+      ({ is_private }) => is_private === 2
+    );
     const [repositoriesData, setRepositoriesData] = useState(sortRepositories);
     const [isVisible, setIsVisible] = useState(false);
     const [isDisabled, setIsDisabled] = useState(true);
@@ -64,37 +68,39 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
               borderColor={"#d0d7de"}
             />
           </div>
-          <div className={styles.rightContainer}>
-            <Link
-              href={{
-                pathname: "/repository/new",
-                query:
-                  type === "user"
-                    ? { type: type }
-                    : { type: type, team_id: owner.id },
-              }}
-              className={styles.link}
-            >
-              <button className={styles.newRepositoryButton}>
-                <Image
-                  src={"/icons/add-repository.svg"}
-                  width={13}
-                  height={13}
-                  alt="repositoryアイコン"
-                  className={styles.repositoryIcon}
-                />
-                New
+          {isSessionUser && (
+            <div className={styles.rightContainer}>
+              <Link
+                href={{
+                  pathname: "/repository/new",
+                  query:
+                    type === "user"
+                      ? { type: type }
+                      : { type: type, team_id: owner.id },
+                }}
+                className={styles.link}
+              >
+                <button className={styles.newRepositoryButton}>
+                  <Image
+                    src={"/icons/add-repository.svg"}
+                    width={13}
+                    height={13}
+                    alt="repositoryアイコン"
+                    className={styles.repositoryIcon}
+                  />
+                  New
+                </button>
+              </Link>
+              <button
+                className={`${styles.selectButton} ${
+                  toggleDelete && styles.redColor
+                }`}
+                onClick={() => setToggleDelete(!toggleDelete)}
+              >
+                Select
               </button>
-            </Link>
-            <button
-              className={`${styles.selectButton} ${
-                toggleDelete && styles.redColor
-              }`}
-              onClick={() => setToggleDelete(!toggleDelete)}
-            >
-              Select
-            </button>
-          </div>
+            </div>
+          )}
         </div>
         {isVisible && (
           <Modal isVisible={isVisible} handleClose={handleClose}>
@@ -120,18 +126,31 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             </div>
           </Modal>
         )}
-        {repositoriesData.map((repository, index) => (
-          <RepositoryListItem
-            repositories={repositories}
-            repository={repository}
-            index={index}
-            key={index}
-            toggleDelete={toggleDelete}
-            handleClose={handleClose}
-            type={type}
-            ownerId={owner.id}
-          />
-        ))}
+        {isSessionUser
+          ? repositoriesData.map((repository, index) => (
+              <RepositoryListItem
+                repositories={repositories}
+                repository={repository}
+                index={index}
+                key={index}
+                toggleDelete={toggleDelete}
+                handleClose={handleClose}
+                type={type}
+                ownerId={owner.id}
+              />
+            ))
+          : privateRepositories.map((repository, index) => (
+              <RepositoryListItem
+                repositories={repositories}
+                repository={repository}
+                index={index}
+                key={index}
+                toggleDelete={toggleDelete}
+                handleClose={handleClose}
+                type={type}
+                ownerId={owner.id}
+              />
+            ))}
       </div>
     );
   }

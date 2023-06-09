@@ -3,6 +3,7 @@ import { TeamProfile, TeamProfileProps } from "@/components/pages/TeamProfile";
 import { teamFactory } from "@/models/Team";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 type PathParams = {
@@ -11,11 +12,21 @@ type PathParams = {
 
 const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({ teamData }) => {
   const router = useRouter();
+  const { data: session } = useSession();
+  const isSessionUser = teamData.team_members
+    ? teamData.team_members.some(({ user }) => user.id === session?.user.id)
+    : false;
 
   if (router.isFallback) {
     return <Loading />;
   }
-  return <TeamProfile teamData={teamData} />;
+  return (
+    <TeamProfile
+      teamData={teamData}
+      router={router}
+      isSessionUser={isSessionUser}
+    />
+  );
 };
 
 export default TeamProfilePage;

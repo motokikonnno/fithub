@@ -24,11 +24,11 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
 }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const isTeamMember = owner.team_members?.find(
-    ({ user }) => user.id === session?.user.id
-  );
+  const isSessionUser = owner.team_members
+    ? owner.team_members.some(({ user }) => user.id === session?.user.id)
+    : false;
   let items: itemType[];
-  if (isTeamMember) {
+  if (isSessionUser) {
     items = [
       {
         id: "1",
@@ -63,6 +63,7 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       sessionUserId={session?.user.id}
       router={router}
       items={items}
+      isSessionUser={isSessionUser}
     />
   );
 };
