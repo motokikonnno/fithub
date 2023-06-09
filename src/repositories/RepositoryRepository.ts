@@ -5,7 +5,7 @@ export type RepositoryRepository = {
   getRepositories: () => Promise<Repository[]>;
   getRepository: (id: string) => Promise<Repository>;
   createRepository: (
-    params: Omit<Repository, "id" | "created_at">
+    params: Omit<Repository, "id" | "created_at" | "next_issue_id">
   ) => Promise<{ id: string }>;
   updateRepository: (
     params: Pick<Repository, "id" | "is_read_me" | "read_me">

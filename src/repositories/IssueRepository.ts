@@ -5,7 +5,7 @@ export type IssueRepository = {
   getIssues: () => Promise<Issue[]>;
   getIssue: (id: string) => Promise<Issue>;
   createIssue: (
-    params: Omit<Issue, "id" | "created_at" | "user" | "repository" | "type">
+    params: Pick<Issue, "title" | "issue" | "user_id" | "repository_id">
   ) => Promise<{ id: string }>;
   updateIssue: (prams: updateIssue) => Promise<void>;
   deleteIssue: (id: string) => Promise<void>;
