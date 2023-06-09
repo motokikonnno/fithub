@@ -1,6 +1,7 @@
 import { CreateIssue, CreateIssueProps } from "@/components/pages/CreateIssue";
 import { repositoryFactory } from "@/models/Repository";
 import { teamFactory } from "@/models/Team";
+import ErrorPage from "@/pages/404";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
@@ -21,7 +22,7 @@ const CreateIssuePage: AuthNextPage<CreateIssueProps> = ({
     owner.team_members?.find(({ user }) => user.id === session?.user.id);
 
   if (!isTeamMember) {
-    return <div>404</div>;
+    return <ErrorPage />;
   }
   return (
     <CreateIssue
