@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { NextRouter } from "next/router";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/RepositoryDetail.module.scss";
 import { BreadCrumb } from "../BreadCrumb";
@@ -15,32 +15,35 @@ import Link from "next/link";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import { Folder, folderFactory } from "@/models/Folder";
 import { File, fileFactory } from "@/models/File";
-import { User } from "@/models/User";
-import { useSession } from "next-auth/react";
 import { Issue } from "@/models/Issue";
 import { IssueList } from "./IssueList";
+import { UserBelongsToTeam } from "@/models/User";
+import { Team } from "@/models/Team";
 
 export type RepositoryDetailProps = {
   repository: Repository;
   folders: Folder[];
   files: File[];
-  user: User;
+  owner: UserBelongsToTeam | Team;
   issues: Issue[];
+  sessionUserId: string | undefined;
+  type: "user" | "team";
+  router: NextRouter;
+  items: itemType[];
 };
 
-export const items: itemType[] = [
-  {
-    id: "1",
-    name: "Log",
-  },
-  {
-    id: "2",
-    name: "Issue",
-  },
-];
-
 export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
-  ({ repository, folders, files, user, issues }) => {
+  ({
+    repository,
+    folders,
+    files,
+    owner,
+    issues,
+    type,
+    sessionUserId,
+    router,
+    items,
+  }) => {
     const modalHeaderItems = [
       {
         name: "commit",
@@ -83,8 +86,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       },
     ];
 
-    const { data: session } = useSession();
-    const router = useRouter();
     const query = String(router.query.tab);
     const [currentTab, setCurrentTab] = useState("Log");
     const [currentFolder, setCurrentFolder] = useState<Folder[]>(folders);
@@ -111,7 +112,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     useEffect(() => {
       const handlePopstate = () => {
         if (currentFolderName.length === 0) {
-          router.push(`/user/${user.id}`);
+          router.push(
+            type === "user" ? `/user/${owner.id}` : `/team/${owner.id}`
+          );
         } else {
           // Folderとパンくずリストを一つ前の状態に戻す
           const breadCrumbsArray = currentFolderName.slice(0, -1);
@@ -139,7 +142,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       return () => {
         removeEventListener("popstate", handlePopstate, false);
       };
-    }, [currentFolderName, files, folders, user, router]);
+    }, [currentFolderName, files, folders, owner, router, type]);
 
     useEffect(() => {
       if (query === "Issue") {
@@ -174,12 +177,16 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       (name: string) => {
         setCurrentTab(name);
         router.push(
-          `/user/${user.id}/repository/${repository.id}/${
-            name === "Log" ? "" : `?tab=${name}`
-          }`
+          type === "user"
+            ? `/user/${owner.id}/repository/${repository.id}/${
+                name === "Log" ? "" : `?tab=${name}`
+              }`
+            : `/team/${owner.id}/repository/${repository.id}/${
+                name === "Log" ? "" : `?tab=${name}`
+              }`
         );
       },
-      [repository, user, router]
+      [router, type, owner.id, repository.id]
     );
 
     const filterFolderWithFile = useCallback(
@@ -284,20 +291,20 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       if (e.key === "Enter") {
         if (isComposition) return;
         e.preventDefault();
-        if (session?.user.id) {
+        if (sessionUserId) {
           if (createType === "folder") {
             await folderFactory().create({
               name: inputText,
               parent_id: parentFolder,
               repository_id: repository.id,
-              user_id: session.user.id,
+              user_id: sessionUserId,
             });
           } else if (createType === "file") {
             await fileFactory().create({
               name: inputText,
               parent_id: parentFolder,
               repository_id: repository.id,
-              user_id: session.user.id,
+              user_id: sessionUserId,
             });
           }
         }
@@ -375,12 +382,19 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         <Header />
         <nav className={styles.backgroundColor}>
           <h1 className={styles.teamDetailContainer}>
-            <Link href={`/user/${user.id}`} className={styles.teamNameHeader}>
-              {repository.user?.name}
+            <Link
+              href={type === "user" ? `/user/${owner.id}` : `/team/${owner.id}`}
+              className={styles.teamNameHeader}
+            >
+              {owner.name}
             </Link>
             <span className={styles.sectionLine}>/</span>
             <Link
-              href={`/user/${user.id}/repository/${repository.id}`}
+              href={
+                type === "user"
+                  ? `/user/${owner.id}/repository/${repository.id}`
+                  : `/team/${owner.id}/repository/${repository.id}`
+              }
               className={styles.teamNameHeader}
             >
               {repository.name}
@@ -407,25 +421,27 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
             <section className={styles.logListWrapper}>
               <div className={styles.repositoryHeader}>
                 <div className={styles.userInformationContainer}>
-                  {repository.user?.image && (
+                  {owner.image && (
                     <Image
-                      src={repository.user?.image}
+                      src={owner.image}
                       width={24}
                       height={24}
                       alt="user-icon"
                       className={styles.userIcon}
                     />
                   )}
-                  <h2 className={styles.userName}>{repository.user?.name}</h2>
+                  <h2 className={styles.userName}>{owner.name}</h2>
                 </div>
-                <div
-                  className={`${styles.select} ${
-                    toggleAction && styles.redColor
-                  }`}
-                  onClick={handleCloseAction}
-                >
-                  Select
-                </div>
+                {(currentFolder.length > 0 || currentFile.length > 0) && (
+                  <div
+                    className={`${styles.select} ${
+                      toggleAction && styles.redColor
+                    }`}
+                    onClick={handleCloseAction}
+                  >
+                    Select
+                  </div>
+                )}
               </div>
               {confirmModal && (
                 <Modal
@@ -688,7 +704,12 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
           </div>
         )}
         {currentTab === "Issue" && (
-          <IssueList issues={issues} repository={repository} user={user} />
+          <IssueList
+            issues={issues}
+            repository={repository}
+            owner={owner}
+            ownerType={type}
+          />
         )}
         <Footer />
       </>

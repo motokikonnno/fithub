@@ -1,5 +1,6 @@
 import { Issue, issueFactory } from "@/models/Issue";
 import { Repository } from "@/models/Repository";
+import { Team } from "@/models/Team";
 import { User } from "@/models/User";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -14,8 +15,9 @@ import { IssueItem } from "../item/IssueItem";
 
 type IssuePropsType = {
   issues: Issue[];
-  user: User;
+  owner: User | Team;
   repository: Repository;
+  ownerType: "user" | "team";
 };
 
 type IssueListType = {
@@ -25,7 +27,7 @@ type IssueListType = {
 };
 
 export const IssueList: React.FC<IssuePropsType> = React.memo(
-  ({ issues, user, repository }) => {
+  ({ issues, owner, repository, ownerType }) => {
     const issueTodo = issues.filter(({ type }) => type === "To do");
     const issueDoing = issues.filter(({ type }) => type === "Doing");
     const issueDone = issues.filter(({ type }) => type === "Done");
@@ -98,7 +100,13 @@ export const IssueList: React.FC<IssuePropsType> = React.memo(
     return (
       <div className={styles.issueLayoutContainer}>
         <div className={styles.buttonContainer}>
-          <Link href={`/user/${user.id}/repository/${repository.id}/issue/new`}>
+          <Link
+            href={
+              ownerType === "user"
+                ? `/user/${owner.id}/repository/${repository.id}/issue/new`
+                : `/team/${owner.id}/repository/${repository.id}/issue/new`
+            }
+          >
             <button className={styles.addIssueButton}>New issue</button>
           </Link>
         </div>
@@ -138,8 +146,9 @@ export const IssueList: React.FC<IssuePropsType> = React.memo(
                             >
                               <IssueItem
                                 task={task}
-                                user={user}
+                                owner={owner}
                                 repository={repository}
+                                ownerType={ownerType}
                               />
                             </div>
                           )}

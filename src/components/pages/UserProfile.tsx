@@ -3,7 +3,6 @@ import styles from "../../styles/components/pages/UserProfile.module.scss";
 import { Header } from "../layouts/Header";
 import { Tabs } from "../Tabs";
 import Image from "next/image";
-import { mockTeams } from "@/mock/mockTeams";
 import Link from "next/link";
 import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
@@ -12,10 +11,11 @@ import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { RepositoryList } from "../list/RepositoryList";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
-import { User, userFactory } from "@/models/User";
+import { User, UserBelongsToTeam, userFactory } from "@/models/User";
 import { useForm } from "react-hook-form";
 import { Repository } from "@/models/Repository";
 import { useSession } from "next-auth/react";
+import { recentSortRepositories } from "@/services/recentSortRepositories";
 
 export type itemType = {
   id: string;
@@ -29,7 +29,7 @@ type updateUserType = {
 };
 
 export type UserProfileProps = {
-  userData: User;
+  userData: UserBelongsToTeam;
 };
 
 export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
@@ -243,17 +243,18 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
           )}
           <h2 className={styles.profileSection}>Teams</h2>
           <div className={styles.teamIconContainer}>
-            {mockTeams.map(({ image }, index) => (
-              <Link href={"/"} key={index}>
-                <Image
-                  src={image}
-                  width={32}
-                  height={32}
-                  className={styles.teamIcon}
-                  alt="team-icon"
-                />
-              </Link>
-            ))}
+            {userData.team_members &&
+              userData.team_members.map(({ team }, index) => (
+                <Link href={`/team/${team.id}`} key={index}>
+                  <Image
+                    src={team.image}
+                    width={32}
+                    height={32}
+                    className={styles.teamIcon}
+                    alt="team-icon"
+                  />
+                </Link>
+              ))}
           </div>
         </div>
         {userData.repositories &&
@@ -263,7 +264,8 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
             <div className={styles.repositoryComponentWrapper}>
               <RepositoryList
                 repositories={userData.repositories}
-                user={userData}
+                owner={userData}
+                type={"user"}
               />
             </div>
           ))}
@@ -275,14 +277,12 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
 
 export type ProfileProps = {
   repositories: Repository[];
-  user: User;
+  user?: User;
 };
 
 const Overview: FC<ProfileProps> = ({ repositories, user }) => {
   const { data: session } = useSession();
-  const sortRepositories = [...repositories].sort((a, b) => {
-    return Date.parse(b.created_at) - Date.parse(a.created_at);
-  });
+  const sortRepositories = recentSortRepositories(repositories);
   const publicRepositories = sortRepositories.slice(0, 6);
   const privateRepositories = sortRepositories
     .filter(({ is_private }) => is_private === 2)
@@ -291,12 +291,13 @@ const Overview: FC<ProfileProps> = ({ repositories, user }) => {
     <div className={styles.rightContainer}>
       <h2 className={styles.title}>Recent repositories</h2>
       <div className={styles.repositoriesContainer}>
-        {session?.user.id === user.id
+        {user?.id && session?.user.id === user.id
           ? publicRepositories.map((repository, index) => (
               <RepositoryCard
                 index={index}
                 repository={repository}
                 key={index}
+                type={"user"}
               />
             ))
           : privateRepositories.map((repository, index) => (
@@ -304,6 +305,7 @@ const Overview: FC<ProfileProps> = ({ repositories, user }) => {
                 index={index}
                 repository={repository}
                 key={index}
+                type={"user"}
               />
             ))}
       </div>

@@ -12,14 +12,23 @@ type RepositoryListItemProps = {
   repository: Repository;
   toggleDelete: boolean;
   handleClose: (name: string, id: string) => void;
+  type: "user" | "team";
+  ownerId: string;
 };
 
 export const RepositoryListItem: FC<RepositoryListItemProps> = React.memo(
-  ({ repositories, index, repository, toggleDelete, handleClose }) => {
+  ({
+    repositories,
+    index,
+    repository,
+    toggleDelete,
+    handleClose,
+    type,
+    ownerId,
+  }) => {
     const createdAt = repository.created_at
       ? getTimeDiff(repository.created_at)
       : null;
-    const { user } = useFetchUser(repository.user_id);
     return (
       <div
         className={`${styles.repositoryItemWrapper} ${
@@ -29,7 +38,11 @@ export const RepositoryListItem: FC<RepositoryListItemProps> = React.memo(
         <div className={styles.leftContainer}>
           <Link
             className={styles.repositoryName}
-            href={`/user/${user?.id}/repository/${repository.id}`}
+            href={
+              type === "user"
+                ? `/user/${ownerId}/repository/${repository.id}`
+                : `/team/${ownerId}/repository/${repository.id}`
+            }
           >
             {repository.name}
           </Link>

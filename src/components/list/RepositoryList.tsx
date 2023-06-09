@@ -11,11 +11,12 @@ import { Team } from "@/models/Team";
 
 type RepositoryListProps = {
   repositories: Repository[];
-  user: User | Team;
+  owner: User | Team;
+  type: "user" | "team";
 };
 
 export const RepositoryList: FC<RepositoryListProps> = React.memo(
-  ({ repositories, user }) => {
+  ({ repositories, owner, type }) => {
     const sortRepositories = [...repositories].sort((a, b) => {
       return Date.parse(b.created_at) - Date.parse(a.created_at);
     });
@@ -44,7 +45,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
 
     const deleteRepository = async () => {
       await repositoryFactory().delete(repositoryId);
-      const userData = await userFactory().show(user.id);
+      const userData = await userFactory().show(owner.id);
       if (userData.repositories) {
         setRepositoriesData(userData.repositories);
       }
@@ -64,7 +65,16 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             />
           </div>
           <div className={styles.rightContainer}>
-            <Link href={"/repository/new"} className={styles.link}>
+            <Link
+              href={{
+                pathname: "/repository/new",
+                query:
+                  type === "user"
+                    ? { type: type }
+                    : { type: type, team_id: owner.id },
+              }}
+              className={styles.link}
+            >
               <button className={styles.newRepositoryButton}>
                 <Image
                   src={"/icons/add-repository.svg"}
@@ -118,6 +128,8 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             key={index}
             toggleDelete={toggleDelete}
             handleClose={handleClose}
+            type={type}
+            ownerId={owner.id}
           />
         ))}
       </div>

@@ -17,11 +17,21 @@ type TiptapProps = {
   handleTitleText?: () => void;
   titleText?: string;
   userId?: string;
-  issueId?: number;
+  issueId?: string;
+  teamId?: string;
 };
 
 export const Tiptap: FC<TiptapProps> = React.memo(
-  ({ text, repository, type, handleTitleText, titleText, userId, issueId }) => {
+  ({
+    text,
+    repository,
+    type,
+    handleTitleText,
+    titleText,
+    userId,
+    issueId,
+    teamId,
+  }) => {
     const router = useRouter();
     const [tiptapEditFlag, setTiptapEditFlag] = useState(false);
     const editor = useEditor({
@@ -81,7 +91,9 @@ export const Tiptap: FC<TiptapProps> = React.memo(
           });
           if (handleTitleText) handleTitleText();
           router.push(
-            `/user/${userId}/repository/${repository.id}/issue/${newIssue}`
+            teamId
+              ? `/team/${teamId}/repository/${repository.id}/issue/${newIssue}`
+              : `/user/${userId}/repository/${repository.id}/issue/${newIssue}`
           );
         }
       }

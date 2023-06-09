@@ -1,6 +1,6 @@
-import useFetchUser from "@/hooks/useFetchUser";
 import { Issue } from "@/models/Issue";
 import { Repository } from "@/models/Repository";
+import { Team } from "@/models/Team";
 import { User } from "@/models/User";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,11 +10,12 @@ import styles from "../../styles/components/item/IssueItem.module.scss";
 type IssueItemProps = {
   task: Issue;
   repository: Repository;
-  user: User;
+  owner: User | Team;
+  ownerType: "user" | "team";
 };
 
 export const IssueItem: FC<IssueItemProps> = React.memo(
-  ({ task, user, repository }) => {
+  ({ task, owner, repository, ownerType }) => {
     return (
       <>
         <div className={styles.issueTitleContainer}>
@@ -31,7 +32,11 @@ export const IssueItem: FC<IssueItemProps> = React.memo(
             />
           </div>
           <Link
-            href={`/user/${user.id}/repository/${repository.id}/issue/${task.id}`}
+            href={
+              ownerType === "user"
+                ? `/user/${owner.id}/repository/${repository.id}/issue/${task.id}`
+                : `/team/${owner.id}/repository/${repository.id}/issue/${task.id}`
+            }
             className={styles.issueTitle}
           >
             {task.title}
@@ -39,7 +44,7 @@ export const IssueItem: FC<IssueItemProps> = React.memo(
         </div>
         <p
           className={styles.createUser}
-        >{`#${task.id} opened by ${user.name}`}</p>
+        >{`#${task.issue_number} opened by ${task.user.name}`}</p>
       </>
     );
   }
