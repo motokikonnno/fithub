@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import styles from "../styles/components/Tabs.module.scss";
-import { itemType } from "./pages/MyProfile";
+import { itemType } from "./pages/UserProfile";
 
 type TabsProps = {
   item: itemType;
