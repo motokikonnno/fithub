@@ -1,65 +1,54 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { FC, useCallback, useState } from "react";
+import { NextRouter, useRouter } from "next/router";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/IssueDetail.module.scss";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
 import { Tabs } from "../Tabs";
 import { Tiptap } from "../Tiptap";
-import { items } from "./RepositoryDetail";
 import { Repository } from "@/models/Repository";
-import { User } from "@/models/User";
 import { Issue, issueFactory } from "@/models/Issue";
 import { formatDateToEnglish } from "../../utils/getTime";
 import { useForm } from "react-hook-form";
 import { Modal } from "../Modal";
+import { Team } from "@/models/Team";
+import { mentionFactory } from "@/models/Mention";
+import { UserBelongsToTeam } from "@/models/User";
+import { itemType } from "./UserProfile";
 
 export type IssueDetailProps = {
   repository: Repository;
-  user: User;
+  team?: Team;
   issue: Issue;
+  sessionUserId?: string;
+  router: NextRouter;
 };
 
+export const items: itemType[] = [
+  {
+    id: "1",
+    name: "Log",
+  },
+  {
+    id: "2",
+    name: "Issue",
+  },
+];
+
 export const IssueDetail: FC<IssueDetailProps> = React.memo(
-  ({ repository, user, issue }) => {
+  ({ repository, team, issue, sessionUserId, router }) => {
     const created_at = formatDateToEnglish(issue.created_at);
-    const issueData = {
-      id: "1",
-      title: "記事が投稿されたら通知がいくようにする",
-      createdAt: "July 11",
-      createdUser: "motoki",
-      type: "To do",
-      assignUser: "satoshi",
-      icon: "/example.png",
-    };
-
-    const teamMember = [
-      {
-        name: "スダリオ",
-        icon: "/example.png",
-      },
-      {
-        name: "hit",
-        icon: "/example.png",
-      },
-      {
-        name: "猗窩座",
-        icon: "/example.png",
-      },
-      {
-        name: "海",
-        icon: "/example.png",
-      },
-    ];
-
-    const router = useRouter();
     const [currentTab, setCurrentTab] = useState("Issue");
-    const [assignUser, setAssignUser] = useState(user.name);
+    const [assignUser, setAssignUser] = useState(
+      issue.mention ? issue.mention.user : ""
+    );
     const [toggleSelectUser, setToggleSelectUser] = useState(false);
     const [toggleEdit, setToggleEdit] = useState(false);
     const [issueTitle, setIssueTitle] = useState(issue.title);
     const [isVisible, setIsVisible] = useState(false);
+    const [memberList, setMemberList] = useState(team?.team_members);
+    const dropDownListRef = useRef<HTMLDivElement>(null);
     const {
       register,
       handleSubmit,
@@ -71,20 +60,49 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
       defaultValues: { title: issue.title },
     });
 
+    useEffect(() => {
+      if (team?.team_members && typeof assignUser !== "string") {
+        const filterOwnerList = team.team_members.filter(({ user }) => {
+          user.id !== assignUser.id;
+        });
+        setMemberList(filterOwnerList);
+      }
+    }, [assignUser, team?.team_members]);
+
+    useEffect(() => {
+      const handleClickToCloseDropDown = (event: MouseEvent) => {
+        if (!(event.target instanceof HTMLElement)) {
+          return;
+        }
+        const element = dropDownListRef.current;
+
+        if (element && element?.contains(event.target)) return;
+        setToggleSelectUser(false);
+      };
+      window.addEventListener("click", handleClickToCloseDropDown, true);
+      return () => {
+        window.removeEventListener("click", handleClickToCloseDropDown);
+      };
+    }, []);
+
     const handleCurrentTab = useCallback(
       (name: string) => {
         setCurrentTab(name);
         router.push(
-          `/user/${user.id}/repository/${repository.id}/${
-            name === "Issue" ? `issue/${issue.id}` : ""
-          }`
+          team
+            ? `/team/${team.id}/repository/${repository.id}/${
+                name === "Issue" ? `issue/${issue.id}` : ""
+              }`
+            : `/user/${issue.user.id}/repository/${repository.id}/${
+                name === "Issue" ? `issue/${issue.id}` : ""
+              }`
         );
       },
-      [issue.id, repository.id, router, user.id]
+      [issue.id, issue.user.id, repository.id, router, team]
     );
 
-    const handleAssignUser = (name: string) => {
-      setAssignUser(name);
+    const handleAssignUser = (user: UserBelongsToTeam) => {
+      setAssignUser(user);
       setToggleSelectUser(false);
     };
 
@@ -110,7 +128,21 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
 
     const handleDeleteIssue = async () => {
       await issueFactory().delete(String(issue.id));
-      router.push(`/user/${user.id}/repository/${repository.id}?tab=Issue`);
+      router.push(
+        team
+          ? `/team/${team.id}/repository/${repository.id}?tab=Issue`
+          : `/user/${issue.user.id}/repository/${repository.id}?tab=Issue`
+      );
+    };
+
+    const handleCreateMention = async (user: UserBelongsToTeam) => {
+      if (sessionUserId && user.id) {
+        await mentionFactory().update({
+          mentioned_user_id: user.id,
+          mentioner_id: sessionUserId,
+          issue_id: issue.id,
+        });
+      }
     };
 
     return (
@@ -118,12 +150,15 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
         <Header />
         <div className={styles.backgroundColor}>
           <div className={styles.teamDetailContainer}>
-            <Link href={`/user/${user.id}`} className={styles.teamNameHeader}>
-              {user.name}
+            <Link
+              href={team ? `/team/${team.id}` : `/user/${issue.user.id}`}
+              className={styles.teamNameHeader}
+            >
+              {team ? team.name : issue.user.name}
             </Link>
             <span className={styles.sectionLine}>/</span>
             <Link
-              href={`/user/${user.id}/repository/${repository.id}`}
+              href={`/user/${issue.user.id}/repository/${repository.id}`}
               className={styles.teamNameHeader}
             >
               {repository.name}
@@ -166,7 +201,9 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                 <>
                   <h1 className={styles.title}>
                     {issueTitle}
-                    <span className={styles.issueNumber}>#{issue.id}</span>
+                    <span className={styles.issueNumber}>
+                      #{issue.issue_number}
+                    </span>
                   </h1>
                   <div className={styles.actionButtonContainer}>
                     <span
@@ -176,7 +213,7 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                       Edit
                     </span>
                     <Link
-                      href={`/user/${user.id}/repository/${repository.id}/issue/new`}
+                      href={`/user/${issue.user.id}/repository/${repository.id}/issue/new`}
                       className={styles.newIssueButton}
                     >
                       New issue
@@ -206,22 +243,27 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                 height={16}
                 alt="issue-type-icon"
               />
-              <span className={styles.issueType}>{issueData.type}</span>
+              <span className={styles.issueType}>{issue.type}</span>
             </div>
-            <Link href={`/user/${user.id}`} className={styles.createdUser}>
-              {user.name}
+            <Link
+              href={`/user/${issue.user.id}`}
+              className={styles.createdUser}
+            >
+              {issue.user.name}
             </Link>
             <span className={styles.createdAt}>
               opened this issue on {created_at}
             </span>
           </div>
           <div className={styles.tiptapContainer}>
-            {issueData.assignUser === "" ? (
+            {team && typeof assignUser === "string" ? (
               <div className={styles.assignUser}>no assigned</div>
             ) : (
               <div className={styles.assignUser}>
-                <span className={styles.assignUserName}>{assignUser}</span>
-                is assigned
+                <span className={styles.assignUserName}>
+                  {typeof assignUser !== "string" && assignUser.name}
+                </span>
+                {typeof assignUser !== "string" && "is assigned"}
               </div>
             )}
 
@@ -238,16 +280,30 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                 className={styles.selectName}
                 onClick={() => setToggleSelectUser(!toggleSelectUser)}
               >
-                <Image
-                  src={issueData.icon}
-                  width={16}
-                  height={16}
-                  alt="user-icon"
-                  className={styles.memberIcon}
-                />
-                {assignUser === "" ? "Select user" : assignUser}
+                <>
+                  {typeof assignUser !== "string" && assignUser.image && (
+                    <Image
+                      src={assignUser.image}
+                      width={16}
+                      height={16}
+                      alt="user-icon"
+                      className={styles.memberIcon}
+                    />
+                  )}
+                  {assignUser === ""
+                    ? "Select user"
+                    : typeof assignUser !== "string" && assignUser.name}
+                </>
               </div>
-              <div className={styles.assignButton}>Assign user</div>
+              <div
+                className={styles.assignButton}
+                onClick={() =>
+                  typeof assignUser !== "string" &&
+                  handleCreateMention(assignUser)
+                }
+              >
+                Assign user
+              </div>
             </div>
             <button className={styles.deleteIssueButton} onClick={handleClose}>
               Delete issue
@@ -277,23 +333,27 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
             )}
           </div>
           {toggleSelectUser && (
-            <div className={styles.memberNameWrapper}>
-              {teamMember.map((member, index) => (
-                <div
-                  className={styles.memberName}
-                  onClick={() => handleAssignUser(member.name)}
-                  key={index}
-                >
-                  <Image
-                    src={member.icon}
-                    width={16}
-                    height={16}
-                    alt="member-icon"
-                    className={styles.memberIcon}
-                  />
-                  {member.name}
-                </div>
-              ))}
+            <div className={styles.memberNameWrapper} ref={dropDownListRef}>
+              {memberList &&
+                memberList.map(
+                  ({ user }, index) =>
+                    user.image && (
+                      <div
+                        className={styles.memberName}
+                        onClick={() => handleAssignUser(user)}
+                        key={index}
+                      >
+                        <Image
+                          src={user.image}
+                          width={16}
+                          height={16}
+                          alt="member-icon"
+                          className={styles.memberIcon}
+                        />
+                        {user.name}
+                      </div>
+                    )
+                )}
             </div>
           )}
         </div>
