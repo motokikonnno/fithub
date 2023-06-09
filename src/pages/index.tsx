@@ -1,23 +1,18 @@
-import { Dashboard, DashboardProps } from "@/components/pages/Dashboard";
-import { repositoryFactory } from "@/models/Repository";
-import { userFactory } from "@/models/User";
+import { Dashboard } from "@/components/pages/Dashboard";
+import useFetchUser from "@/hooks/useFetchUser";
 import { AuthNextPage } from "@/types/auth-next-page";
-import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { useSession } from "next-auth/react";
+import ErrorPage from "./404";
 
-const DashboardPage: AuthNextPage<DashboardProps> = ({ user }) => {
-  return <Dashboard user={user} />;
+const DashboardPage: AuthNextPage = () => {
+  const { data: session } = useSession();
+  const { user } = useFetchUser(session?.user ? session.user.id : null);
+  if (user) {
+    return <Dashboard user={user} />;
+  } else {
+    return <ErrorPage />;
+  }
 };
 
 export default DashboardPage;
 DashboardPage.requireAuth = true;
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
-  const user = session?.user;
-
-  return {
-    props: { user },
-  };
-};

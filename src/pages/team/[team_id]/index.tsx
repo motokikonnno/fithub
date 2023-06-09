@@ -36,7 +36,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const { team_id } = context.params as PathParams;
   try {
     const teamData = await teamFactory().show(team_id);
-
     return {
       props: { teamData: teamData },
       revalidate: 60,

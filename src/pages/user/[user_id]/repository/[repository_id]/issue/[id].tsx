@@ -1,10 +1,12 @@
 import { Loading } from "@/components/Loading";
-import { IssueDetail, IssueDetailProps } from "@/components/pages/IssueDetail";
-import { issueFactory } from "@/models/Issue";
-import { repositoryFactory } from "@/models/Repository";
+import { IssueDetail } from "@/components/pages/IssueDetail";
+import { Issue, issueFactory } from "@/models/Issue";
+import { Repository, repositoryFactory } from "@/models/Repository";
 import { userFactory } from "@/models/User";
+import ErrorPage from "@/pages/404";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 type PathParams = {
@@ -13,16 +15,28 @@ type PathParams = {
   user_id: string;
 };
 
-const IssueDetailPage: AuthNextPage<IssueDetailProps> = ({
+type IssueDetailPageProps = {
+  issue: Issue;
+  repository: Repository;
+  user_id: string;
+};
+
+const IssueDetailPage: AuthNextPage<IssueDetailPageProps> = ({
   issue,
-  user,
   repository,
+  user_id,
 }) => {
   const router = useRouter();
+  const { data: session } = useSession();
+
+  if (user_id !== session?.user.id) {
+    return <ErrorPage />;
+  }
+
   if (router.isFallback) {
     return <Loading />;
   }
-  return <IssueDetail user={user} repository={repository} issue={issue} />;
+  return <IssueDetail repository={repository} issue={issue} router={router} />;
 };
 
 export default IssueDetailPage;
@@ -53,13 +67,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const { repository_id, id, user_id } = context.params as PathParams;
   try {
     const repository = await repositoryFactory().show(repository_id);
-    const user = await userFactory().show(user_id);
     const issue = await issueFactory().show(id);
     return {
       props: {
         repository: repository,
-        user: user,
         issue: issue,
+        user_id: user_id,
       },
     };
   } catch {

@@ -3,10 +3,12 @@ import {
   RepositoryDetail,
   RepositoryDetailProps,
 } from "@/components/pages/RepositoryDetail";
+import { itemType } from "@/components/pages/UserProfile";
 import { repositoryFactory } from "@/models/Repository";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 type PathParams = {
@@ -17,10 +19,31 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
   repository,
   folders,
   files,
-  user,
+  owner,
   issues,
 }) => {
   const router = useRouter();
+  const { data: session } = useSession();
+  let items: itemType[];
+  if (owner.id === session?.user.id) {
+    items = [
+      {
+        id: "1",
+        name: "Log",
+      },
+      {
+        id: "2",
+        name: "Issue",
+      },
+    ];
+  } else {
+    items = [
+      {
+        id: "1",
+        name: "Log",
+      },
+    ];
+  }
 
   if (router.isFallback) {
     return <Loading />;
@@ -31,8 +54,12 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       repository={repository}
       folders={folders}
       files={files}
-      user={user}
+      owner={owner}
       issues={issues}
+      type={"user"}
+      router={router}
+      sessionUserId={session?.user.id}
+      items={items}
     />
   );
 };
@@ -74,7 +101,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
         repository: repository,
         folders: folders,
         files: files,
-        user: user,
+        owner: user,
         issues: issues,
       },
     };
