@@ -1,5 +1,6 @@
 import { userRepository, UserRepository } from "@/repositories/UserRepository";
 import { Repository } from "./Repository";
+import { TeamMember } from "./TeamMember";
 
 export type User = {
   id: string;
@@ -11,17 +12,7 @@ export type User = {
 };
 
 export type UserBelongsToTeam = User & {
-  team_members: {
-    owner: boolean;
-    created_at: string;
-    team: {
-      id: string;
-      name: string;
-      bio: string;
-      image: string;
-      created_at: string;
-    };
-  };
+  team_members?: TeamMember[];
 };
 
 export const userFactory = (rep?: UserRepository) => {

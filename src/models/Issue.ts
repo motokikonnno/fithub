@@ -2,11 +2,13 @@ import {
   issueRepository,
   IssueRepository,
 } from "@/repositories/IssueRepository";
+import { Mention } from "./Mention";
 import { Repository } from "./Repository";
 import { User } from "./User";
 
 export type Issue = {
-  id: number;
+  id: string;
+  issue_number: number;
   title: string;
   issue: string;
   type: string;
@@ -15,10 +17,11 @@ export type Issue = {
   user_id: string;
   repository: Repository;
   user: User;
+  mention?: Mention;
 };
 
 export type updateIssue = {
-  id: number;
+  id: string;
   title?: string;
   issue?: string;
   type?: string;
@@ -36,7 +39,7 @@ export const issueFactory = (rep?: IssueRepository) => {
       return issue;
     },
     create: async (
-      params: Omit<Issue, "id" | "created_at" | "user" | "repository" | "type">
+      params: Pick<Issue, "title" | "issue" | "user_id" | "repository_id">
     ): Promise<{ id: string } | void> => {
       const issue = await repository.createIssue(params);
       return issue;

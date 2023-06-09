@@ -5,11 +5,14 @@ import {
 import { File } from "./File";
 import { Folder } from "./Folder";
 import { Issue } from "./Issue";
+import { Team } from "./Team";
 import { User } from "./User";
 
 export type Repository = {
   id: string;
-  user_id: string;
+  next_issue_id: number;
+  user_id?: string;
+  team_id?: string;
   name: string;
   description?: string;
   is_private: Number;
@@ -20,6 +23,7 @@ export type Repository = {
   files?: File[];
   issues?: Issue[];
   user?: User;
+  team?: Team;
 };
 
 export const repositoryFactory = (rep?: RepositoryRepository) => {
@@ -34,7 +38,7 @@ export const repositoryFactory = (rep?: RepositoryRepository) => {
       return repository;
     },
     create: async (
-      params: Omit<Repository, "id" | "created_at">
+      params: Omit<Repository, "id" | "created_at" | "next_issue_id">
     ): Promise<{ id: string } | void> => {
       const repository = await repo.createRepository(params);
       return repository;

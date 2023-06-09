@@ -1,5 +1,5 @@
 import { Team } from "./Team";
-import { User } from "./User";
+import { UserBelongsToTeam } from "./User";
 
 export type TeamMember = {
   id: string;
@@ -7,6 +7,6 @@ export type TeamMember = {
   team_id: string;
   owner: number;
   created_at: string;
-  user: User;
+  user: UserBelongsToTeam;
   team: Team;
 };
