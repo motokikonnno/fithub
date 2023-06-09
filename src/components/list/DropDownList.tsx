@@ -13,7 +13,17 @@ type DropDownListProps = {
 export const DropDownList: React.FC<DropDownListProps> = React.memo(
   ({ item }) => {
     return (
-      <Link href={item.link} className={styles.link}>
+      <Link
+        href={
+          item.title === "New repository"
+            ? {
+                pathname: item.link,
+                query: { type: "user" },
+              }
+            : item.link
+        }
+        className={styles.link}
+      >
         {item.title === "Sign out" ? (
           <div
             className={styles.dropDownItem}
