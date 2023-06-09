@@ -32,27 +32,17 @@ export async function getUser(
   }
 
   try {
-    const user = await prisma.user.findFirst({
+    const user = await prisma.user.findUnique({
       where: {
         id: id,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        bio: true,
+      include: {
+        repositories: true,
         team_members: {
-          select: {
-            owner: true,
-            created_at: true,
+          include: {
             team: {
-              select: {
-                id: true,
-                name: true,
-                bio: true,
-                image: true,
-                created_at: true,
+              include: {
+                repositories: true,
               },
             },
           },

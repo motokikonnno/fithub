@@ -1,6 +1,5 @@
 import { Team } from "@/models/Team";
 import { NextApiRequest, NextApiResponse } from "next";
-import { TRUE } from "sass";
 import prisma from "../prisma";
 
 export async function getTeams(
@@ -28,7 +27,7 @@ export async function getTeams(
 export async function getTeam(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | NextApiResponse<Team[]>> {
+): Promise<void | NextApiResponse<Team>> {
   try {
     const { id } = req.query;
 
@@ -40,14 +39,17 @@ export async function getTeam(
       where: {
         id: id,
       },
-      select: {
-        id: true,
-        name: true,
-        bio: true,
-        image: true,
+      include: {
         repositories: true,
-        team_members: true,
-        commits: true,
+        team_members: {
+          include: {
+            user: {
+              include: {
+                team_members: true,
+              },
+            },
+          },
+        },
       },
     });
     return res.status(200).json({ team: team });

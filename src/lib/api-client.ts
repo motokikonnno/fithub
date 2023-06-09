@@ -25,6 +25,5 @@ ApiClient.interceptors.response.use(
 
     const errorMessage = (error.response?.data?.message || "").split(",");
     throw new Error(errorMessage);
-    // return { errors: errorMessage, message: "error message" };
   }
 );

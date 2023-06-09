@@ -10,6 +10,7 @@ export async function getIssues(
     const issues = await prisma.issue.findMany({
       select: {
         id: true,
+        issue_number: true,
         user_id: true,
         title: true,
         issue: true,
@@ -31,23 +32,24 @@ export async function getIssue(
   res: NextApiResponse
 ): Promise<void | NextApiResponse<Issue>> {
   const { id } = req.query;
-  const issueId = Number(id);
+
+  if (typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
 
   try {
     const issue = await prisma.issue.findUnique({
       where: {
-        id: issueId,
+        id: id,
       },
-      select: {
-        id: true,
-        user_id: true,
-        title: true,
-        issue: true,
-        type: true,
+      include: {
         user: true,
         repository: true,
-        created_at: true,
-        repository_id: true,
+        mention: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
     return res.status(200).json({ issue: issue });
@@ -63,15 +65,27 @@ export async function createIssue(
   const { title, issue, repository_id, user_id } = req.body;
 
   try {
-    const issueData = await prisma.issue.create({
-      data: {
-        title,
-        issue,
-        user_id,
-        repository_id,
-      },
+    const repository = await prisma.repository.findUnique({
+      where: { id: repository_id },
     });
-    return res.status(200).json({ id: issueData.id });
+    if (repository) {
+      const issueData = await prisma.issue.create({
+        data: {
+          title,
+          issue,
+          issue_number: repository?.next_issue_id,
+          user_id,
+          repository_id,
+        },
+      });
+      await prisma.repository.update({
+        where: { id: repository_id },
+        data: {
+          next_issue_id: repository.next_issue_id + 1,
+        },
+      });
+      return res.status(200).json({ id: issueData.id });
+    }
   } catch (error) {
     return res.status(500).end(error);
   }
@@ -105,12 +119,15 @@ export async function deleteIssue(
   res: NextApiResponse
 ): Promise<void | NextApiResponse<void>> {
   const { id } = req.query;
-  const issueId = Number(id);
+
+  if (typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
 
   try {
     const response = await prisma.issue.delete({
       where: {
-        id: issueId,
+        id: id,
       },
     });
     return res.status(200).json(response);

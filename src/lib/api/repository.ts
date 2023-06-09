@@ -36,23 +36,28 @@ export async function getRepository(
   }
 
   try {
-    const repository = await prisma.repository.findFirst({
+    const repository = await prisma.repository.findUnique({
       where: {
         id: id,
       },
-      select: {
-        id: true,
-        user_id: true,
-        name: true,
-        description: true,
-        is_private: true,
-        is_read_me: true,
-        read_me: true,
-        created_at: true,
-        folders: true,
-        files: true,
-        issues: true,
+      include: {
+        issues: {
+          include: {
+            user: true,
+          },
+        },
         user: true,
+        files: true,
+        folders: true,
+        team: {
+          include: {
+            team_members: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
       },
     });
     return res.status(200).json({ repository: repository });
@@ -65,19 +70,47 @@ export async function createRepository(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<{ id: string }>> {
-  const { user_id, name, description, is_private, read_me, is_read_me } =
-    req.body;
+  const {
+    user_id,
+    name,
+    description,
+    is_private,
+    read_me,
+    is_read_me,
+    team_id,
+  } = req.body;
+
   try {
-    const repository = await prisma.repository.create({
-      data: {
-        user_id,
-        name,
-        description,
-        is_private,
-        read_me,
-        is_read_me,
-      },
-    });
+    let repository;
+
+    if (user_id) {
+      repository = await prisma.repository.create({
+        data: {
+          user: {
+            connect: { id: user_id },
+          },
+          name,
+          description,
+          is_private,
+          read_me,
+          is_read_me,
+        },
+      });
+    } else {
+      repository = await prisma.repository.create({
+        data: {
+          team: {
+            connect: { id: team_id },
+          },
+          name,
+          description,
+          is_private,
+          read_me,
+          is_read_me,
+        },
+      });
+    }
+
     return res.status(200).json({ id: repository.id });
   } catch (error) {
     return res.status(500).end(error);
