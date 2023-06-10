@@ -1,4 +1,3 @@
-import useFetchUser from "@/hooks/useFetchUser";
 import { Repository } from "@/models/Repository";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,7 +10,7 @@ type RepositoryListItemProps = {
   index: number;
   repository: Repository;
   toggleDelete: boolean;
-  handleClose: (name: string, id: string) => void;
+  handleClose: (name?: string, id?: string) => void;
   type: "user" | "team";
   ownerId: string;
 };
