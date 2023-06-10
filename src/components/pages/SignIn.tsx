@@ -31,7 +31,7 @@ export const SignIn: FC<SignInProps> = React.memo(({ providers }) => {
                   <button
                     key={provider.id}
                     className={styles.signInButton}
-                    onClick={() => signIn(provider.id)}
+                    onClick={() => signIn(provider.id, { callbackUrl: "/" })}
                   >
                     <Image
                       src={`/icons/${provider.id}.svg`}

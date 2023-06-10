@@ -30,7 +30,10 @@ export const InviteConfirm: FC<InviteConfirmProps> = ({ inviteData }) => {
     router.push("/");
   };
 
-  if (session && session.user.email !== inviteData.invitee_email) {
+  if (
+    !inviteData ||
+    (session && session.user.email !== inviteData.invitee_email)
+  ) {
     return <ErrorPage />;
   }
 

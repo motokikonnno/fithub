@@ -381,29 +381,6 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
                   </div>
                 </Modal>
               )}
-              {/* <div className={styles.inputSearchContainer}>
-              <InputSearch
-                placeholder={"Find a member..."}
-                backgroundColor={"#fff"}
-                color={"#656d76"}
-                borderColor={"#d0d7de"}
-              />
-            </div>
-            <div className={styles.peopleListWrapper}>
-              <div
-                className={styles.peopleNumber}
-              >{`${peopleDetail.length} people`}</div>
-              {team.team_members &&
-                team.team_members.map(({ user }, index) => (
-                  <PeopleList
-                    people={user}
-                    index={index}
-                    peoples={peopleDetail}
-                    key={index}
-                    isInvite={true}
-                  />
-                ))}
-            </div> */}
             </div>
           )}
         </div>

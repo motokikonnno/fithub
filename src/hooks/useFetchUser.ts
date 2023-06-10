@@ -7,8 +7,11 @@ const userFetcher = async (key: string): Promise<UserBelongsToTeam> => {
 };
 
 const useFetchUser = (id: string | null) => {
-  const { data: user } = useSWR<UserBelongsToTeam>(id ? id : null, userFetcher);
-  return { user };
+  const { data: user, isLoading } = useSWR<UserBelongsToTeam>(
+    id ? id : null,
+    userFetcher
+  );
+  return { user, isLoading };
 };
 
 export default useFetchUser;

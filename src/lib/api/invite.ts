@@ -71,7 +71,7 @@ export async function createInvite(
         team.name,
         invite.id
       );
-    return res.status(200).json({ id: invite.team_id });
+    return res.status(200).json({ id: team_id });
   } catch (error) {
     return res.status(500).end(error);
   }

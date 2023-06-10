@@ -13,7 +13,7 @@ export type Invite = {
   team_id: string;
 };
 
-export type createInvite = {
+export type createInviteInfo = {
   invitee_email: string;
   inviter_name: string;
   team_id: string;
@@ -30,7 +30,7 @@ export const inviteFactory = (rep?: InviteRepository) => {
       const invite = await repository.getInvite(id);
       return invite;
     },
-    create: async (params: createInvite): Promise<{ id: string }> => {
+    create: async (params: createInviteInfo): Promise<{ id: string }> => {
       const invite = await repository.createInvite(params);
       return invite;
     },

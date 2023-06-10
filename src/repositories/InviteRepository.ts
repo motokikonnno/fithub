@@ -1,10 +1,10 @@
 import { ApiClient } from "@/lib/api-client";
-import { createInvite, Invite } from "@/models/Invite";
+import { createInviteInfo, Invite } from "@/models/Invite";
 
 export type InviteRepository = {
   getInvites: () => Promise<Invite[]>;
   getInvite: (id: string) => Promise<Invite>;
-  createInvite: (prams: createInvite) => Promise<{ id: string }>;
+  createInvite: (prams: createInviteInfo) => Promise<{ id: string }>;
   deleteInvite: (id: string) => Promise<void>;
 };
 

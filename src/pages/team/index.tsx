@@ -6,9 +6,10 @@ import { useSession } from "next-auth/react";
 
 const TeamListPage: AuthNextPage<TeamListProps> = () => {
   const { data: session } = useSession();
-  const { user } = useFetchUser(session?.user ? session.user.id : null);
-  // TODO: if文の条件をSWRのisLoadingに変える
-  if (user) {
+  const { user, isLoading } = useFetchUser(
+    session?.user ? session.user.id : null
+  );
+  if (!isLoading && user) {
     return <TeamList user={user} />;
   } else {
     return <Loading />;
