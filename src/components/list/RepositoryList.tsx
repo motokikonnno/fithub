@@ -7,7 +7,7 @@ import { RepositoryListItem } from "../item/RepositoryListItem";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import { Modal } from "../Modal";
 import { User, userFactory } from "@/models/User";
-import { Team } from "@/models/Team";
+import { Team, teamFactory } from "@/models/Team";
 
 type RepositoryListProps = {
   repositories: Repository[];
@@ -22,7 +22,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
       return Date.parse(b.created_at) - Date.parse(a.created_at);
     });
     const privateRepositories = sortRepositories.filter(
-      ({ is_private }) => is_private === 2
+      ({ is_private }) => is_private === 1
     );
     const [repositoriesData, setRepositoriesData] = useState(sortRepositories);
     const [isVisible, setIsVisible] = useState(false);
@@ -49,9 +49,16 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
 
     const deleteRepository = async () => {
       await repositoryFactory().delete(repositoryId);
-      const userData = await userFactory().show(owner.id);
-      if (userData.repositories) {
-        setRepositoriesData(userData.repositories);
+      if (type === "user") {
+        const userData = await userFactory().show(owner.id);
+        if (userData.repositories) {
+          setRepositoriesData(userData.repositories);
+        }
+      } else if (type === "team") {
+        const teamData = await teamFactory().show(owner.id);
+        if (teamData.repositories) {
+          setRepositoriesData(teamData.repositories);
+        }
       }
       setDeleteText("");
       setIsVisible(false);
@@ -91,14 +98,17 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
                   New
                 </button>
               </Link>
-              <button
-                className={`${styles.selectButton} ${
-                  toggleDelete && styles.redColor
-                }`}
-                onClick={() => setToggleDelete(!toggleDelete)}
-              >
-                Select
-              </button>
+              {(!isSessionUser && privateRepositories.length > 0) ||
+                (isSessionUser && sortRepositories.length > 0 && (
+                  <button
+                    className={`${styles.selectButton} ${
+                      toggleDelete && styles.redColor
+                    }`}
+                    onClick={() => setToggleDelete(!toggleDelete)}
+                  >
+                    Select
+                  </button>
+                ))}
             </div>
           )}
         </div>
