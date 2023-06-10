@@ -56,7 +56,7 @@ model Repository {
   updated_at    DateTime  @updatedAt
   user_id       String?
   team_id       String?
-  team          Team?     @relation(fields: [team_id], references: [id])
+  team          Team?     @relation(fields: [team_id], references: [id], onDelete: Cascade)
   user          User?     @relation(fields: [user_id], references: [id])
   folders       Folder[]
   issues        Issue[]
@@ -73,7 +73,7 @@ model Folder {
   created_at    DateTime   @default(now())
   repository_id String
   user_id       String
-  repository    Repository @relation(fields: [repository_id], references: [id])
+  repository    Repository @relation(fields: [repository_id], references: [id], onDelete: Cascade)
   user          User       @relation(fields: [user_id], references: [id])
 
   @@index([repository_id])
@@ -87,7 +87,7 @@ model File {
   created_at      DateTime        @default(now())
   repository_id   String
   user_id         String
-  repository      Repository      @relation(fields: [repository_id], references: [id])
+  repository      Repository      @relation(fields: [repository_id], references: [id], onDelete: Cascade)
   commits         Commit[]
   current_commits CurrentCommit[]
   user            User            @relation(fields: [user_id], references: [id])
@@ -106,7 +106,7 @@ model Issue {
   repository_id String
   user_id       String
   user          User       @relation(fields: [user_id], references: [id])
-  repository    Repository @relation(fields: [repository_id], references: [id])
+  repository    Repository @relation(fields: [repository_id], references: [id], onDelete: Cascade)
   mention       Mention?
 
   @@index([repository_id])
@@ -120,8 +120,8 @@ model Commit {
   created_at    DateTime   @default(now())
   file_id       String
   team_id       String
-  file          File      @relation(fields: [file_id], references: [id])
-  team          Team      @relation(fields: [team_id], references: [id])
+  file          File      @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  team          Team      @relation(fields: [team_id], references: [id], onDelete: Cascade)
 
   @@index([file_id])
   @@index([team_id])
@@ -132,7 +132,7 @@ model CurrentCommit {
   message       String
   created_at    DateTime    @default(now())
   file_id       String
-  file          File        @relation(fields: [file_id], references: [id])
+  file          File        @relation(fields: [file_id], references: [id], onDelete: Cascade)
 
   @@index([file_id])
 }
@@ -169,7 +169,7 @@ model Mention {
   created_at               DateTime       @default(now())
   mentioned_user_id        String
   user                     User           @relation(fields: [mentioned_user_id], references: [id])
-  issue                    Issue          @relation(fields: [issue_id], references: [id])
+  issue                    Issue          @relation(fields: [issue_id], references: [id], onDelete: Cascade)
 
   @@index([mentioned_user_id])
   @@index([issue_id])
@@ -181,7 +181,7 @@ model TeamInvitation {
   inviter_name  String
   team_id       String
   created_at    DateTime      @default(now())
-  team          Team          @relation(fields: [team_id], references: [id])
+  team          Team          @relation(fields: [team_id], references: [id], onDelete: Cascade)
 
   @@index([team_id])
 }
