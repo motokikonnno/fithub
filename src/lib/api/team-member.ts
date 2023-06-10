@@ -20,3 +20,26 @@ export async function createTeamMember(
     return res.status(500).end(error);
   }
 }
+
+export async function deleteTeamMember(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<void>> {
+  const { id } = req.query;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
+
+  try {
+    const response = await prisma.teamMember.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}

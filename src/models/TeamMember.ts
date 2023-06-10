@@ -23,5 +23,8 @@ export const teamMemberFactory = (rep?: TeamMemberRepository) => {
     ): Promise<void> => {
       await repository.createTeamMember(params);
     },
+    delete: async (id: string): Promise<void> => {
+      await repository.deleteTeamMember(id);
+    },
   };
 };

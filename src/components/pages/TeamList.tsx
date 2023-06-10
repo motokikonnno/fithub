@@ -1,7 +1,8 @@
-import { UserBelongsToTeam } from "@/models/User";
+import { teamMemberFactory } from "@/models/TeamMember";
+import { UserBelongsToTeam, userFactory } from "@/models/User";
 import Image from "next/image";
 import Link from "next/link";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import styles from "../../styles/components/pages/TeamList.module.scss";
 import { AppLayout } from "../layouts/AppLayout";
 import { Footer } from "../layouts/Footer";
@@ -11,68 +12,77 @@ export type TeamListProps = {
 };
 
 export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
+  const [userData, setUserData] = useState(user);
+
+  const handleLeaveTeam = async (id: string) => {
+    await teamMemberFactory().delete(id);
+    const data = await userFactory().show(user.id);
+    setUserData(data);
+  };
+
   return (
-    <>
-      <AppLayout user={user}>
-        <div className={styles.layoutContainer}>
-          <div className={styles.userLinkContainer}>
-            <div className={styles.userDetailContainer}>
-              {user.image && (
-                <Image
-                  src={user.image}
-                  width={48}
-                  height={48}
-                  alt="user-icon"
-                  className={styles.userIcon}
-                />
-              )}
-              <Link href={`/user/${user.id}`} className={styles.userName}>
-                {user.name}
-              </Link>
-            </div>
-            <Link href={`/user/${user.id}`}>
-              <button className={styles.profileButton}>
-                Go to your profile
-              </button>
+    <AppLayout user={userData}>
+      <div className={styles.layoutContainer}>
+        <div className={styles.userLinkContainer}>
+          <div className={styles.userDetailContainer}>
+            {userData.image && (
+              <Image
+                src={userData.image}
+                width={48}
+                height={48}
+                alt="user-icon"
+                className={styles.userIcon}
+              />
+            )}
+            <Link href={`/user/${userData.id}`} className={styles.userName}>
+              {userData.name}
             </Link>
           </div>
-          <div className={styles.teamListContainer}>
-            <h1 className={styles.pageTitle}>Teams</h1>
-            <Link href={"/team/new"} className={styles.newTeamButton}>
-              New team
-            </Link>
-          </div>
-          {user.team_members &&
-            user.team_members.map((team, index) => (
-              <div
-                key={index}
-                className={`${styles.teamContainer} ${
-                  user.team_members &&
-                  user.team_members.length - 1 === index &&
-                  styles.lastItem
-                } ${index === 0 && styles.firstItem}`}
-              >
-                <div className={styles.teamDetailContainer}>
-                  <Image
-                    src={team.team.image}
-                    width={20}
-                    height={20}
-                    alt="team-icon"
-                    className={styles.teamImage}
-                  />
-                  <Link
-                    href={`team/${team.team.id}`}
-                    className={styles.teamName}
-                  >
-                    {team.team.name}
-                  </Link>
-                </div>
-                <button className={styles.leaveButton}>Leave</button>
-              </div>
-            ))}
+          <Link href={`/user/${userData.id}`}>
+            <button className={styles.profileButton}>Go to your profile</button>
+          </Link>
         </div>
-        <Footer />
-      </AppLayout>
-    </>
+        <div className={styles.teamListContainer}>
+          <h1 className={styles.pageTitle}>Teams</h1>
+          <Link href={"/team/new"} className={styles.newTeamButton}>
+            New team
+          </Link>
+        </div>
+        {userData.team_members &&
+          userData.team_members.map((teamMember, index) => (
+            <div
+              key={index}
+              className={`${styles.teamContainer} ${
+                userData.team_members &&
+                userData.team_members.length - 1 === index &&
+                styles.lastItem
+              } ${index === 0 && styles.firstItem}`}
+            >
+              <div className={styles.teamDetailContainer}>
+                <Image
+                  src={teamMember.team.image}
+                  width={20}
+                  height={20}
+                  alt="team-icon"
+                  className={styles.teamImage}
+                />
+                <Link
+                  href={`team/${teamMember.team.id}`}
+                  className={styles.teamName}
+                >
+                  {teamMember.team.name}
+                </Link>
+              </div>
+              <button
+                className={styles.leaveButton}
+                onClick={() => handleLeaveTeam(teamMember.id)}
+              >
+                Leave
+              </button>
+            </div>
+          ))}
+      </div>
+      <Footer />
+    </AppLayout>
   );
 });
