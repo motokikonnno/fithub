@@ -285,11 +285,18 @@ const Overview: FC<ProfileProps> = ({ repositories, user }) => {
   const sortRepositories = recentSortRepositories(repositories);
   const publicRepositories = sortRepositories.slice(0, 6);
   const privateRepositories = sortRepositories
-    .filter(({ is_private }) => is_private === 2)
+    .filter(({ is_private }) => is_private === 1)
     .slice(0, 6);
   return (
     <div className={styles.rightContainer}>
-      <h2 className={styles.title}>Recent repositories</h2>
+      {(user?.id &&
+        session?.user.id !== user.id &&
+        privateRepositories.length > 0) ||
+        (user?.id &&
+          session?.user.id === user.id &&
+          sortRepositories.length > 0 && (
+            <h2 className={styles.title}>Recent repositories</h2>
+          ))}
       <div className={styles.repositoriesContainer}>
         {user?.id && session?.user.id === user.id
           ? publicRepositories.map((repository, index) => (

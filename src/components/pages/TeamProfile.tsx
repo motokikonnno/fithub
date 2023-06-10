@@ -399,7 +399,7 @@ const Overview: FC<OverviewProps> = ({ repositories, isSessionUser }) => {
   const sortRepositories = recentSortRepositories(repositories);
   const privateRepositories = sortRepositories.slice(0, 10);
   const publicRepositories = sortRepositories
-    .filter(({ is_private }) => is_private === 2)
+    .filter(({ is_private }) => is_private === 1)
     .slice(0, 10);
   return (
     <div className={styles.rightContainer}>
