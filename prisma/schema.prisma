@@ -138,14 +138,15 @@ model CurrentCommit {
 }
 
 model Team {
-  id            String         @id @default(cuid())
-  name          String
-  bio           String?
-  image         String
-  created_at    DateTime       @default(now())
-  repositories  Repository[]
-  team_members  TeamMember[]
-  commits       Commit[]
+  id              String         @id @default(cuid())
+  name            String
+  bio             String?
+  image           String
+  created_at      DateTime       @default(now())
+  repositories    Repository[]
+  team_members    TeamMember[]
+  commits         Commit[]
+  team_invitation TeamInvitation[]
 }
 
 model TeamMember {
@@ -172,4 +173,15 @@ model Mention {
 
   @@index([mentioned_user_id])
   @@index([issue_id])
+}
+
+model TeamInvitation {
+  id            String        @id @default(cuid())
+  invitee_email String
+  inviter_name  String
+  team_id       String
+  created_at    DateTime      @default(now())
+  team          Team          @relation(fields: [team_id], references: [id])
+
+  @@index([team_id])
 }

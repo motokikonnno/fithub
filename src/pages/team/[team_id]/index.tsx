@@ -59,6 +59,7 @@ const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({ teamData }) => {
       router={router}
       isSessionUser={isSessionUser}
       items={items}
+      sessionUserName={session?.user.name}
     />
   );
 };

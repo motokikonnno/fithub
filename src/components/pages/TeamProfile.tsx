@@ -17,12 +17,14 @@ import { useForm } from "react-hook-form";
 import { recentSortRepositories } from "@/services/recentSortRepositories";
 import { Repository } from "@/models/Repository";
 import { Modal } from "../Modal";
+import { inviteFactory } from "@/models/Invite";
 
 export type TeamProfileProps = {
   teamData: Team;
   isSessionUser: boolean;
   router: NextRouter;
   items: itemType[];
+  sessionUserName?: string | null;
 };
 
 type editTeamRepositoryType = {
@@ -31,7 +33,7 @@ type editTeamRepositoryType = {
 };
 
 export const TeamProfile: FC<TeamProfileProps> = React.memo(
-  ({ teamData, isSessionUser, router, items }) => {
+  ({ teamData, isSessionUser, router, items, sessionUserName }) => {
     const query = String(router.query.tab);
     const defaultImage =
       "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
@@ -132,9 +134,14 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
       setIsToggle(false);
     };
 
-    const handleSendEmail = () => {
+    const handleSendEmail = async () => {
       if (inputText === "") return;
-
+      if (sessionUserName)
+        await inviteFactory().create({
+          invitee_email: inputText,
+          inviter_name: sessionUserName,
+          team_id: teamData.id,
+        });
       setInputText("");
       setIsVisible(true);
     };

@@ -5,5 +5,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/((?!sign_in|[^/.]).*)"],
+  matcher: ["/((?!sign_in|[^/.]|invitation).*)"],
 };
