@@ -107,3 +107,41 @@
 .teamImage {
   @extend .userIcon;
 }
+
+.confirmModalBackground {
+  padding: 64px;
+}
+
+.confirmText {
+  margin: 0 0 16px 0;
+  margin-bottom: 32px;
+  font-size: 32px;
+}
+
+.confirmContainer {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+}
+
+.deleteButton {
+  display: inline-block;
+  padding: 8px 80px;
+  font-size: 24px;
+  border-radius: 6px;
+  border: none;
+  background-color: #fc635c;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.backButton {
+  @extend .deleteButton;
+  color: #000;
+  background-color: #fff;
+  border: 1px solid #d0d7de;
+}

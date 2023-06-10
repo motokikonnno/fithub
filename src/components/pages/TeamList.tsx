@@ -6,6 +6,7 @@ import React, { FC, useState } from "react";
 import styles from "../../styles/components/pages/TeamList.module.scss";
 import { AppLayout } from "../layouts/AppLayout";
 import { Footer } from "../layouts/Footer";
+import { Modal } from "../Modal";
 
 export type TeamListProps = {
   user: UserBelongsToTeam;
@@ -13,9 +14,18 @@ export type TeamListProps = {
 
 export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
   const [userData, setUserData] = useState(user);
+  const [isVisible, setIsVisible] = useState(false);
+  const [memberId, setMemberId] = useState("");
 
-  const handleLeaveTeam = async (id: string) => {
-    await teamMemberFactory().delete(id);
+  const handleClose = (id?: string) => {
+    if (id) {
+      setMemberId(id);
+    }
+    setIsVisible(!isVisible);
+  };
+
+  const handleLeaveTeam = async () => {
+    await teamMemberFactory().delete(memberId);
     const data = await userFactory().show(user.id);
     setUserData(data);
   };
@@ -75,10 +85,33 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
               </div>
               <button
                 className={styles.leaveButton}
-                onClick={() => handleLeaveTeam(teamMember.id)}
+                onClick={() => handleClose(teamMember.id)}
               >
                 Leave
               </button>
+              {isVisible && (
+                <Modal isVisible={isVisible} handleClose={handleClose}>
+                  <div className={styles.confirmModalBackground}>
+                    <p className={styles.confirmText}>
+                      Do you really want to leave this?
+                    </p>
+                    <div className={styles.confirmContainer}>
+                      <div
+                        className={styles.deleteButton}
+                        onClick={handleLeaveTeam}
+                      >
+                        Leave
+                      </div>
+                      <div
+                        className={styles.backButton}
+                        onClick={() => handleClose()}
+                      >
+                        Back
+                      </div>
+                    </div>
+                  </div>
+                </Modal>
+              )}
             </div>
           ))}
       </div>
