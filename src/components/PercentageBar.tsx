@@ -7,18 +7,18 @@ type PercentageBarProps = {
   count: Count;
 };
 
-export const PercentageBar: FC<PercentageBarProps> = ({ count }) => {
-  type Colors = {
-    1: string;
-    2: string;
-    3: string;
-    4: string;
-    5: string;
-    6: string;
-    7: string;
-    [key: number]: string;
-  };
+type Colors = {
+  1: string;
+  2: string;
+  3: string;
+  4: string;
+  5: string;
+  6: string;
+  7: string;
+  [key: number]: string;
+};
 
+export const PercentageBar: FC<PercentageBarProps> = ({ count }) => {
   const colors: Colors = {
     1: "#ff3300",
     2: "#3333ff",
