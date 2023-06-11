@@ -21,6 +21,10 @@ import { UserBelongsToTeam } from "@/models/User";
 import { Team } from "@/models/Team";
 import { CurrentCommit, currentCommitFactory } from "@/models/CurrentCommit";
 import { changeBodyPartsNumber } from "@/utils/changeBodyPartsNumber";
+import { Commit, commitFactory } from "@/models/Commit";
+import { getTimeDiff } from "@/utils/getTime";
+import { PercentageBar } from "../PercentageBar";
+import useFetchCount from "@/hooks/useFetchCount";
 
 export type RepositoryDetailProps = {
   repository: Repository;
@@ -90,6 +94,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       },
     ];
 
+    const { count } = useFetchCount(repository.id);
     const query = String(router.query.tab);
     const [currentTab, setCurrentTab] = useState("Log");
     const [currentFolder, setCurrentFolder] = useState<Folder[]>(folders);
@@ -117,6 +122,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     const [commitText, setCommitText] = useState("");
     const [currentCommitData, setCurrentCommitData] =
       useState<CurrentCommit[]>();
+    const [commitData, setCommitData] = useState<Commit[]>();
     const dropDownListRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -265,6 +271,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         const filterCurrentCommit = currentCommit.current_commits?.filter(
           ({ user_id }) => user_id === sessionUserId
         );
+        setCommitData(currentCommit.commits);
         setCurrentCommitData(filterCurrentCommit);
         setCurrentFolderOrFileId(id);
         setIsVisible(!isVisible);
@@ -425,6 +432,15 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       await currentCommitFactory().delete(id);
     };
 
+    const handleMergeCommit = async () => {
+      if (currentCommitData && sessionUserId) {
+        await commitFactory().create({
+          file_id: currentFolderOrFileId,
+          user_id: sessionUserId,
+        });
+      }
+    };
+
     return (
       <>
         <Header />
@@ -575,11 +591,15 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               alt="header-item-icon"
                               className={styles.itemIcon}
                             />
-                            {name === "merge" && (
-                              <span className={styles.currentCommitDataNumber}>
-                                {currentCommitData?.length}
-                              </span>
-                            )}
+                            {name === "merge" &&
+                              currentCommitData &&
+                              currentCommitData.length > 0 && (
+                                <span
+                                  className={styles.currentCommitDataNumber}
+                                >
+                                  {currentCommitData?.length}
+                                </span>
+                              )}
                             <p className={styles.itemTitle}>{name}</p>
                           </div>
                         ))}
@@ -588,8 +608,8 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                     {modalHeader === "commit" && (
                       <>
                         <div className={styles.commitBackground}>
-                          {repository.commit &&
-                            repository.commit.map((commit, index) => (
+                          {commitData &&
+                            commitData.map((commit, index) => (
                               <ul
                                 key={index}
                                 className={styles.commitListContainer}
@@ -599,10 +619,19 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                                 </li>
                                 <li className={styles.rightContainer}>
                                   <div className={styles.commitUser}>
+                                    {commit.user.image && (
+                                      <Image
+                                        src={commit.user.image}
+                                        width={14}
+                                        height={14}
+                                        alt="user-icon"
+                                        className={styles.userIcon}
+                                      />
+                                    )}
                                     {commit.user.name}
                                   </div>
                                   <div className={styles.commitUpdatedAt}>
-                                    {commit.created_at}
+                                    {getTimeDiff(commit.created_at)}
                                   </div>
                                 </li>
                               </ul>
@@ -693,7 +722,12 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               </div>
                             ))}
                         </div>
-                        <button className={styles.mergeButton}>merge</button>
+                        <button
+                          className={styles.mergeButton}
+                          onClick={handleMergeCommit}
+                        >
+                          merge
+                        </button>
                       </>
                     )}
                   </div>
@@ -770,6 +804,14 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                 </div>
               )}
             </section>
+            {count && Object.keys(count).length !== 0 && (
+              <section className={styles.percentages}>
+                <h2 className={styles.sectionTitle}>Body parts percentages</h2>
+                <div className={styles.percentageBarWrapper}>
+                  <PercentageBar count={count} />
+                </div>
+              </section>
+            )}
             {isReadme ? (
               <section className={styles.readmeWrapper}>
                 <div className={styles.readmeContainer}>

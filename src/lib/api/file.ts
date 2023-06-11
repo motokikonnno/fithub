@@ -18,7 +18,11 @@ export async function getFile(
       },
       include: {
         user: true,
-        commits: true,
+        commits: {
+          include: {
+            user: true,
+          },
+        },
         current_commits: true,
       },
     });

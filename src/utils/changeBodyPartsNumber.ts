@@ -35,5 +35,4 @@ export const changeBodyPartsNumber = (num: number) => {
       bodyPartName = "";
       return { color, bodyPartName };
   }
-  // return { color, bodyPartName };
 };

@@ -176,10 +176,10 @@
 .commitListContainer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin: 0 auto;
-  width: 70%;
   padding: 0;
+  width: 70%;
+  gap: 24px;
   list-style: none;
 }
 
@@ -200,7 +200,7 @@
   display: flex;
   align-items: baseline;
   gap: 24px;
-  padding: 16px 0 32px 12%;
+  padding: 16px 0 32px 24px;
   border-left: 1px solid #d0d7de;
   &::before {
     position: absolute;
@@ -215,12 +215,23 @@
 }
 
 .commitUpdatedAt {
+  max-width: 90px;
   font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .commitUser {
+  display: flex;
+  align-items: center;
+  max-width: 130px;
+  gap: 4px;
   font-size: 14px;
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .commitFormLayout {
@@ -468,6 +479,25 @@
   font-size: 12px;
   font-weight: bold;
   color: #fff;
+}
+
+.percentages {
+  margin: 48px 0;
+  padding: 16px 32px;
+  border: 1px solid #656d76;
+  border-radius: 10px;
+}
+
+.sectionTitle {
+  margin: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.percentageBarWrapper {
+  margin: 0 auto;
+  width: 70%;
 }
 
 .red {
