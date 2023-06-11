@@ -19,6 +19,8 @@ import { Issue } from "@/models/Issue";
 import { IssueList } from "./IssueList";
 import { UserBelongsToTeam } from "@/models/User";
 import { Team } from "@/models/Team";
+import { CurrentCommit, currentCommitFactory } from "@/models/CurrentCommit";
+import { changeBodyPartsNumber } from "@/utils/changeBodyPartsNumber";
 
 export type RepositoryDetailProps = {
   repository: Repository;
@@ -31,6 +33,11 @@ export type RepositoryDetailProps = {
   router: NextRouter;
   items: itemType[];
   isSessionUser: boolean;
+};
+
+type bodyPartsType = {
+  id: number;
+  name: string;
 };
 
 export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
@@ -55,36 +62,31 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       },
     ];
 
-    const commitData = [
+    const bodyPartsList: bodyPartsType[] = [
       {
-        id: "1",
-        message: "feat-ログイン機能",
-        userName: "motoki",
-        updatedAt: "2023/05/12",
+        id: 1,
+        name: "Chest",
       },
       {
-        id: "2",
-        message: "feat-ログイン機能",
-        userName: "motoki",
-        updatedAt: "2023/05/12",
+        id: 2,
+        name: "Back",
+      },
+      { id: 3, name: "Legs" },
+      {
+        id: 4,
+        name: "Arms",
       },
       {
-        id: "3",
-        message: "feat-ログイン機能",
-        userName: "motoki",
-        updatedAt: "2023/05/12",
+        id: 5,
+        name: "Shoulders",
       },
       {
-        id: "4",
-        message: "feat-ログイン機能",
-        userName: "motoki",
-        updatedAt: "2023/05/12",
+        id: 6,
+        name: "Abdominal",
       },
       {
-        id: "5",
-        message: "feat-ログイン機能",
-        userName: "motoki",
-        updatedAt: "2023/05/12",
+        id: 7,
+        name: "Other",
       },
     ];
 
@@ -110,6 +112,12 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     const [defaultText, setDefaultText] = useState("");
     const [currentType, setCurrentType] = useState<"folder" | "file" | "">("");
     const [isReadme, setIsReadme] = useState(repository.is_read_me);
+    const [bodyParts, setBodyParts] = useState<bodyPartsType>();
+    const [isBodyPartsFlag, setBodyPartsFlag] = useState(false);
+    const [commitText, setCommitText] = useState("");
+    const [currentCommitData, setCurrentCommitData] =
+      useState<CurrentCommit[]>();
+    const dropDownListRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
       const handlePopstate = () => {
@@ -164,10 +172,16 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
           return;
         }
         const inputElement = inputRef.current;
-        if (inputElement && inputElement?.contains(event.target)) return;
+        const dropdownElement = dropDownListRef.current;
+        if (
+          (inputElement && inputElement?.contains(event.target)) ||
+          (dropdownElement && dropdownElement?.contains(event.target))
+        )
+          return;
         setCreateType("");
         setToggleInput(false);
         setInputText("");
+        setBodyPartsFlag(false);
       };
       window.addEventListener("click", handleClickToCloseInput, true);
       return () => {
@@ -244,6 +258,21 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       setIsVisible(!isVisible);
       setModalHeader("commit");
     }, [isVisible]);
+
+    const handleSetCommitData = useCallback(
+      async (id: string) => {
+        const currentCommit = await fileFactory().show(id);
+        const filterCurrentCommit = currentCommit.current_commits?.filter(
+          ({ user_id }) => user_id === sessionUserId
+        );
+        setCurrentCommitData(filterCurrentCommit);
+        setCurrentFolderOrFileId(id);
+        setIsVisible(!isVisible);
+        setModalHeader("commit");
+        setBodyParts(undefined);
+      },
+      [isVisible, sessionUserId]
+    );
 
     const handleConfirmModal = useCallback(
       (id?: string) => {
@@ -379,6 +408,23 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       setIsReadme(updateIsReadme.is_read_me);
     };
 
+    const handleCreateCurrentCommit = async () => {
+      if (commitText === "") return;
+      if (sessionUserId)
+        await currentCommitFactory().create({
+          user_id: sessionUserId,
+          file_id: currentFolderOrFileId,
+          message: commitText,
+          body_parts: bodyParts ? bodyParts.id : 7,
+        });
+      setBodyParts(undefined);
+      setCommitText("");
+    };
+
+    const handleCurrentCommitDelete = async (id: string) => {
+      await currentCommitFactory().delete(id);
+    };
+
     return (
       <>
         <Header />
@@ -494,7 +540,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                 currentFile.map((file, index) => (
                   <FileItem
                     file={file}
-                    handleModalClose={handleModalClose}
+                    handleModalClose={handleSetCommitData}
                     key={index}
                     handleConfirmModal={handleConfirmModal}
                     handleSetDefaultText={handleSetDefaultText}
@@ -529,6 +575,11 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               alt="header-item-icon"
                               className={styles.itemIcon}
                             />
+                            {name === "merge" && (
+                              <span className={styles.currentCommitDataNumber}>
+                                {currentCommitData?.length}
+                              </span>
+                            )}
                             <p className={styles.itemTitle}>{name}</p>
                           </div>
                         ))}
@@ -537,69 +588,110 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                     {modalHeader === "commit" && (
                       <>
                         <div className={styles.commitBackground}>
-                          {commitData.map((commit, index) => (
-                            <ul
-                              key={index}
-                              className={styles.commitListContainer}
-                            >
-                              <li className={styles.commitMessage}>
-                                {commit.message}
-                              </li>
-                              <li className={styles.rightContainer}>
-                                <li className={styles.commitUser}>
-                                  {commit.userName}
+                          {repository.commit &&
+                            repository.commit.map((commit, index) => (
+                              <ul
+                                key={index}
+                                className={styles.commitListContainer}
+                              >
+                                <li className={styles.commitMessage}>
+                                  {commit.message}
                                 </li>
-                                <li className={styles.commitUpdatedAt}>
-                                  {commit.updatedAt}
+                                <li className={styles.rightContainer}>
+                                  <div className={styles.commitUser}>
+                                    {commit.user.name}
+                                  </div>
+                                  <div className={styles.commitUpdatedAt}>
+                                    {commit.created_at}
+                                  </div>
                                 </li>
-                              </li>
-                            </ul>
-                          ))}
+                              </ul>
+                            ))}
                         </div>
                         <div className={styles.commitFormLayout}>
                           <textarea
                             placeholder="commit message"
                             className={styles.textarea}
+                            value={commitText}
+                            onChange={(e) => setCommitText(e.target.value)}
                           ></textarea>
-                          <button className={styles.commitButton}>
-                            commit
-                          </button>
+                          <div className={styles.commitRightContainer}>
+                            <div
+                              className={styles.bodyPartsSelectForm}
+                              onClick={() => setBodyPartsFlag(!isBodyPartsFlag)}
+                              ref={dropDownListRef}
+                            >
+                              {bodyParts ? bodyParts.name : "Body part select"}
+                              {isBodyPartsFlag && (
+                                <ul className={styles.bodyPartList}>
+                                  {bodyPartsList.map((body) => (
+                                    <li
+                                      key={body.id}
+                                      className={styles.bodyItem}
+                                      onClick={() => setBodyParts(body)}
+                                    >
+                                      {body.name}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                            <button
+                              className={styles.commitButton}
+                              onClick={handleCreateCurrentCommit}
+                            >
+                              commit
+                            </button>
+                          </div>
                         </div>
                       </>
                     )}
                     {modalHeader === "merge" && (
                       <>
                         <div className={styles.commitBackground}>
-                          {commitData.map((commit, index) => (
-                            <div
-                              key={index}
-                              className={styles.committedListContainer}
-                            >
+                          {currentCommitData &&
+                            currentCommitData.map((commit, index) => (
                               <div
-                                className={styles.committedMessage}
-                                id={commit.id}
-                                onMouseEnter={(e) =>
-                                  handleMouseEnter(e, commit.id)
-                                }
-                                onMouseLeave={() => setIsHover(false)}
+                                key={index}
+                                className={styles.committedListContainer}
                               >
-                                {commit.message}
-                                {isHover && hoverValue === commit.id && (
-                                  <Image
-                                    src={"/icons/trash.svg"}
-                                    width={16}
-                                    height={16}
-                                    alt="trash-icon"
-                                    className={styles.trashIcon}
-                                  />
-                                )}
+                                <div
+                                  className={styles.committedMessage}
+                                  id={commit.id}
+                                  onMouseEnter={(e) =>
+                                    handleMouseEnter(e, commit.id)
+                                  }
+                                  onMouseLeave={() => setIsHover(false)}
+                                >
+                                  {commit.message}
+                                  {isHover && hoverValue === commit.id && (
+                                    <Image
+                                      src={"/icons/trash.svg"}
+                                      width={16}
+                                      height={16}
+                                      alt="trash-icon"
+                                      className={styles.trashIcon}
+                                      onClick={() =>
+                                        handleCurrentCommitDelete(commit.id)
+                                      }
+                                    />
+                                  )}
+                                </div>
+                                <div
+                                  className={`${styles.bodyPart} ${
+                                    styles[
+                                      changeBodyPartsNumber(commit.body_parts)
+                                        .color
+                                    ]
+                                  }`}
+                                >
+                                  {
+                                    changeBodyPartsNumber(commit.body_parts)
+                                      .bodyPartName
+                                  }
+                                </div>
                               </div>
-                              <input
-                                type={"checkbox"}
-                                className={styles.checkbox}
-                              />
-                            </div>
-                          ))}
+                            ))}
                         </div>
                         <button className={styles.mergeButton}>merge</button>
                       </>

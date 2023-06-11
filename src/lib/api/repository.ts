@@ -46,8 +46,18 @@ export async function getRepository(
             user: true,
           },
         },
+        commits: {
+          include: {
+            user: true,
+          },
+        },
         user: true,
-        files: true,
+        files: {
+          include: {
+            commits: true,
+            current_commits: true,
+          },
+        },
         folders: true,
         team: {
           include: {

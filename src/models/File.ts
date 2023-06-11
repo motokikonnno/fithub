@@ -20,6 +20,10 @@ export type File = {
 export const fileFactory = (rep?: FileRepository) => {
   const repository = rep ?? fileRepository;
   return {
+    show: async (id: string): Promise<File> => {
+      const file = await repository.getFile(id);
+      return file;
+    },
     create: async (
       params: Pick<File, "name" | "repository_id" | "parent_id" | "user_id">
     ): Promise<void> => {

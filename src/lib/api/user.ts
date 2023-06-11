@@ -47,6 +47,7 @@ export async function getUser(
             },
           },
         },
+        commits: true,
       },
     });
     return res.status(200).json({ user: user });

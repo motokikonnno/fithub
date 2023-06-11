@@ -1,6 +1,33 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../prisma";
 
+export async function getFile(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<void>> {
+  const { id } = req.query;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
+
+  try {
+    const file = await prisma.file.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        user: true,
+        commits: true,
+        current_commits: true,
+      },
+    });
+    return res.status(200).json({ file: file });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
+
 export async function createFile(
   req: NextApiRequest,
   res: NextApiResponse

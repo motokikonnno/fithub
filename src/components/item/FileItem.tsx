@@ -8,7 +8,7 @@ import styles from "../../styles/components/item/FolderWithFileItem.module.scss"
 
 type FileItemProps = {
   file: File;
-  handleModalClose: () => void;
+  handleModalClose: (id: string) => void;
   toggleAction: boolean;
   toggleInput: boolean;
   defaultText: string;
@@ -65,7 +65,7 @@ export const FileItem: FC<FileItemProps> = React.memo(
           ) : (
             <span
               className={styles.folderOrFileName}
-              onClick={handleModalClose}
+              onClick={() => handleModalClose(file.id)}
             >
               {file.name}
             </span>

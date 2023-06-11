@@ -22,45 +22,48 @@ model Account {
   scope              String?
   id_token           String?  @db.Text
   session_state      String?
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  bio           String?   @default("")
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  repositories  Repository[]
-  team_members  TeamMember[]
-  folders       Folder[]
-  files         File[]
-  issues        Issue[]
-  mentions      Mention[]
+  id             String    @id @default(cuid())
+  name           String?
+  bio            String?   @default("")
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  repositories   Repository[]
+  team_members   TeamMember[]
+  folders        Folder[]
+  files          File[]
+  issues         Issue[]
+  mentions       Mention[]
+  commits        Commit[]
+  curent_commits CurrentCommit[]
 }
 
 model Repository {
-  id            String    @id @default(cuid())
-  next_issue_id Int       @default(1)
-  name          String
-  description   String?
-  is_private    Int // 1: パブリック, 2: プライベート
-  is_read_me    Boolean
-  read_me       String?   @db.LongText
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  user_id       String?
-  team_id       String?
-  team          Team?     @relation(fields: [team_id], references: [id], onDelete: Cascade)
-  user          User?     @relation(fields: [user_id], references: [id])
-  folders       Folder[]
-  issues        Issue[]
-  files         File[]
+  id             String    @id @default(cuid())
+  next_issue_id  Int       @default(1)
+  name           String
+  description    String?
+  is_private     Int // 1: パブリック, 2: プライベート
+  is_read_me     Boolean
+  read_me        String?   @db.LongText
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  user_id        String?
+  team_id        String?
+  team           Team?     @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  user           User?     @relation(fields: [user_id], references: [id])
+  folders        Folder[]
+  issues         Issue[]
+  files          File[]
+  commits        Commit[]
 
   @@index([user_id])
   @@index([team_id])
@@ -116,25 +119,35 @@ model Issue {
 model Commit {
   id            String     @id @default(cuid())
   message       String
-  commit_user   String
+  body_parts    Int // 1: 胸、 2: 背中、 3: 足、 4: 腕、 5: 肩、 6、腹筋、 7: その他
   created_at    DateTime   @default(now())
+  user_id       String
   file_id       String
-  team_id       String
-  file          File      @relation(fields: [file_id], references: [id], onDelete: Cascade)
-  team          Team      @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  team_id       String?
+  repository_id String
+  repository    Repository  @relation(fields: [repository_id], references: [id], onDelete: Cascade)
+  file          File        @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  team          Team?       @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [user_id], references: [id])
 
   @@index([file_id])
   @@index([team_id])
+  @@index([user_id])
+  @@index([repository_id])
 }
 
 model CurrentCommit {
   id            String      @id @default(cuid())
   message       String
+  body_parts    Int         // 1: 胸、 2: 背中、 3: 足、 4: 腕、 5: 肩、 6、腹筋、 7: その他
   created_at    DateTime    @default(now())
+  user_id       String
   file_id       String
+  user          User        @relation(fields: [user_id], references: [id])
   file          File        @relation(fields: [file_id], references: [id], onDelete: Cascade)
 
   @@index([file_id])
+  @@index([user_id])
 }
 
 model Team {

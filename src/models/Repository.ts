@@ -2,6 +2,7 @@ import {
   repositoryRepository,
   RepositoryRepository,
 } from "@/repositories/RepositoryRepository";
+import { Commit } from "./Commit";
 import { File } from "./File";
 import { Folder } from "./Folder";
 import { Issue } from "./Issue";
@@ -13,6 +14,7 @@ export type Repository = {
   next_issue_id: number;
   user_id?: string;
   team_id?: string;
+  commit_id?: string;
   name: string;
   description?: string;
   is_private: Number;
@@ -24,6 +26,7 @@ export type Repository = {
   issues?: Issue[];
   user?: User;
   team?: Team;
+  commit?: Commit[];
 };
 
 export const repositoryFactory = (rep?: RepositoryRepository) => {

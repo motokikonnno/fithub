@@ -137,6 +137,7 @@
 }
 
 .headerItem {
+  position: relative;
   flex: 1;
   text-align: center;
   padding-top: 16px;
@@ -224,28 +225,83 @@
 
 .commitFormLayout {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
   margin: 0 auto;
   padding-top: 16px;
-  width: 70%;
+  width: 80%;
+  gap: 32px;
+}
+
+.commitRightContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 88px;
+}
+
+.bodyPartsSelectForm {
+  position: relative;
+  padding: 4px 8px;
+  font-size: 16px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.bodyPartList {
+  position: absolute;
+  right: -120px;
+  top: -10px;
+  margin: 0;
+  padding: 0;
+  height: 100px;
+  background-color: #fff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  overflow-y: scroll;
+  z-index: 2;
+}
+
+.bodyItem {
+  padding: 4px 0 4px 16px;
+  width: 80px;
+  font-size: 14px;
+  list-style: none;
+  &:hover {
+    background-color: #f6f8fa;
+  }
 }
 
 .textarea {
   padding: 8px;
-  width: 85%;
+  width: 70%;
   height: 70px;
   border: 1px solid #d0d7de;
 }
 
 .commitButton {
   padding: 8px;
+  max-width: 63px;
   font-size: 14px;
-  border: none;
+  border: 1px solid #d0d7de;
   color: #fff;
   background-color: #2c8747;
   border-radius: 6px;
+  transition: 0.2s all ease-in-out;
   cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.currentCommitDataNumber {
+  position: absolute;
+  top: 10px;
+  right: 240px;
+  padding: 0 5px;
+  background-color: #0969da;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
 }
 
 .xmarkIconWrapper {
@@ -283,10 +339,19 @@
 }
 
 .mergeButton {
-  @extend .commitButton;
   display: block;
   margin: 38px auto 0 auto;
-  width: 10%;
+  padding: 8px 16px;
+  background-color: #2c8747;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  color: #fff;
+  font-size: 18px;
+  transition: 0.2s all ease-in-out;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
 .readme {
@@ -396,4 +461,46 @@
   &:hover {
     opacity: 0.85;
   }
+}
+
+.bodyPart {
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.red {
+  border-radius: 10px;
+  background-color: #ff3300;
+}
+
+.blue {
+  border-radius: 10px;
+  background-color: #3333ff;
+}
+
+.green {
+  border-radius: 10px;
+  background-color: #00dd00;
+}
+
+.yellow {
+  border-radius: 10px;
+  background-color: #ffff11;
+}
+
+.purple {
+  border-radius: 10px;
+  background-color: #7b3cff;
+}
+
+.brown {
+  border-radius: 10px;
+  background-color: #a0522d;
+}
+
+.gray {
+  border-radius: 10px;
+  background-color: #d3d3d3;
 }
