@@ -1,4 +1,5 @@
 import { userRepository, UserRepository } from "@/repositories/UserRepository";
+import { Commit } from "./Commit";
 import { Repository } from "./Repository";
 import { TeamMember } from "./TeamMember";
 
@@ -13,6 +14,7 @@ export type User = {
 
 export type UserBelongsToTeam = User & {
   team_members?: TeamMember[];
+  commits: Commit[];
 };
 
 export const userFactory = (rep?: UserRepository) => {

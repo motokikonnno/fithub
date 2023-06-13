@@ -18,12 +18,15 @@ import { recentSortRepositories } from "@/services/recentSortRepositories";
 import { Repository } from "@/models/Repository";
 import { Modal } from "../Modal";
 import { inviteFactory } from "@/models/Invite";
+import { Count } from "@/models/Count";
+import { PercentageBar } from "../PercentageBar";
 
 export type TeamProfileProps = {
   teamData: Team;
   isSessionUser: boolean;
   items: itemType[];
   sessionUserName?: string | null;
+  count: Count;
 };
 
 type editTeamRepositoryType = {
@@ -32,7 +35,7 @@ type editTeamRepositoryType = {
 };
 
 export const TeamProfile: FC<TeamProfileProps> = React.memo(
-  ({ teamData, isSessionUser, items, sessionUserName }) => {
+  ({ teamData, isSessionUser, items, sessionUserName, count }) => {
     const router = useRouter();
     const query = String(router.query.tab);
     const defaultImage =
@@ -300,6 +303,8 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
                 <Overview
                   repositories={team.repositories}
                   isSessionUser={isSessionUser}
+                  count={count}
+                  team={teamData}
                 />
               )}
             </>
@@ -393,9 +398,16 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
 type OverviewProps = {
   repositories: Repository[];
   isSessionUser: boolean;
+  count: Count;
+  team: Team;
 };
 
-const Overview: FC<OverviewProps> = ({ repositories, isSessionUser }) => {
+const Overview: FC<OverviewProps> = ({
+  repositories,
+  isSessionUser,
+  count,
+  team,
+}) => {
   const sortRepositories = recentSortRepositories(repositories);
   const privateRepositories = sortRepositories.slice(0, 10);
   const publicRepositories = sortRepositories
@@ -423,6 +435,16 @@ const Overview: FC<OverviewProps> = ({ repositories, isSessionUser }) => {
               />
             ))}
       </div>
+      {count && Object.keys(count).length !== 0 && (
+        <section className={styles.percentages}>
+          <h2 className={styles.sectionTitle}>Body parts percentages</h2>
+          <div className={styles.percentageBarWrapper}>
+            <PercentageBar count={count} />
+          </div>
+        </section>
+      )}
+      <h2 className={styles.title}>Contributions</h2>
+      <div className={styles.commitNumber}>{team.commits?.length}</div>
     </div>
   );
 };

@@ -30,6 +30,7 @@
   display: flex;
   margin: 0 auto;
   width: 85.4%;
+  gap: 48px;
 }
 
 .tabRepositoryContainer {
@@ -292,4 +293,29 @@
   &:hover {
     opacity: 0.8;
   }
+}
+
+.percentages {
+  margin: 48px 0;
+  padding: 16px 32px;
+  border: 1px solid #656d76;
+  border-radius: 10px;
+}
+
+.sectionTitle {
+  margin: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.percentageBarWrapper {
+  margin: 0 auto;
+  width: 70%;
+}
+
+.commitNumber {
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
 }

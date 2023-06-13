@@ -8,11 +8,7 @@ export async function getTeams(
 ): Promise<void | NextApiResponse<Team[]>> {
   try {
     const teams = await prisma.team.findMany({
-      select: {
-        id: true,
-        name: true,
-        bio: true,
-        image: true,
+      include: {
         repositories: true,
         team_members: true,
         commits: true,
@@ -40,6 +36,7 @@ export async function getTeam(
         id: id,
       },
       include: {
+        commits: true,
         repositories: true,
         team_members: {
           include: {

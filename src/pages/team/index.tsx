@@ -16,7 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (session) {
     const user = await userFactory().show(session?.user.id);
     return {
-      props: { user },
+      props: { user, session },
     };
   } else {
     return {

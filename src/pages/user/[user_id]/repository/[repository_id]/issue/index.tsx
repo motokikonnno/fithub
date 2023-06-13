@@ -30,8 +30,9 @@ const UserIssueListPage: AuthNextPage<IssuePropsType> = ({
       name: "Issue",
     },
   ];
+
   if (owner.id !== session?.user.id) {
-    return <ErrorPage />;
+    return <ErrorPage isSession={true} />;
   }
 
   return (

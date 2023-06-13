@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     `${repository_id}_`
   );
   const files = await fileFactory().index(repository_id, `${repository_id}_`);
-  const countData = await countFactory().get(repository_id);
+  const countData = await countFactory().get(`${repository_id}_repository`);
   const user = repository.user && repository.user;
 
   return {

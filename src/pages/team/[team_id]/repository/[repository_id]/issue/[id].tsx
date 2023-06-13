@@ -25,7 +25,7 @@ const IssueDetailPage: AuthNextPage<IssueDetailProps> = ({
     : false;
 
   if (!isSessionUser) {
-    return <ErrorPage />;
+    return <ErrorPage isSession={true} />;
   }
 
   const items: itemType[] = [

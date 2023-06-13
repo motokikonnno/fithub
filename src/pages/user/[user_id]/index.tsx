@@ -1,4 +1,5 @@
 import { UserProfile, UserProfileProps } from "@/components/pages/UserProfile";
+import { countFactory } from "@/models/Count";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetServerSideProps } from "next";
@@ -11,8 +12,15 @@ type QueryParams = {
 const UserProfilePage: AuthNextPage<UserProfileProps> = ({
   userData,
   isSessionUser,
+  count,
 }) => {
-  return <UserProfile userData={userData} isSessionUser={isSessionUser} />;
+  return (
+    <UserProfile
+      userData={userData}
+      isSessionUser={isSessionUser}
+      count={count}
+    />
+  );
 };
 
 export default UserProfilePage;
@@ -24,9 +32,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const user = await userFactory().show(user_id);
     const session = await getSession(context);
     const isSessionUser = session?.user.id === user.id;
+    const count = await countFactory().get(`${user_id}_user`);
 
     return {
-      props: { userData: user, isSessionUser: isSessionUser },
+      props: { userData: user, isSessionUser: isSessionUser, count: count },
     };
   } catch {
     return {

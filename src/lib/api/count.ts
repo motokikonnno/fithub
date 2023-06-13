@@ -12,33 +12,54 @@ export async function countBodyParts(
     return res.status(400).json({ error: "Invalid user_id not string type" });
   }
 
-  try {
-    const repository = await prisma.repository.findUnique({
-      where: {
-        id: id,
-      },
-      include: {
-        commits: true,
-      },
-    });
+  const Id = id.split("_")[0];
+  const type = id.split("_")[1];
 
-    if (repository) {
-      const totalCommits = repository.commits.length;
-      const typeCounts: Count = repository.commits.reduce(
-        (counts: Count, commit) => {
-          const key = commit.body_parts;
-          if (key >= 1 && key <= 7) {
-            const count = counts[key];
-            if (count !== undefined) {
-              counts[key] = count + 1;
-            } else {
-              counts[key] = 1;
-            }
-          }
-          return counts;
+  try {
+    let data;
+    if (type === "repository") {
+      data = await prisma.repository.findUnique({
+        where: {
+          id: Id,
         },
-        {} as Count
-      );
+        include: {
+          commits: true,
+        },
+      });
+    } else if (type === "user") {
+      data = await prisma.user.findUnique({
+        where: {
+          id: Id,
+        },
+        include: {
+          commits: true,
+        },
+      });
+    } else if (type === "team") {
+      data = await prisma.team.findUnique({
+        where: {
+          id: Id,
+        },
+        include: {
+          commits: true,
+        },
+      });
+    }
+
+    if (data) {
+      const totalCommits = data.commits.length;
+      const typeCounts: Count = data.commits.reduce((counts: Count, commit) => {
+        const key = commit.body_parts;
+        if (key >= 1 && key <= 7) {
+          const count = counts[key];
+          if (count !== undefined) {
+            counts[key] = count + 1;
+          } else {
+            counts[key] = 1;
+          }
+        }
+        return counts;
+      }, {} as Count);
 
       const typePercentages: Count = Object.fromEntries(
         Object.entries(typeCounts).map(([key, value]) => [

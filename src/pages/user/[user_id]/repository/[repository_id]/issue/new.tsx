@@ -18,7 +18,7 @@ const CreateIssuePage: AuthNextPage<CreateIssueProps> = ({
   const { data: session } = useSession();
 
   if (owner.id !== session?.user.id) {
-    return <ErrorPage />;
+    return <ErrorPage isSession={true} />;
   }
 
   const items: itemType[] = [

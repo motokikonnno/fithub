@@ -16,6 +16,8 @@ import { useForm } from "react-hook-form";
 import { Repository } from "@/models/Repository";
 import { useSession } from "next-auth/react";
 import { recentSortRepositories } from "@/services/recentSortRepositories";
+import { PercentageBar } from "../PercentageBar";
+import { Count } from "@/models/Count";
 
 export type itemType = {
   id: string;
@@ -31,10 +33,11 @@ type updateUserType = {
 export type UserProfileProps = {
   userData: UserBelongsToTeam;
   isSessionUser: boolean;
+  count: Count;
 };
 
 export const UserProfile: FC<UserProfileProps> = React.memo(
-  ({ userData, isSessionUser }) => {
+  ({ userData, isSessionUser, count }) => {
     const items: itemType[] = [
       {
         id: "1",
@@ -258,7 +261,11 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
           </div>
           {userData.repositories &&
             (currentTab === "Overview" ? (
-              <Overview repositories={userData.repositories} user={userData} />
+              <Overview
+                repositories={userData.repositories}
+                user={userData}
+                count={count}
+              />
             ) : (
               <div className={styles.repositoryComponentWrapper}>
                 <RepositoryList
@@ -278,10 +285,11 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
 
 export type ProfileProps = {
   repositories: Repository[];
-  user?: User;
+  user?: UserBelongsToTeam;
+  count: Count;
 };
 
-const Overview: FC<ProfileProps> = ({ repositories, user }) => {
+const Overview: FC<ProfileProps> = ({ repositories, user, count }) => {
   const { data: session } = useSession();
   const sortRepositories = recentSortRepositories(repositories);
   const publicRepositories = sortRepositories.slice(0, 6);
@@ -317,7 +325,7 @@ const Overview: FC<ProfileProps> = ({ repositories, user }) => {
               />
             ))}
       </div>
-      <h2 className={styles.title}>317 contributions</h2>
+      <h2 className={styles.title}>{user?.commits.length} contributions</h2>
       <div className={styles.calendarContainer}>
         <ReactCalendarHeatmap
           startDate={new Date("2023-01-01")}
@@ -329,6 +337,14 @@ const Overview: FC<ProfileProps> = ({ repositories, user }) => {
           ]}
         />
       </div>
+      {count && Object.keys(count).length !== 0 && (
+        <section className={styles.percentages}>
+          <h2 className={styles.sectionTitle}>Body parts percentages</h2>
+          <div className={styles.percentageBarWrapper}>
+            <PercentageBar count={count} />
+          </div>
+        </section>
+      )}
     </div>
   );
 };

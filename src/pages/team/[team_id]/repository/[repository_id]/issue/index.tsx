@@ -23,7 +23,7 @@ const TeamIssueListPage: AuthNextPage<IssuePropsType> = ({
   const isTeamMember =
     team && team.team_members?.find(({ user }) => user.id === session?.user.id);
   if (!isTeamMember) {
-    return <ErrorPage />;
+    return <ErrorPage isSession={true} />;
   }
   const items: itemType[] = [
     {

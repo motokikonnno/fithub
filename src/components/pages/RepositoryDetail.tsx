@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/RepositoryDetail.module.scss";
 import { BreadCrumb } from "../BreadCrumb";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
 import { Modal } from "../Modal";
-import { Tabs } from "../Tabs";
 import { itemType } from "./UserProfile";
 import { FolderItem } from "../item/FolderItem";
 import { FileItem } from "../item/FileItem";
@@ -15,8 +14,6 @@ import Link from "next/link";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import { Folder, folderFactory } from "@/models/Folder";
 import { File, fileFactory } from "@/models/File";
-import { Issue } from "@/models/Issue";
-import { IssueList } from "./IssueList";
 import { UserBelongsToTeam } from "@/models/User";
 import { Team } from "@/models/Team";
 import { CurrentCommit, currentCommitFactory } from "@/models/CurrentCommit";
@@ -93,9 +90,11 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       },
     ];
 
-    const { count, countMutate } = useFetchCount(repository.id, countData);
+    const { count, countMutate } = useFetchCount(
+      `${repository.id}_repository`,
+      countData
+    );
     const router = useRouter();
-    // const [currentTab, setCurrentTab] = useState("Log");
     const [currentFolder, setCurrentFolder] = useState<Folder[]>(folders);
     const [currentFile, setCurrentFile] = useState<File[]>(files);
     const [createType, setCreateType] = useState("");

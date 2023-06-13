@@ -51,7 +51,7 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
     useEffect(() => {
       if (team?.team_members && typeof assignUser !== "string") {
         const filterOwnerList = team.team_members.filter(({ user }) => {
-          user.id !== assignUser.id;
+          return user.id !== assignUser.id;
         });
         setMemberList(filterOwnerList);
       }
@@ -212,7 +212,6 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
           {toggleEdit && (
             <p className={styles.errorMessage}>{errors.title?.message}</p>
           )}
-
           <div className={styles.issueDetailContainer}>
             <div
               className={`${styles.issueTypeContainer} ${
