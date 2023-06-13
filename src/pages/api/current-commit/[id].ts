@@ -2,7 +2,7 @@ import { deleteCurrentCommit } from "@/lib/api/current-commit";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleCurrentCommitRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleCurrentCommitRequest: NextApiHandler = async (
   }
 };
 
-export default handleCurrentCommitRequest;
+export default handleRequest;

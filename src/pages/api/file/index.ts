@@ -2,7 +2,7 @@ import { createFile } from "@/lib/api/file";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleFileCreateRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleFileCreateRequest: NextApiHandler = async (
   }
 };
 
-export default handleFileCreateRequest;
+export default handleRequest;

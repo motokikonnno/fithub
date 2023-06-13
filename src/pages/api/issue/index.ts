@@ -2,7 +2,7 @@ import { createIssue, getIssues } from "@/lib/api/issue";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleCreateIssueRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -16,4 +16,4 @@ const handleCreateIssueRequest: NextApiHandler = async (
   }
 };
 
-export default handleCreateIssueRequest;
+export default handleRequest;

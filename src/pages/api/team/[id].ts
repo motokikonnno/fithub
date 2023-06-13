@@ -2,7 +2,7 @@ import { getTeam, updateTeam } from "@/lib/api/team";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleTeamRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -18,4 +18,4 @@ const handleTeamRequest: NextApiHandler = async (
   }
 };
 
-export default handleTeamRequest;
+export default handleRequest;

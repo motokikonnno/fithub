@@ -2,7 +2,7 @@ import { createCommit } from "@/lib/api/commit";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleCreateCommitRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleCreateCommitRequest: NextApiHandler = async (
   }
 };
 
-export default handleCreateCommitRequest;
+export default handleRequest;

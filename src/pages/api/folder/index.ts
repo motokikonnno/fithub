@@ -2,7 +2,7 @@ import { createFolder } from "@/lib/api/folder";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleFolderCreateRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleFolderCreateRequest: NextApiHandler = async (
   }
 };
 
-export default handleFolderCreateRequest;
+export default handleRequest;

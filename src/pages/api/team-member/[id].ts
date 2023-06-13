@@ -2,7 +2,7 @@ import { deleteTeamMember } from "@/lib/api/team-member";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleDeleteTeamMemberRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleDeleteTeamMemberRequest: NextApiHandler = async (
   }
 };
 
-export default handleDeleteTeamMemberRequest;
+export default handleRequest;

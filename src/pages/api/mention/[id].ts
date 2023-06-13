@@ -2,7 +2,7 @@ import { updateMention } from "@/lib/api/mention";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleMentionCreateRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleMentionCreateRequest: NextApiHandler = async (
   }
 };
 
-export default handleMentionCreateRequest;
+export default handleRequest;

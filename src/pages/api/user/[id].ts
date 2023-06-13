@@ -2,7 +2,7 @@ import { getUser, updateUser } from "@/lib/api/user";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleUserRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -16,4 +16,4 @@ const handleUserRequest: NextApiHandler = async (
   }
 };
 
-export default handleUserRequest;
+export default handleRequest;

@@ -2,7 +2,7 @@ import { countBodyParts } from "@/lib/api/count";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleCountRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -14,4 +14,4 @@ const handleCountRequest: NextApiHandler = async (
   }
 };
 
-export default handleCountRequest;
+export default handleRequest;

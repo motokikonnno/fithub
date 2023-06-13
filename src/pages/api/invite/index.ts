@@ -2,7 +2,7 @@ import { createInvite, getInvites } from "@/lib/api/invite";
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleCreateInviteRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -16,4 +16,4 @@ const handleCreateInviteRequest: NextApiHandler = async (
   }
 };
 
-export default handleCreateInviteRequest;
+export default handleRequest;

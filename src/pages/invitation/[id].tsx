@@ -5,7 +5,7 @@ import {
 } from "@/components/pages/InviteConfirm";
 import { inviteFactory } from "@/models/Invite";
 import { AuthNextPage } from "@/types/auth-next-page";
-import { GetServerSideProps, GetStaticPaths } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import ErrorPage from "../404";
@@ -41,7 +41,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetServerSideProps = async (context) => {
+export const getStaticProps: GetStaticProps = async (context) => {
   const { id } = context.params as PathParams;
   try {
     const inviteData = await inviteFactory().show(id);

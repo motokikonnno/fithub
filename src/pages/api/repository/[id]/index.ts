@@ -6,7 +6,7 @@ import {
 import { HttpMethod } from "@/types/http";
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const handleRepositoryAllRequest: NextApiHandler = async (
+const handleRequest: NextApiHandler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
@@ -22,4 +22,4 @@ const handleRepositoryAllRequest: NextApiHandler = async (
   }
 };
 
-export default handleRepositoryAllRequest;
+export default handleRequest;
