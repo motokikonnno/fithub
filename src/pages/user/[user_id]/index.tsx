@@ -1,59 +1,36 @@
-import { Loading } from "@/components/Loading";
 import { UserProfile, UserProfileProps } from "@/components/pages/UserProfile";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
-import { GetStaticPaths, GetStaticProps } from "next";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 
-type PathParams = {
+type QueryParams = {
   user_id: string;
 };
 
-const UserProfilePage: AuthNextPage<UserProfileProps> = ({ userData }) => {
-  const router = useRouter();
-  const { data: session } = useSession();
-  const isSessionUser = session?.user.id === userData.id;
-
-  if (router.isFallback) {
-    return <Loading />;
-  }
-  return (
-    <UserProfile
-      userData={userData}
-      router={router}
-      isSessionUser={isSessionUser}
-    />
-  );
+const UserProfilePage: AuthNextPage<UserProfileProps> = ({
+  userData,
+  isSessionUser,
+}) => {
+  return <UserProfile userData={userData} isSessionUser={isSessionUser} />;
 };
 
 export default UserProfilePage;
 UserProfilePage.requireAuth = true;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const users = await userFactory().index();
-  const paths = users.map(({ id }) => ({
-    params: { user_id: id },
-  }));
-  return {
-    paths: paths,
-    fallback: true,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { user_id } = context.params as PathParams;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { user_id } = context.query as QueryParams;
   try {
     const user = await userFactory().show(user_id);
+    const session = await getSession();
+    const isSessionUser = session?.user.id === user.id;
 
     return {
-      props: { userData: user },
-      revalidate: 60,
+      props: { userData: user, isSessionUser: isSessionUser },
     };
   } catch {
     return {
-      notFound: true,
-      revalidate: 60,
+      props: {},
     };
   }
 };

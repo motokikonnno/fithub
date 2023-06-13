@@ -7,7 +7,7 @@ import Link from "next/link";
 import ReactCalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import { Footer } from "../layouts/Footer";
-import { NextRouter } from "next/router";
+import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { RepositoryList } from "../list/RepositoryList";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
@@ -29,12 +29,11 @@ type updateUserType = {
 
 export type UserProfileProps = {
   userData: UserBelongsToTeam;
-  router: NextRouter;
   isSessionUser: boolean;
 };
 
 export const UserProfile: FC<UserProfileProps> = React.memo(
-  ({ userData, router, isSessionUser }) => {
+  ({ userData, isSessionUser }) => {
     const items: itemType[] = [
       {
         id: "1",
@@ -46,6 +45,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
       },
     ];
 
+    const router = useRouter();
     const query = router.query.tab;
     const [user, setUser] = useState<User>(userData);
     const {

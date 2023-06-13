@@ -16,33 +16,35 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AuthAppProps) {
-  const router = useRouter();
-  const [pageLoading, setPageLoading] = useState(false);
+  // const router = useRouter();
+  // const [pageLoading, setPageLoading] = useState(false);
 
-  useEffect(() => {
-    const handleStart = (url: string) =>
-      url !== router.asPath && setPageLoading(true);
-    const handleComplete = () => setPageLoading(false);
+  // useEffect(() => {
+  //   const handleStart = (url: string) =>
+  //     url !== router.asPath && setPageLoading(true);
+  //   const handleComplete = () => setPageLoading(false);
 
-    router.events.on("routeChangeStart", handleStart);
-    router.events.on("routeChangeComplete", handleComplete);
-    router.events.on("routeChangeError", handleComplete);
+  //   router.events.on("routeChangeStart", handleStart);
+  //   router.events.on("routeChangeComplete", handleComplete);
+  //   router.events.on("routeChangeError", handleComplete);
 
-    return () => {
-      router.events.off("routeChangeStart", handleStart);
-      router.events.off("routeChangeComplete", handleComplete);
-      router.events.off("routeChangeError", handleComplete);
-    };
-  });
+  //   return () => {
+  //     router.events.off("routeChangeStart", handleStart);
+  //     router.events.off("routeChangeComplete", handleComplete);
+  //     router.events.off("routeChangeError", handleComplete);
+  //   };
+  // });
 
   return (
     <SessionProvider session={session}>
       {Component.requireAuth ? (
         <AuthGuard>
-          {pageLoading ? <Loading /> : <Component {...pageProps} />}
+          <Component {...pageProps} />
+          {/* {pageLoading ? <Loading /> : <Component {...pageProps} />} */}
         </AuthGuard>
       ) : (
-        <>{pageLoading ? <Loading /> : <Component {...pageProps} />}</>
+        <Component {...pageProps} />
+        // <>{pageLoading ? <Loading /> : <Component {...pageProps} />}</>
       )}
     </SessionProvider>
   );

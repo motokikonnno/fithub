@@ -1,17 +1,17 @@
-import { Loading } from "@/components/Loading";
 import {
   RepositoryDetail,
   RepositoryDetailProps,
 } from "@/components/pages/RepositoryDetail";
 import { itemType } from "@/components/pages/UserProfile";
+import { countFactory } from "@/models/Count";
+import { fileFactory } from "@/models/File";
+import { folderFactory } from "@/models/Folder";
 import { repositoryFactory } from "@/models/Repository";
-import { teamFactory } from "@/models/Team";
 import { AuthNextPage } from "@/types/auth-next-page";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
-type PathParams = {
+type QueryParams = {
   repository_id: string;
 };
 
@@ -21,8 +21,8 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
   files,
   owner,
   issues,
+  countData,
 }) => {
-  const router = useRouter();
   const { data: session } = useSession();
   const isSessionUser = owner.team_members
     ? owner.team_members.some(({ user }) => user.id === session?.user.id)
@@ -48,10 +48,6 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
     ];
   }
 
-  if (router.isFallback) {
-    return <Loading />;
-  }
-
   return (
     <RepositoryDetail
       repository={repository}
@@ -61,9 +57,9 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       issues={issues}
       type={"team"}
       sessionUserId={session?.user.id}
-      router={router}
       items={items}
       isSessionUser={isSessionUser}
+      countData={countData}
     />
   );
 };
@@ -71,48 +67,26 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
 export default RepositoryDetailPage;
 RepositoryDetailPage.requireAuth = true;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const teams = await teamFactory().index();
-  const repositories = await repositoryFactory().index();
-  const paths = teams.flatMap((team) =>
-    repositories.map((repository) => ({
-      params: {
-        team_id: team.id.toString(),
-        repository_id: repository.id.toString(),
-      },
-    }))
-  );
-  return {
-    paths: paths,
-    fallback: true,
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { repository_id } = context.query as QueryParams;
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { repository_id } = context.params as PathParams;
-  try {
-    const repository = await repositoryFactory().show(repository_id);
-    const folders =
-      repository.folders &&
-      repository.folders.filter(({ parent_id }) => parent_id === "");
-    const files =
-      repository.files &&
-      repository.files.filter(({ parent_id }) => parent_id === "");
-    const team = repository.team && repository.team;
-    const issues = repository.issues && repository.issues;
-    return {
-      props: {
-        repository: repository,
-        folders: folders,
-        files: files,
-        owner: team,
-        issues: issues,
-      },
-    };
-  } catch {
-    return {
-      notFound: true,
-      revalidate: 60,
-    };
-  }
+  const repository = await repositoryFactory().show(repository_id);
+  const folders = await folderFactory().index(
+    repository_id,
+    `${repository_id}_`
+  );
+  const files = await fileFactory().index(repository_id, `${repository_id}_`);
+  const countData = await countFactory().get(repository_id);
+  const team = repository.team && repository.team;
+  const issues = repository.issues && repository.issues;
+  return {
+    props: {
+      repository: repository,
+      folders: folders,
+      files: files,
+      owner: team,
+      issues: issues,
+      countData: countData,
+    },
+  };
 };

@@ -4,7 +4,7 @@ import { Team } from "@/models/Team";
 import { UserBelongsToTeam } from "@/models/User";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { FC, useCallback, useState } from "react";
 import styles from "../../styles/components/pages/CreateIssue.module.scss";
 import { Footer } from "../layouts/Footer";
@@ -17,11 +17,11 @@ export type CreateIssueProps = {
   repository: Repository;
   owner: UserBelongsToTeam | Team;
   type: "user" | "team";
-  router: NextRouter;
 };
 
 export const CreateIssue: FC<CreateIssueProps> = React.memo(
-  ({ repository, owner, type, router }) => {
+  ({ repository, owner, type }) => {
+    const router = useRouter();
     const { data: session } = useSession();
     const { user } = useFetchUser(session?.user ? session.user.id : null);
     const [currentTab, setCurrentTab] = useState("Issue");

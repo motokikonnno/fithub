@@ -1,15 +1,12 @@
-import { Loading } from "@/components/Loading";
 import { IssueDetail } from "@/components/pages/IssueDetail";
 import { Issue, issueFactory } from "@/models/Issue";
 import { Repository, repositoryFactory } from "@/models/Repository";
-import { userFactory } from "@/models/User";
 import ErrorPage from "@/pages/404";
 import { AuthNextPage } from "@/types/auth-next-page";
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
-type PathParams = {
+type QueryParams = {
   repository_id: string;
   id: string;
   user_id: string;
@@ -26,59 +23,27 @@ const IssueDetailPage: AuthNextPage<IssueDetailPageProps> = ({
   repository,
   user_id,
 }) => {
-  const router = useRouter();
   const { data: session } = useSession();
 
   if (user_id !== session?.user.id) {
     return <ErrorPage />;
   }
 
-  if (router.isFallback) {
-    return <Loading />;
-  }
-  return <IssueDetail repository={repository} issue={issue} router={router} />;
+  return <IssueDetail repository={repository} issue={issue} />;
 };
 
 export default IssueDetailPage;
 IssueDetailPage.requireAuth = true;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const issues = await issueFactory().index();
-  const users = await userFactory().index();
-  const repositories = await repositoryFactory().index();
-  const paths = users.flatMap((user) =>
-    repositories.flatMap((repository) =>
-      issues.map((issue) => ({
-        params: {
-          user_id: user.id.toString(),
-          repository_id: repository.id.toString(),
-          id: issue.id.toString(),
-        },
-      }))
-    )
-  );
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { repository_id, id, user_id } = context.query as QueryParams;
+  const repository = await repositoryFactory().show(repository_id);
+  const issue = await issueFactory().show(id);
   return {
-    paths: paths,
-    fallback: true,
+    props: {
+      repository: repository,
+      issue: issue,
+      user_id: user_id,
+    },
   };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { repository_id, id, user_id } = context.params as PathParams;
-  try {
-    const repository = await repositoryFactory().show(repository_id);
-    const issue = await issueFactory().show(id);
-    return {
-      props: {
-        repository: repository,
-        issue: issue,
-        user_id: user_id,
-      },
-    };
-  } catch {
-    return {
-      notFound: true,
-      revalidate: 60,
-    };
-  }
 };

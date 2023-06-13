@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/IssueDetail.module.scss";
 import { Footer } from "../layouts/Footer";
@@ -22,7 +22,6 @@ export type IssueDetailProps = {
   team?: Team;
   issue: Issue;
   sessionUserId?: string;
-  router: NextRouter;
 };
 
 export const items: itemType[] = [
@@ -37,7 +36,8 @@ export const items: itemType[] = [
 ];
 
 export const IssueDetail: FC<IssueDetailProps> = React.memo(
-  ({ repository, team, issue, sessionUserId, router }) => {
+  ({ repository, team, issue, sessionUserId }) => {
+    const router = useRouter();
     const created_at = formatDateToEnglish(issue.created_at);
     const [currentTab, setCurrentTab] = useState("Issue");
     const [assignUser, setAssignUser] = useState(
@@ -213,7 +213,11 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                       Edit
                     </span>
                     <Link
-                      href={`/user/${issue.user.id}/repository/${repository.id}/issue/new`}
+                      href={
+                        team
+                          ? `/team/${issue.user.id}/repository/${repository.id}/issue/new`
+                          : `/user/${issue.user.id}/repository/${repository.id}/issue/new`
+                      }
                       className={styles.newIssueButton}
                     >
                       New issue

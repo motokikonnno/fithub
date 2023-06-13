@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { NextRouter } from "next/router";
+import { NextRouter, useRouter } from "next/router";
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/RepositoryDetail.module.scss";
 import { BreadCrumb } from "../BreadCrumb";
@@ -35,7 +35,6 @@ export type RepositoryDetailProps = {
   issues: Issue[];
   sessionUserId: string | undefined;
   type: "user" | "team";
-  router: NextRouter;
   items: itemType[];
   isSessionUser: boolean;
   countData: Count;
@@ -55,7 +54,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     issues,
     type,
     sessionUserId,
-    router,
     items,
     isSessionUser,
     countData,
@@ -98,6 +96,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     ];
 
     const { count, countMutate } = useFetchCount(repository.id, countData);
+    const router = useRouter();
     const query = String(router.query.tab);
     const [currentTab, setCurrentTab] = useState("Log");
     const [currentFolder, setCurrentFolder] = useState<Folder[]>(folders);

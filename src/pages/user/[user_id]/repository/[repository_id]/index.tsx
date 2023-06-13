@@ -10,7 +10,6 @@ import { repositoryFactory } from "@/models/Repository";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 type QueryParams = {
   repository_id: string;
@@ -24,7 +23,6 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
   issues,
   countData,
 }) => {
-  const router = useRouter();
   const { data: session } = useSession();
   const isSessionUser = session?.user.id === owner.id;
   let items: itemType[];
@@ -56,7 +54,6 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       owner={owner}
       issues={issues}
       type={"user"}
-      router={router}
       sessionUserId={session?.user.id}
       items={items}
       isSessionUser={isSessionUser}

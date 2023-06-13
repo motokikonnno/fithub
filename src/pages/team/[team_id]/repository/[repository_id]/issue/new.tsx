@@ -5,7 +5,8 @@ import ErrorPage from "@/pages/404";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+
+// TODO: assignUserの挙動がおかしいので修正する
 
 type PathParams = {
   repository_id: string;
@@ -15,7 +16,6 @@ const CreateIssuePage: AuthNextPage<CreateIssueProps> = ({
   repository,
   owner,
 }) => {
-  const router = useRouter();
   const { data: session } = useSession();
   const isTeamMember =
     owner &&
@@ -24,14 +24,7 @@ const CreateIssuePage: AuthNextPage<CreateIssueProps> = ({
   if (!isTeamMember) {
     return <ErrorPage />;
   }
-  return (
-    <CreateIssue
-      repository={repository}
-      owner={owner}
-      type={"team"}
-      router={router}
-    />
-  );
+  return <CreateIssue repository={repository} owner={owner} type={"team"} />;
 };
 
 export default CreateIssuePage;
@@ -50,29 +43,23 @@ export const getStaticPaths: GetStaticPaths = async () => {
   );
   return {
     paths: paths,
-    fallback: true,
+    fallback: false,
   };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { repository_id } = context.params as PathParams;
-  try {
-    const repository = await repositoryFactory().show(repository_id);
-    if (repository.team_id) {
-      const owner = await teamFactory().show(repository.team_id);
-      return {
-        props: {
-          repository: repository,
-          owner: owner,
-        },
-      };
-    } else {
-      return { props: {} };
-    }
-  } catch {
+
+  const repository = await repositoryFactory().show(repository_id);
+  if (repository.team_id) {
+    const owner = await teamFactory().show(repository.team_id);
     return {
-      notFound: true,
-      revalidate: 60,
+      props: {
+        repository: repository,
+        owner: owner,
+      },
     };
+  } else {
+    return { props: {} };
   }
 };

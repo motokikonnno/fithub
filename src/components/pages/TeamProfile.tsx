@@ -5,7 +5,7 @@ import { Tabs } from "../Tabs";
 import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "../layouts/Footer";
-import { NextRouter } from "next/router";
+import { useRouter } from "next/router";
 import { RepositoryCard } from "../card/RepositoryCard";
 import { itemType } from "./UserProfile";
 import { RepositoryList } from "../list/RepositoryList";
@@ -22,7 +22,6 @@ import { inviteFactory } from "@/models/Invite";
 export type TeamProfileProps = {
   teamData: Team;
   isSessionUser: boolean;
-  router: NextRouter;
   items: itemType[];
   sessionUserName?: string | null;
 };
@@ -33,7 +32,8 @@ type editTeamRepositoryType = {
 };
 
 export const TeamProfile: FC<TeamProfileProps> = React.memo(
-  ({ teamData, isSessionUser, router, items, sessionUserName }) => {
+  ({ teamData, isSessionUser, items, sessionUserName }) => {
+    const router = useRouter();
     const query = String(router.query.tab);
     const defaultImage =
       "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";

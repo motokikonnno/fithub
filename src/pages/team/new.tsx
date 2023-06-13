@@ -5,3 +5,9 @@ const CreateTeamPage: AuthNextPage = () => <CreateTeam />;
 
 export default CreateTeamPage;
 CreateTeamPage.requireAuth = true;
+
+export async function getStaticProps() {
+  return {
+    props: {},
+  };
+}
