@@ -1,25 +1,26 @@
 import { CreateRepository } from "@/components/pages/CreateRepository";
-import useFetchTeam from "@/hooks/useFetchTeam";
-import useFetchUser from "@/hooks/useFetchUser";
+import { Team, teamFactory } from "@/models/Team";
+import { userFactory, UserBelongsToTeam } from "@/models/User";
 import { shapeOwnerDataList } from "@/services/ownerList";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { Owner } from "@/types/owner";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 import ErrorPage from "../404";
 
-const CreateRepositoryPage: AuthNextPage = () => {
-  const router = useRouter();
-  const { type, team_id } = router.query;
-  const teamId = Array.isArray(team_id) ? team_id[0] : team_id;
-  const { data: session } = useSession();
-  const { user } = useFetchUser(session?.user ? session.user.id : null);
-  const teamList = (user && shapeOwnerDataList(user).teamData) || [];
-  const ownerList: Owner[] = [
-    { id: user?.id ?? "", name: user?.name, image: user?.image, type: "user" },
-    ...teamList,
-  ];
-  const { team } = useFetchTeam(teamId ? teamId : null);
+type CreateRepositoryPageProps = {
+  user: UserBelongsToTeam;
+  team: Team;
+  ownerList: Owner[];
+  type: string;
+};
+
+const CreateRepositoryPage: AuthNextPage<CreateRepositoryPageProps> = ({
+  user,
+  team,
+  ownerList,
+  type,
+}) => {
   let currentOwner: Owner;
   if (type === "user" && user?.name && user.image) {
     currentOwner = {
@@ -33,7 +34,6 @@ const CreateRepositoryPage: AuthNextPage = () => {
         currentOwner={currentOwner}
         ownerList={ownerList}
         type={type}
-        router={router}
       />
     );
   } else if (type === "team" && team?.name && team.image) {
@@ -48,7 +48,6 @@ const CreateRepositoryPage: AuthNextPage = () => {
         currentOwner={currentOwner}
         ownerList={ownerList}
         type={type}
-        router={router}
       />
     );
   } else {
@@ -58,3 +57,35 @@ const CreateRepositoryPage: AuthNextPage = () => {
 
 export default CreateRepositoryPage;
 CreateRepositoryPage.requireAuth = true;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  if (session) {
+    const { type, team_id } = context.query;
+    const teamId = Array.isArray(team_id) ? team_id[0] : team_id;
+    const user = await userFactory().show(session?.user.id);
+    const teamList = (user && shapeOwnerDataList(user).teamData) || [];
+    const ownerList: Owner[] = [
+      {
+        id: user?.id ?? "",
+        name: user?.name,
+        image: user?.image,
+        type: "user",
+      },
+      ...teamList,
+    ];
+    const team = await teamFactory().show(teamId ? teamId : "");
+    return {
+      props: {
+        type: type,
+        ownerList: ownerList,
+        team: team || null,
+        user: user,
+      },
+    };
+  } else {
+    return {
+      props: {},
+    };
+  }
+};

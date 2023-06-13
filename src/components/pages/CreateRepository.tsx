@@ -4,14 +4,13 @@ import Image from "next/image";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { repositoryFactory } from "@/models/Repository";
-import { NextRouter } from "next/router";
+import { useRouter } from "next/router";
 import { Owner } from "@/types/owner";
 
 export type CreateRepositoryProps = {
   ownerList: Owner[];
   currentOwner: Owner;
   type: "user" | "team";
-  router: NextRouter;
 };
 
 type createRepositoryType = {
@@ -22,7 +21,8 @@ type createRepositoryType = {
 };
 
 export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
-  ({ ownerList, currentOwner, type, router }) => {
+  ({ ownerList, currentOwner, type }) => {
+    const router = useRouter();
     const [owner, setOwner] = useState<Owner>(currentOwner);
     const [toggleOwnerList, setToggleOwnerList] = useState(false);
     const [currentType, setCurrentType] = useState(type);
