@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { user_id } = context.query as QueryParams;
   try {
     const user = await userFactory().show(user_id);
-    const session = await getSession();
+    const session = await getSession(context);
     const isSessionUser = session?.user.id === user.id;
 
     return {

@@ -1,4 +1,5 @@
 import { IssueDetail, IssueDetailProps } from "@/components/pages/IssueDetail";
+import { itemType } from "@/components/pages/UserProfile";
 import { issueFactory } from "@/models/Issue";
 import { repositoryFactory } from "@/models/Repository";
 import { teamFactory } from "@/models/Team";
@@ -27,12 +28,25 @@ const IssueDetailPage: AuthNextPage<IssueDetailProps> = ({
     return <ErrorPage />;
   }
 
+  const items: itemType[] = [
+    {
+      id: "1",
+      name: "Log",
+      link: `/team/${team && team.id}/repository/${repository.id}`,
+    },
+    {
+      id: "2",
+      name: "Issue",
+    },
+  ];
+
   return (
     <IssueDetail
       repository={repository}
       issue={issue}
       team={team}
       sessionUserId={session?.user.id}
+      items={items}
     />
   );
 };

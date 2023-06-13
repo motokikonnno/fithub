@@ -12,9 +12,9 @@ export default TeamListPage;
 TeamListPage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession();
+  const session = await getSession(context);
   if (session) {
-    const user = userFactory().show(session?.user.id);
+    const user = await userFactory().show(session?.user.id);
     return {
       props: { user },
     };

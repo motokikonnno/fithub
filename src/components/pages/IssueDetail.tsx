@@ -1,11 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import styles from "../../styles/components/pages/IssueDetail.module.scss";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
-import { Tabs } from "../Tabs";
 import { Tiptap } from "../Tiptap";
 import { Repository } from "@/models/Repository";
 import { Issue, issueFactory } from "@/models/Issue";
@@ -22,24 +21,13 @@ export type IssueDetailProps = {
   team?: Team;
   issue: Issue;
   sessionUserId?: string;
+  items: itemType[];
 };
 
-export const items: itemType[] = [
-  {
-    id: "1",
-    name: "Log",
-  },
-  {
-    id: "2",
-    name: "Issue",
-  },
-];
-
 export const IssueDetail: FC<IssueDetailProps> = React.memo(
-  ({ repository, team, issue, sessionUserId }) => {
+  ({ repository, team, issue, sessionUserId, items }) => {
     const router = useRouter();
     const created_at = formatDateToEnglish(issue.created_at);
-    const [currentTab, setCurrentTab] = useState("Issue");
     const [assignUser, setAssignUser] = useState(
       issue.mention ? issue.mention.user : ""
     );
@@ -84,22 +72,6 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
         window.removeEventListener("click", handleClickToCloseDropDown);
       };
     }, []);
-
-    const handleCurrentTab = useCallback(
-      (name: string) => {
-        setCurrentTab(name);
-        router.push(
-          team
-            ? `/team/${team.id}/repository/${repository.id}/${
-                name === "Issue" ? `issue/${issue.id}` : ""
-              }`
-            : `/user/${issue.user.id}/repository/${repository.id}/${
-                name === "Issue" ? `issue/${issue.id}` : ""
-              }`
-        );
-      },
-      [issue.id, issue.user.id, repository.id, router, team]
-    );
 
     const handleAssignUser = (user: UserBelongsToTeam) => {
       setAssignUser(user);
@@ -165,14 +137,24 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
             </Link>
           </div>
           <div className={styles.tabsContainer}>
-            {items.map((item, index) => (
-              <Tabs
-                item={item}
-                handleCurrentTab={handleCurrentTab}
-                currentTab={currentTab}
-                key={index}
-              />
-            ))}
+            {items.map((item, index) =>
+              item.id === "1" ? (
+                <Link
+                  key={index}
+                  href={`/${team ? "team" : "user"}/[${
+                    team ? "team_id" : "user_id"
+                  }]/repository/[repository_id]`}
+                  as={item.link}
+                  className={styles.item}
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <div key={index} className={`${styles.current} ${styles.item}`}>
+                  {item.name}
+                </div>
+              )
+            )}
           </div>
         </div>
         <div className={styles.layoutContainer}>
@@ -278,37 +260,45 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
               issueId={issue.id}
             />
           </div>
-          <div className={styles.selectNameContainer}>
-            <div className={styles.leftContainer}>
-              <div
-                className={styles.selectName}
-                onClick={() => setToggleSelectUser(!toggleSelectUser)}
-              >
-                <>
-                  {typeof assignUser !== "string" && assignUser.image && (
-                    <Image
-                      src={assignUser.image}
-                      width={16}
-                      height={16}
-                      alt="user-icon"
-                      className={styles.memberIcon}
-                    />
-                  )}
-                  {assignUser === ""
-                    ? "Select user"
-                    : typeof assignUser !== "string" && assignUser.name}
-                </>
-              </div>
-              <div
-                className={styles.assignButton}
-                onClick={() =>
-                  typeof assignUser !== "string" &&
-                  handleCreateMention(assignUser)
-                }
-              >
-                Assign user
-              </div>
-            </div>
+          <div
+            className={
+              team ? styles.selectNameContainer : styles.deleteIssueContainer
+            }
+          >
+            {team && (
+              <>
+                <div className={styles.leftContainer}>
+                  <div
+                    className={styles.selectName}
+                    onClick={() => setToggleSelectUser(!toggleSelectUser)}
+                  >
+                    <>
+                      {typeof assignUser !== "string" && assignUser.image && (
+                        <Image
+                          src={assignUser.image}
+                          width={16}
+                          height={16}
+                          alt="user-icon"
+                          className={styles.memberIcon}
+                        />
+                      )}
+                      {assignUser === ""
+                        ? "Select user"
+                        : typeof assignUser !== "string" && assignUser.name}
+                    </>
+                  </div>
+                  <div
+                    className={styles.assignButton}
+                    onClick={() =>
+                      typeof assignUser !== "string" &&
+                      handleCreateMention(assignUser)
+                    }
+                  >
+                    Assign user
+                  </div>
+                </div>
+              </>
+            )}
             <button className={styles.deleteIssueButton} onClick={handleClose}>
               Delete issue
             </button>

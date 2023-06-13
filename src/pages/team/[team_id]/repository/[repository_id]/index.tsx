@@ -20,33 +20,30 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
   folders,
   files,
   owner,
-  issues,
   countData,
 }) => {
   const { data: session } = useSession();
   const isSessionUser = owner.team_members
     ? owner.team_members.some(({ user }) => user.id === session?.user.id)
     : false;
-  let items: itemType[];
-  if (isSessionUser) {
-    items = [
-      {
-        id: "1",
-        name: "Log",
-      },
-      {
-        id: "2",
-        name: "Issue",
-      },
-    ];
-  } else {
-    items = [
-      {
-        id: "1",
-        name: "Log",
-      },
-    ];
-  }
+  const items: itemType[] = isSessionUser
+    ? [
+        {
+          id: "1",
+          name: "Log",
+        },
+        {
+          id: "2",
+          name: "Issue",
+          link: `/team/${owner.id}/repository/${repository.id}/issue`,
+        },
+      ]
+    : [
+        {
+          id: "1",
+          name: "Log",
+        },
+      ];
 
   return (
     <RepositoryDetail
@@ -54,7 +51,6 @@ const RepositoryDetailPage: AuthNextPage<RepositoryDetailProps> = ({
       folders={folders}
       files={files}
       owner={owner}
-      issues={issues}
       type={"team"}
       sessionUserId={session?.user.id}
       items={items}
@@ -78,14 +74,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const files = await fileFactory().index(repository_id, `${repository_id}_`);
   const countData = await countFactory().get(repository_id);
   const team = repository.team && repository.team;
-  const issues = repository.issues && repository.issues;
+
   return {
     props: {
       repository: repository,
       folders: folders,
       files: files,
       owner: team,
-      issues: issues,
       countData: countData,
     },
   };

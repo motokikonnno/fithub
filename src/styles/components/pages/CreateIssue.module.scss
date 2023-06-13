@@ -64,3 +64,15 @@
   margin-bottom: 16px;
   font-weight: normal;
 }
+
+.item {
+  padding: 16px 8px;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.current {
+  font-weight: bold;
+  border-bottom: 2px solid #fb8e77;
+}

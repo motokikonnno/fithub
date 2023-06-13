@@ -9,39 +9,23 @@ import React, { FC, useCallback, useState } from "react";
 import styles from "../../styles/components/pages/CreateIssue.module.scss";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
-import { Tabs } from "../Tabs";
 import { Tiptap } from "../Tiptap";
-import { items } from "./IssueDetail";
+import { itemType } from "./UserProfile";
 
 export type CreateIssueProps = {
   repository: Repository;
   owner: UserBelongsToTeam | Team;
   type: "user" | "team";
+  items: itemType[];
 };
 
 export const CreateIssue: FC<CreateIssueProps> = React.memo(
-  ({ repository, owner, type }) => {
+  ({ repository, owner, type, items }) => {
     const router = useRouter();
     const { data: session } = useSession();
     const { user } = useFetchUser(session?.user ? session.user.id : null);
     const [currentTab, setCurrentTab] = useState("Issue");
     const [titleText, setTitleText] = useState("");
-
-    const handleCurrentTab = useCallback(
-      (name: string) => {
-        setCurrentTab(name);
-        router.push(
-          type === "user"
-            ? `/user/${owner.id}/repository/${repository.id}/${
-                name === "Issue" ? "issue/new" : ""
-              }`
-            : `/team/${owner.id}/repository/${repository.id}/${
-                name === "Issue" ? "issue/new" : ""
-              }`
-        );
-      },
-      [owner.id, repository.id, router, type]
-    );
 
     const handleTitleText = () => {
       setTitleText("");
@@ -71,14 +55,24 @@ export const CreateIssue: FC<CreateIssueProps> = React.memo(
             </Link>
           </div>
           <div className={styles.tabsContainer}>
-            {items.map((item, index) => (
-              <Tabs
-                item={item}
-                handleCurrentTab={handleCurrentTab}
-                currentTab={currentTab}
-                key={index}
-              />
-            ))}
+            {items.map((item, index) =>
+              item.id === "1" ? (
+                <Link
+                  key={index}
+                  href={`/${type}/[${
+                    type === "team" ? "team_id" : "user_id"
+                  }]/repository/[repository_id]`}
+                  as={item.link}
+                  className={styles.item}
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <div key={index} className={`${styles.current} ${styles.item}`}>
+                  {item.name}
+                </div>
+              )
+            )}
           </div>
         </div>
 

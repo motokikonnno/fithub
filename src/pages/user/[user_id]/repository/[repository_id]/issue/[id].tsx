@@ -1,4 +1,5 @@
 import { IssueDetail } from "@/components/pages/IssueDetail";
+import { itemType } from "@/components/pages/UserProfile";
 import { Issue, issueFactory } from "@/models/Issue";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import ErrorPage from "@/pages/404";
@@ -29,7 +30,19 @@ const IssueDetailPage: AuthNextPage<IssueDetailPageProps> = ({
     return <ErrorPage />;
   }
 
-  return <IssueDetail repository={repository} issue={issue} />;
+  const items: itemType[] = [
+    {
+      id: "1",
+      name: "Log",
+      link: `/user/${user_id}/repository/${repository.id}`,
+    },
+    {
+      id: "2",
+      name: "Issue",
+    },
+  ];
+
+  return <IssueDetail repository={repository} issue={issue} items={items} />;
 };
 
 export default IssueDetailPage;

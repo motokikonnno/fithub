@@ -286,3 +286,20 @@
   background-color: #fff;
   border: 1px solid #d0d7de;
 }
+
+.item {
+  padding: 16px 8px;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.current {
+  font-weight: bold;
+  border-bottom: 2px solid #fb8e77;
+}
+
+.deleteIssueContainer {
+  @extend .selectNameContainer;
+  justify-content: right;
+}

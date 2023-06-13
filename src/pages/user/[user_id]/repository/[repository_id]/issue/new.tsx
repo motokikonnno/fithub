@@ -1,4 +1,5 @@
 import { CreateIssue, CreateIssueProps } from "@/components/pages/CreateIssue";
+import { itemType } from "@/components/pages/UserProfile";
 import { repositoryFactory } from "@/models/Repository";
 import { userFactory } from "@/models/User";
 import ErrorPage from "@/pages/404";
@@ -20,7 +21,26 @@ const CreateIssuePage: AuthNextPage<CreateIssueProps> = ({
     return <ErrorPage />;
   }
 
-  return <CreateIssue repository={repository} owner={owner} type={"user"} />;
+  const items: itemType[] = [
+    {
+      id: "1",
+      name: "Log",
+      link: `/user/${owner.id}/repository/${repository.id}`,
+    },
+    {
+      id: "2",
+      name: "Issue",
+    },
+  ];
+
+  return (
+    <CreateIssue
+      repository={repository}
+      owner={owner}
+      type={"user"}
+      items={items}
+    />
+  );
 };
 
 export default CreateIssuePage;

@@ -32,7 +32,6 @@ export type RepositoryDetailProps = {
   folders: Folder[];
   files: File[];
   owner: UserBelongsToTeam | Team;
-  issues: Issue[];
   sessionUserId: string | undefined;
   type: "user" | "team";
   items: itemType[];
@@ -51,7 +50,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     folders,
     files,
     owner,
-    issues,
     type,
     sessionUserId,
     items,
@@ -97,8 +95,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
 
     const { count, countMutate } = useFetchCount(repository.id, countData);
     const router = useRouter();
-    const query = String(router.query.tab);
-    const [currentTab, setCurrentTab] = useState("Log");
+    // const [currentTab, setCurrentTab] = useState("Log");
     const [currentFolder, setCurrentFolder] = useState<Folder[]>(folders);
     const [currentFile, setCurrentFile] = useState<File[]>(files);
     const [createType, setCreateType] = useState("");
@@ -165,14 +162,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     }, [currentFolderName, files, folders, owner, repository.id, router, type]);
 
     useEffect(() => {
-      if (query === "Issue") {
-        setCurrentTab("Issue");
-      } else {
-        setCurrentTab("Log");
-      }
-    }, [query]);
-
-    useEffect(() => {
       setToggleSelectType(false);
     }, [currentFolderName]);
 
@@ -198,22 +187,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         window.removeEventListener("click", handleClickToCloseInput);
       };
     }, []);
-
-    const handleCurrentTab = useCallback(
-      (name: string) => {
-        setCurrentTab(name);
-        router.push(
-          type === "user"
-            ? `/user/${owner.id}/repository/${repository.id}/${
-                name === "Log" ? "" : `?tab=${name}`
-              }`
-            : `/team/${owner.id}/repository/${repository.id}/${
-                name === "Log" ? "" : `?tab=${name}`
-              }`
-        );
-      },
-      [router, type, owner.id, repository.id]
-    );
 
     const filterFolderWithFile = useCallback(
       async (id: string) => {
@@ -501,390 +474,387 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
             </Link>
           </h1>
           <div className={styles.tabsContainer}>
-            {items.map((item, index) => (
-              <Tabs
-                item={item}
-                handleCurrentTab={handleCurrentTab}
-                currentTab={currentTab}
-                key={index}
-              />
-            ))}
+            {items.map((item, index) =>
+              item.id === "2" ? (
+                <Link
+                  key={index}
+                  href={`/${type}/[${
+                    type === "team" ? "team_id" : "user_id"
+                  }]/repository/[repository_id]/issue`}
+                  as={item.link}
+                  className={styles.item}
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <div key={index} className={`${styles.current} ${styles.item}`}>
+                  {item.name}
+                </div>
+              )
+            )}
           </div>
         </nav>
-        {currentTab === "Log" && (
-          <div className={styles.layoutContainer}>
-            <BreadCrumb
-              folderTitle={currentFolderName}
-              repository={repository.name}
-              handleViewRepository={handleViewRepository}
-            />
-            <section className={styles.logListWrapper}>
-              <div className={styles.repositoryHeader}>
-                <div className={styles.userInformationContainer}>
-                  {owner.image && (
-                    <Image
-                      src={owner.image}
-                      width={24}
-                      height={24}
-                      alt="user-icon"
-                      className={styles.userIcon}
-                    />
-                  )}
-                  <h2 className={styles.userName}>{owner.name}</h2>
-                </div>
-                {(currentFolder.length > 0 || currentFile.length > 0) && (
-                  <div
-                    className={`${styles.select} ${
-                      toggleAction && styles.redColor
-                    }`}
-                    onClick={handleCloseAction}
-                  >
-                    Select
-                  </div>
+        <div className={styles.layoutContainer}>
+          <BreadCrumb
+            folderTitle={currentFolderName}
+            repository={repository.name}
+            handleViewRepository={handleViewRepository}
+          />
+          <section className={styles.logListWrapper}>
+            <div className={styles.repositoryHeader}>
+              <div className={styles.userInformationContainer}>
+                {owner.image && (
+                  <Image
+                    src={owner.image}
+                    width={24}
+                    height={24}
+                    alt="user-icon"
+                    className={styles.userIcon}
+                  />
                 )}
+                <h2 className={styles.userName}>{owner.name}</h2>
               </div>
-              {confirmModal && (
-                <Modal
-                  isVisible={confirmModal}
-                  handleClose={() => handleConfirmModal()}
+              {(currentFolder.length > 0 || currentFile.length > 0) && (
+                <div
+                  className={`${styles.select} ${
+                    toggleAction && styles.redColor
+                  }`}
+                  onClick={handleCloseAction}
                 >
-                  <div className={styles.confirmModalBackground}>
-                    <p className={styles.confirmText}>
-                      Do you really want to delete this?
-                    </p>
-                    <div className={styles.confirmContainer}>
-                      <button
-                        className={styles.deleteButton}
-                        onClick={handleDeleteFolder}
-                      >
-                        Delete
-                      </button>
-                      <button
-                        className={styles.backButton}
-                        onClick={() => handleConfirmModal()}
-                      >
-                        Back
-                      </button>
-                    </div>
-                  </div>
-                </Modal>
+                  Select
+                </div>
               )}
-
-              {currentFolder &&
-                currentFolder.map((folder, index) => (
-                  <FolderItem
-                    folder={folder}
-                    handleCurrentFolder={handleCurrentFolder}
-                    handleConfirmModal={handleConfirmModal}
-                    handleSetDefaultText={handleSetDefaultText}
-                    toggleEditInput={toggleEditInput}
-                    toggleAction={toggleAction}
-                    toggleInput={toggleInput}
-                    key={index}
-                    defaultText={defaultText}
-                    handleSetComposing={handleSetComposition}
-                    currentFolderOrFileId={currentFolderOrFileId}
-                    submitEditEnter={submitEditEnter}
-                    inputRef={inputRef}
-                  />
-                ))}
-              {currentFile &&
-                currentFile.map((file, index) => (
-                  <FileItem
-                    file={file}
-                    handleModalClose={handleSetCommitData}
-                    key={index}
-                    handleConfirmModal={handleConfirmModal}
-                    handleSetDefaultText={handleSetDefaultText}
-                    toggleEditInput={toggleEditInput}
-                    toggleAction={toggleAction}
-                    toggleInput={toggleInput}
-                    defaultText={defaultText}
-                    handleSetComposing={handleSetComposition}
-                    currentFolderOrFileId={currentFolderOrFileId}
-                    submitEditEnter={submitEditEnter}
-                    handleCurrentType={handleCurrentType}
-                    inputRef={inputRef}
-                  />
-                ))}
-              {isVisible && (
-                <Modal isVisible={isVisible} handleClose={handleModalClose}>
-                  <div className={styles.modalBackground}>
-                    <header className={styles.headerContainer}>
-                      <div className={styles.headerItemContainer}>
-                        {modalHeaderItems.map(({ name }, index) => (
-                          <div
-                            className={`${styles.headerItem} ${
-                              modalHeader === name && styles.activeBackground
-                            }`}
-                            key={index}
-                            onClick={() => setModalHeader(name)}
-                          >
-                            <Image
-                              src={`/icons/${name}.svg`}
-                              width={12}
-                              height={12}
-                              alt="header-item-icon"
-                              className={styles.itemIcon}
-                            />
-                            {name === "merge" &&
-                              currentCommitData &&
-                              currentCommitData.length > 0 && (
-                                <span
-                                  className={styles.currentCommitDataNumber}
-                                >
-                                  {currentCommitData?.length}
-                                </span>
-                              )}
-                            <p className={styles.itemTitle}>{name}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </header>
-                    {modalHeader === "commit" && (
-                      <>
-                        <div className={styles.commitBackground}>
-                          {commitData &&
-                            commitData.map((commit, index) => (
-                              <ul
-                                key={index}
-                                className={styles.commitListContainer}
-                              >
-                                <li className={styles.commitMessage}>
-                                  {commit.message}
-                                </li>
-                                <li className={styles.rightContainer}>
-                                  <div className={styles.commitUser}>
-                                    {commit.user.image && (
-                                      <Image
-                                        src={commit.user.image}
-                                        width={14}
-                                        height={14}
-                                        alt="user-icon"
-                                        className={styles.userIcon}
-                                      />
-                                    )}
-                                    {commit.user.name}
-                                  </div>
-                                  <div className={styles.commitUpdatedAt}>
-                                    {getTimeDiff(commit.created_at)}
-                                  </div>
-                                </li>
-                              </ul>
-                            ))}
+            </div>
+            {confirmModal && (
+              <Modal
+                isVisible={confirmModal}
+                handleClose={() => handleConfirmModal()}
+              >
+                <div className={styles.confirmModalBackground}>
+                  <p className={styles.confirmText}>
+                    Do you really want to delete this?
+                  </p>
+                  <div className={styles.confirmContainer}>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={handleDeleteFolder}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className={styles.backButton}
+                      onClick={() => handleConfirmModal()}
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </Modal>
+            )}
+            {currentFolder &&
+              currentFolder.map((folder, index) => (
+                <FolderItem
+                  folder={folder}
+                  handleCurrentFolder={handleCurrentFolder}
+                  handleConfirmModal={handleConfirmModal}
+                  handleSetDefaultText={handleSetDefaultText}
+                  toggleEditInput={toggleEditInput}
+                  toggleAction={toggleAction}
+                  toggleInput={toggleInput}
+                  key={index}
+                  defaultText={defaultText}
+                  handleSetComposing={handleSetComposition}
+                  currentFolderOrFileId={currentFolderOrFileId}
+                  submitEditEnter={submitEditEnter}
+                  inputRef={inputRef}
+                />
+              ))}
+            {currentFile &&
+              currentFile.map((file, index) => (
+                <FileItem
+                  file={file}
+                  handleModalClose={handleSetCommitData}
+                  key={index}
+                  handleConfirmModal={handleConfirmModal}
+                  handleSetDefaultText={handleSetDefaultText}
+                  toggleEditInput={toggleEditInput}
+                  toggleAction={toggleAction}
+                  toggleInput={toggleInput}
+                  defaultText={defaultText}
+                  handleSetComposing={handleSetComposition}
+                  currentFolderOrFileId={currentFolderOrFileId}
+                  submitEditEnter={submitEditEnter}
+                  handleCurrentType={handleCurrentType}
+                  inputRef={inputRef}
+                />
+              ))}
+            {isVisible && (
+              <Modal isVisible={isVisible} handleClose={handleModalClose}>
+                <div className={styles.modalBackground}>
+                  <header className={styles.headerContainer}>
+                    <div className={styles.headerItemContainer}>
+                      {modalHeaderItems.map(({ name }, index) => (
+                        <div
+                          className={`${styles.headerItem} ${
+                            modalHeader === name && styles.activeBackground
+                          }`}
+                          key={index}
+                          onClick={() => setModalHeader(name)}
+                        >
+                          <Image
+                            src={`/icons/${name}.svg`}
+                            width={12}
+                            height={12}
+                            alt="header-item-icon"
+                            className={styles.itemIcon}
+                          />
+                          {name === "merge" &&
+                            currentCommitData &&
+                            currentCommitData.length > 0 && (
+                              <span className={styles.currentCommitDataNumber}>
+                                {currentCommitData?.length}
+                              </span>
+                            )}
+                          <p className={styles.itemTitle}>{name}</p>
                         </div>
-                        <div className={styles.commitFormLayout}>
-                          <textarea
-                            placeholder="commit message"
-                            className={styles.textarea}
-                            value={commitText}
-                            onChange={(e) => setCommitText(e.target.value)}
-                          ></textarea>
-                          <div className={styles.commitRightContainer}>
-                            <div
-                              className={styles.bodyPartsSelectForm}
-                              onClick={() => setBodyPartsFlag(!isBodyPartsFlag)}
-                              ref={dropDownListRef}
+                      ))}
+                    </div>
+                  </header>
+                  {modalHeader === "commit" && (
+                    <>
+                      <div className={styles.commitBackground}>
+                        {commitData &&
+                          commitData.map((commit, index) => (
+                            <ul
+                              key={index}
+                              className={styles.commitListContainer}
                             >
-                              {bodyParts ? bodyParts.name : "Body part select"}
-                              {isBodyPartsFlag && (
-                                <ul className={styles.bodyPartList}>
-                                  {bodyPartsList.map((body) => (
-                                    <li
-                                      key={body.id}
-                                      className={styles.bodyItem}
-                                      onClick={() => setBodyParts(body)}
-                                    >
-                                      {body.name}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </div>
-                            <button
-                              className={styles.commitButton}
-                              onClick={handleCreateCurrentCommit}
-                            >
-                              commit
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    {modalHeader === "merge" && (
-                      <>
-                        <div className={styles.commitBackground}>
-                          {currentCommitData &&
-                            currentCommitData.map((commit, index) => (
-                              <div
-                                key={index}
-                                className={styles.committedListContainer}
-                              >
-                                <div
-                                  className={styles.committedMessage}
-                                  id={commit.id}
-                                  onMouseEnter={(e) =>
-                                    handleMouseEnter(e, commit.id)
-                                  }
-                                  onMouseLeave={() => setIsHover(false)}
-                                >
-                                  {commit.message}
-                                  {isHover && hoverValue === commit.id && (
+                              <li className={styles.commitMessage}>
+                                {commit.message}
+                              </li>
+                              <li className={styles.rightContainer}>
+                                <div className={styles.commitUser}>
+                                  {commit.user.image && (
                                     <Image
-                                      src={"/icons/trash.svg"}
-                                      width={16}
-                                      height={16}
-                                      alt="trash-icon"
-                                      className={styles.trashIcon}
-                                      onClick={() =>
-                                        handleDeleteCurrentCommit(commit.id)
-                                      }
+                                      src={commit.user.image}
+                                      width={14}
+                                      height={14}
+                                      alt="user-icon"
+                                      className={styles.userIcon}
                                     />
                                   )}
+                                  {commit.user.name}
                                 </div>
-                                <div
-                                  className={`${styles.bodyPart} ${
-                                    styles[
-                                      changeBodyPartsNumber(commit.body_parts)
-                                        .color
-                                    ]
-                                  }`}
-                                >
-                                  {
-                                    changeBodyPartsNumber(commit.body_parts)
-                                      .bodyPartName
-                                  }
+                                <div className={styles.commitUpdatedAt}>
+                                  {getTimeDiff(commit.created_at)}
                                 </div>
+                              </li>
+                            </ul>
+                          ))}
+                      </div>
+                      <div className={styles.commitFormLayout}>
+                        <textarea
+                          placeholder="commit message"
+                          className={styles.textarea}
+                          value={commitText}
+                          onChange={(e) => setCommitText(e.target.value)}
+                        ></textarea>
+                        <div className={styles.commitRightContainer}>
+                          <div
+                            className={styles.bodyPartsSelectForm}
+                            onClick={() => setBodyPartsFlag(!isBodyPartsFlag)}
+                            ref={dropDownListRef}
+                          >
+                            {bodyParts ? bodyParts.name : "Body part select"}
+                            {isBodyPartsFlag && (
+                              <ul className={styles.bodyPartList}>
+                                {bodyPartsList.map((body) => (
+                                  <li
+                                    key={body.id}
+                                    className={styles.bodyItem}
+                                    onClick={() => setBodyParts(body)}
+                                  >
+                                    {body.name}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                          <button
+                            className={styles.commitButton}
+                            onClick={handleCreateCurrentCommit}
+                          >
+                            commit
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {modalHeader === "merge" && (
+                    <>
+                      <div className={styles.commitBackground}>
+                        {currentCommitData &&
+                          currentCommitData.map((commit, index) => (
+                            <div
+                              key={index}
+                              className={styles.committedListContainer}
+                            >
+                              <div
+                                className={styles.committedMessage}
+                                id={commit.id}
+                                onMouseEnter={(e) =>
+                                  handleMouseEnter(e, commit.id)
+                                }
+                                onMouseLeave={() => setIsHover(false)}
+                              >
+                                {commit.message}
+                                {isHover && hoverValue === commit.id && (
+                                  <Image
+                                    src={"/icons/trash.svg"}
+                                    width={16}
+                                    height={16}
+                                    alt="trash-icon"
+                                    className={styles.trashIcon}
+                                    onClick={() =>
+                                      handleDeleteCurrentCommit(commit.id)
+                                    }
+                                  />
+                                )}
                               </div>
-                            ))}
-                        </div>
-                        <button
-                          className={styles.mergeButton}
-                          onClick={handleMergeCommit}
-                        >
-                          merge
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </Modal>
-              )}
-
-              {createType === "" ? (
-                isSessionUser && (
-                  <section className={styles.addFolderOrFile}>
-                    <div
-                      className={styles.addFileOrFolderWrapper}
-                      onClick={handleCloseCreateType}
-                    >
-                      <Image
-                        src={
-                          toggleSelectType
-                            ? "/icons/minus.svg"
-                            : "/icons/plus-gray.svg"
-                        }
-                        width={16}
-                        height={16}
-                        alt="plus-icon"
-                        className={styles.icon}
-                      />
-                    </div>
-                    {toggleSelectType && (
-                      <ul className={styles.dropdownWrapper}>
-                        <div
-                          className={styles.dropdownItemContainer}
-                          onClick={() => handleSelectType("folder")}
-                        >
-                          <Image
-                            src={"/icons/folder.svg"}
-                            width={16}
-                            height={14}
-                            alt="folder-icon"
-                          />
-                          <li className={styles.dropdownItem}>Add folder</li>
-                        </div>
-                        <div
-                          className={styles.dropdownItemContainer}
-                          onClick={() => handleSelectType("file")}
-                        >
-                          <Image
-                            src={"/icons/file.svg"}
-                            width={16}
-                            height={14}
-                            alt="file-icon"
-                          />
-                          <li className={styles.dropdownItem}>Add File</li>
-                        </div>
-                      </ul>
-                    )}
-                  </section>
-                )
-              ) : (
-                <div className={styles.inputContainer}>
-                  <Image
-                    src={`/icons/${createType}.svg`}
-                    width={16}
-                    height={14}
-                    alt="file-icon"
-                  />
-                  <input
-                    className={styles.createInputWrapper}
-                    autoFocus={true}
-                    value={inputText}
-                    onKeyDown={(e) => submitEnter(e)}
-                    onChange={(e) => setInputText(e.target.value)}
-                    onCompositionStart={() => setIsComposition(true)}
-                    onCompositionEnd={() => setIsComposition(false)}
-                    ref={inputRef}
-                  />
+                              <div
+                                className={`${styles.bodyPart} ${
+                                  styles[
+                                    changeBodyPartsNumber(commit.body_parts)
+                                      .color
+                                  ]
+                                }`}
+                              >
+                                {
+                                  changeBodyPartsNumber(commit.body_parts)
+                                    .bodyPartName
+                                }
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                      <button
+                        className={styles.mergeButton}
+                        onClick={handleMergeCommit}
+                      >
+                        merge
+                      </button>
+                    </>
+                  )}
                 </div>
-              )}
-            </section>
-            {count && Object.keys(count).length !== 0 && (
-              <section className={styles.percentages}>
-                <h2 className={styles.sectionTitle}>Body parts percentages</h2>
-                <div className={styles.percentageBarWrapper}>
-                  <PercentageBar count={count} />
-                </div>
-              </section>
+              </Modal>
             )}
-            {isReadme ? (
-              <section className={styles.readmeWrapper}>
-                <div className={styles.readmeContainer}>
-                  <Image
-                    src={"/icons/list-ul.svg"}
-                    width={16}
-                    height={16}
-                    alt="list-ul-icon"
-                  />
-                  <h2 className={styles.readme}>README.md</h2>
-                </div>
-                <Tiptap
-                  text={repository.read_me}
-                  repository={repository}
-                  type={"readme"}
-                />
-              </section>
+
+            {createType === "" ? (
+              isSessionUser && (
+                <section className={styles.addFolderOrFile}>
+                  <div
+                    className={styles.addFileOrFolderWrapper}
+                    onClick={handleCloseCreateType}
+                  >
+                    <Image
+                      src={
+                        toggleSelectType
+                          ? "/icons/minus.svg"
+                          : "/icons/plus-gray.svg"
+                      }
+                      width={16}
+                      height={16}
+                      alt="plus-icon"
+                      className={styles.icon}
+                    />
+                  </div>
+                  {toggleSelectType && (
+                    <ul className={styles.dropdownWrapper}>
+                      <div
+                        className={styles.dropdownItemContainer}
+                        onClick={() => handleSelectType("folder")}
+                      >
+                        <Image
+                          src={"/icons/folder.svg"}
+                          width={16}
+                          height={14}
+                          alt="folder-icon"
+                        />
+                        <li className={styles.dropdownItem}>Add folder</li>
+                      </div>
+                      <div
+                        className={styles.dropdownItemContainer}
+                        onClick={() => handleSelectType("file")}
+                      >
+                        <Image
+                          src={"/icons/file.svg"}
+                          width={16}
+                          height={14}
+                          alt="file-icon"
+                        />
+                        <li className={styles.dropdownItem}>Add File</li>
+                      </div>
+                    </ul>
+                  )}
+                </section>
+              )
             ) : (
-              <div className={styles.createReadmeButtonContainer}>
-                <button
-                  className={styles.createReadmeButton}
-                  onClick={handleUpdateReadme}
-                >
-                  Create README.md
-                </button>
+              <div className={styles.inputContainer}>
+                <Image
+                  src={`/icons/${createType}.svg`}
+                  width={16}
+                  height={14}
+                  alt="file-icon"
+                />
+                <input
+                  className={styles.createInputWrapper}
+                  autoFocus={true}
+                  value={inputText}
+                  onKeyDown={(e) => submitEnter(e)}
+                  onChange={(e) => setInputText(e.target.value)}
+                  onCompositionStart={() => setIsComposition(true)}
+                  onCompositionEnd={() => setIsComposition(false)}
+                  ref={inputRef}
+                />
               </div>
             )}
-          </div>
-        )}
-        {currentTab === "Issue" && (
-          <IssueList
-            issues={issues}
-            repository={repository}
-            owner={owner}
-            ownerType={type}
-          />
-        )}
+          </section>
+          {count && Object.keys(count).length !== 0 && (
+            <section className={styles.percentages}>
+              <h2 className={styles.sectionTitle}>Body parts percentages</h2>
+              <div className={styles.percentageBarWrapper}>
+                <PercentageBar count={count} />
+              </div>
+            </section>
+          )}
+          {isReadme ? (
+            <section className={styles.readmeWrapper}>
+              <div className={styles.readmeContainer}>
+                <Image
+                  src={"/icons/list-ul.svg"}
+                  width={16}
+                  height={16}
+                  alt="list-ul-icon"
+                />
+                <h2 className={styles.readme}>README.md</h2>
+              </div>
+              <Tiptap
+                text={repository.read_me}
+                repository={repository}
+                type={"readme"}
+              />
+            </section>
+          ) : (
+            <div className={styles.createReadmeButtonContainer}>
+              <button
+                className={styles.createReadmeButton}
+                onClick={handleUpdateReadme}
+              >
+                Create README.md
+              </button>
+            </div>
+          )}
+        </div>
         <Footer />
       </>
     );

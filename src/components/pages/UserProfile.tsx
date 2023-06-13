@@ -20,6 +20,7 @@ import { recentSortRepositories } from "@/services/recentSortRepositories";
 export type itemType = {
   id: string;
   name: string;
+  link?: string;
 };
 
 type updateUserType = {

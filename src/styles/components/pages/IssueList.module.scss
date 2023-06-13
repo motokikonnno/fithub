@@ -59,3 +59,45 @@
 .issueLayoutContainer {
   margin: 32px 64px 0 64px;
 }
+
+.item {
+  padding: 16px 8px;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.current {
+  font-weight: bold;
+  border-bottom: 2px solid #fb8e77;
+}
+
+.teamNameHeader {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0969da;
+  text-decoration: none;
+}
+
+.tabsContainer {
+  display: flex;
+  padding-left: 48px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.sectionLine {
+  font-size: 20px;
+  color: #656d76;
+}
+
+.backgroundColor {
+  background-color: #f6f8fa;
+}
+
+.teamDetailContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 48px;
+  padding: 16px 0;
+}
