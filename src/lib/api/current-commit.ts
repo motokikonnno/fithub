@@ -1,5 +1,29 @@
+import { CurrentCommit } from "@/models/CurrentCommit";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../prisma";
+
+export async function getCurrentCommits(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<CurrentCommit[]>> {
+  const { id, user_id } = req.query;
+
+  if (typeof id !== "string" || typeof user_id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
+
+  try {
+    const current_commits = await prisma.currentCommit.findMany({
+      where: {
+        file_id: id,
+        user_id: user_id,
+      },
+    });
+    return res.status(200).json({ current_commits: current_commits });
+  } catch (error) {
+    return res.status(500).end(error);
+  }
+}
 
 export async function createCurrentCommit(
   req: NextApiRequest,

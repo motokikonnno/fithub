@@ -19,6 +19,10 @@ export type CurrentCommit = {
 export const currentCommitFactory = (rep?: CurrentCommitRepository) => {
   const repository = rep ?? currentCommitRepository;
   return {
+    index: async (id: string, user_id: string): Promise<CurrentCommit[]> => {
+      const current_commits = await repository.getCurrentCommits(id, user_id);
+      return current_commits;
+    },
     create: async (
       params: Pick<
         CurrentCommit,

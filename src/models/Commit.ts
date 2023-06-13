@@ -24,6 +24,10 @@ export type Commit = {
 export const commitFactory = (rep?: CommitRepository) => {
   const repository = rep ?? commitRepository;
   return {
+    index: async (id: string): Promise<Commit[]> => {
+      const commits = await repository.getCommits(id);
+      return commits;
+    },
     create: async (params: {
       file_id: string;
       user_id: string;

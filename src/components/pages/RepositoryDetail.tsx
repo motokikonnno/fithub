@@ -25,6 +25,7 @@ import { Commit, commitFactory } from "@/models/Commit";
 import { getTimeDiff } from "@/utils/getTime";
 import { PercentageBar } from "../PercentageBar";
 import useFetchCount from "@/hooks/useFetchCount";
+import { Count } from "@/models/Count";
 
 export type RepositoryDetailProps = {
   repository: Repository;
@@ -37,6 +38,7 @@ export type RepositoryDetailProps = {
   router: NextRouter;
   items: itemType[];
   isSessionUser: boolean;
+  countData: Count;
 };
 
 type bodyPartsType = {
@@ -56,6 +58,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     router,
     items,
     isSessionUser,
+    countData,
   }) => {
     const modalHeaderItems = [
       {
@@ -94,7 +97,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       },
     ];
 
-    const { count } = useFetchCount(repository.id);
+    const { count, countMutate } = useFetchCount(repository.id, countData);
     const query = String(router.query.tab);
     const [currentTab, setCurrentTab] = useState("Log");
     const [currentFolder, setCurrentFolder] = useState<Folder[]>(folders);
@@ -270,18 +273,20 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
 
     const handleSetCommitData = useCallback(
       async (id: string) => {
-        const currentCommit = await fileFactory().show(id);
-        const filterCurrentCommit = currentCommit.current_commits?.filter(
-          ({ user_id }) => user_id === sessionUserId
-        );
-        setCommitData(currentCommit.commits);
-        setCurrentCommitData(filterCurrentCommit);
+        fetchCommits(id);
+        fetchCurrentCommits(id);
         setCurrentFolderOrFileId(id);
         setIsVisible(!isVisible);
         setModalHeader("commit");
         setBodyParts(undefined);
       },
-      [isVisible, sessionUserId]
+      [
+        currentCommitData,
+        commitData,
+        setCommitData,
+        setCurrentCommitData,
+        isVisible,
+      ]
     );
 
     const handleConfirmModal = useCallback(
@@ -423,6 +428,25 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       setIsReadme(updateIsReadme.is_read_me);
     };
 
+    const fetchCurrentCommits = async (id?: string) => {
+      if (sessionUserId) {
+        const currentCommits = await currentCommitFactory().index(
+          id ? id : currentFolderOrFileId,
+          sessionUserId
+        );
+        setCurrentCommitData(currentCommits);
+      }
+    };
+
+    const fetchCommits = async (id?: string) => {
+      if (sessionUserId) {
+        const commits = await commitFactory().index(
+          id ? id : currentFolderOrFileId
+        );
+        setCommitData(commits);
+      }
+    };
+
     const handleCreateCurrentCommit = async () => {
       if (commitText === "") return;
       if (sessionUserId)
@@ -432,12 +456,14 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
           message: commitText,
           body_parts: bodyParts ? bodyParts.id : 7,
         });
+      fetchCurrentCommits();
       setBodyParts(undefined);
       setCommitText("");
     };
 
-    const handleCurrentCommitDelete = async (id: string) => {
+    const handleDeleteCurrentCommit = async (id: string) => {
       await currentCommitFactory().delete(id);
+      fetchCurrentCommits();
     };
 
     const handleMergeCommit = async () => {
@@ -446,6 +472,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
           file_id: currentFolderOrFileId,
           user_id: sessionUserId,
         });
+        fetchCurrentCommits();
+        fetchCommits();
+        countMutate();
       }
     };
 
@@ -709,7 +738,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                                       alt="trash-icon"
                                       className={styles.trashIcon}
                                       onClick={() =>
-                                        handleCurrentCommitDelete(commit.id)
+                                        handleDeleteCurrentCommit(commit.id)
                                       }
                                     />
                                   )}
