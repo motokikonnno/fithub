@@ -1,10 +1,35 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../prisma";
 
+export async function getFiles(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void | NextApiResponse<File[]>> {
+  const { id, parent_id } = req.query;
+
+  if (typeof parent_id !== "string" || typeof id !== "string") {
+    return res.status(400).json({ error: "Invalid user_id not string type" });
+  }
+
+  const parentId = parent_id.split("_")[1] || "";
+
+  try {
+    const files = await prisma.file.findMany({
+      where: {
+        parent_id: parentId,
+        repository_id: id,
+      },
+    });
+    return res.status(200).json({ files: files });
+  } catch (error) {
+    res.status(500).end(error);
+  }
+}
+
 export async function getFile(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | NextApiResponse<void>> {
+): Promise<void | NextApiResponse<File>> {
   const { id } = req.query;
 
   if (typeof id !== "string") {

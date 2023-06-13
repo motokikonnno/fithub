@@ -72,7 +72,7 @@ model Repository {
 model Folder {
   id            String     @id @default(cuid())
   name          String
-  parent_id     String
+  parent_id     String?
   created_at    DateTime   @default(now())
   repository_id String
   user_id       String
@@ -86,7 +86,7 @@ model Folder {
 model File {
   id              String          @id @default(cuid())
   name            String
-  parent_id       String
+  parent_id       String?
   created_at      DateTime        @default(now())
   repository_id   String
   user_id         String

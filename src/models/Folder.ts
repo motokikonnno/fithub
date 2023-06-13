@@ -19,6 +19,10 @@ export type Folder = {
 export const folderFactory = (rep?: FolderRepository) => {
   const repository = rep ?? folderRepository;
   return {
+    index: async (id: string, parent_id: string): Promise<Folder[]> => {
+      const folders = repository.getFolders(id, parent_id);
+      return folders;
+    },
     create: async (
       params: Pick<Folder, "name" | "parent_id" | "user_id" | "repository_id">
     ): Promise<void> => {

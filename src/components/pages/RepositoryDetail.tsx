@@ -112,7 +112,6 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     const [toggleAction, setToggleAction] = useState(false);
     const [confirmModal, setConfirmModal] = useState(false);
     const [currentFolderOrFileId, setCurrentFolderOrFileId] = useState("");
-    const inputRef = useRef<HTMLInputElement>(null);
     const [toggleInput, setToggleInput] = useState(false);
     const [defaultText, setDefaultText] = useState("");
     const [currentType, setCurrentType] = useState<"folder" | "file" | "">("");
@@ -124,9 +123,10 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       useState<CurrentCommit[]>();
     const [commitData, setCommitData] = useState<Commit[]>();
     const dropDownListRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-      const handlePopstate = () => {
+      const handlePopstate = async () => {
         if (currentFolderName.length === 0) {
           router.push(
             type === "user" ? `/user/${owner.id}` : `/team/${owner.id}`
@@ -136,20 +136,22 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
           const breadCrumbsArray = currentFolderName.slice(0, -1);
           const parentIndex = breadCrumbsArray.length - 1;
           const parentItem = breadCrumbsArray[parentIndex];
-          const filterFolder =
-            folders &&
-            folders.filter(({ parent_id }) =>
-              parentItem ? parent_id === parentItem.id : parent_id === ""
-            );
+          const filterFolder = await folderFactory().index(
+            repository.id,
+            parentItem
+              ? `${repository.id}_${parentItem.id}`
+              : `${repository.id}_`
+          );
           setCurrentFolderName(breadCrumbsArray);
           setCurrentFolder(filterFolder);
 
           // Fileを一つ前の状態に戻す
-          const filterFile =
-            files &&
-            files.filter(({ parent_id }) =>
-              parentItem ? parent_id === parentItem.id : parent_id === ""
-            );
+          const filterFile = await fileFactory().index(
+            repository.id,
+            parentItem
+              ? `${repository.id}_${parentItem.id}`
+              : `${repository.id}_`
+          );
           setCurrentFile(filterFile);
         }
       };
@@ -158,7 +160,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       return () => {
         removeEventListener("popstate", handlePopstate, false);
       };
-    }, [currentFolderName, files, folders, owner, router, type]);
+    }, [currentFolderName, files, folders, owner, repository.id, router, type]);
 
     useEffect(() => {
       if (query === "Issue") {
@@ -213,20 +215,21 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
 
     const filterFolderWithFile = useCallback(
       async (id: string) => {
-        const newRepository = await repositoryFactory().show(repository.id);
-        if (newRepository.folders && newRepository.files) {
-          const folderArray = newRepository.folders.filter(
-            ({ parent_id }) => id === parent_id
-          );
-          const fileArray = newRepository.files.filter(
-            ({ parent_id }) => id === parent_id
-          );
+        const folderArray = await folderFactory().index(
+          repository.id,
+          `${repository.id}_${id}`
+        );
+        const fileArray = await fileFactory().index(
+          repository.id,
+          `${repository.id}_${id}`
+        );
+        if (folderArray && fileArray) {
           setCurrentFolder(folderArray);
           setCurrentFile(fileArray);
           setParentFolder(id);
         }
       },
-      [repository]
+      [repository.id]
     );
 
     const handleCurrentFolder = useCallback(
@@ -301,28 +304,31 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       }
     };
 
-    const fetchRepository = async () => {
-      const newRepository = await repositoryFactory().show(repository.id);
-      const newFolder = newRepository.folders?.filter(
-        ({ parent_id }) => parent_id === parentFolder
-      );
-      const newFile = newRepository.files?.filter(
-        ({ parent_id }) => parent_id === parentFolder
-      );
-      if (newFolder && newFile) {
-        setCurrentFolder(newFolder);
-        setCurrentFile(newFile);
-      }
-    };
-
     const handleDeleteFolder = async () => {
       if (currentType === "file") {
         await fileFactory().delete(currentFolderOrFileId);
+        fetchFiles();
       } else {
         await folderFactory().delete(currentFolderOrFileId);
+        fetchFolders();
       }
-      fetchRepository();
       setConfirmModal(false);
+    };
+
+    const fetchFolders = async () => {
+      const newFolder = await folderFactory().index(
+        repository.id,
+        `${repository.id}_${parentFolder}`
+      );
+      setCurrentFolder(newFolder);
+    };
+
+    const fetchFiles = async () => {
+      const newFile = await fileFactory().index(
+        repository.id,
+        `${repository.id}_${parentFolder}`
+      );
+      setCurrentFile(newFile);
     };
 
     const submitEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -337,6 +343,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               repository_id: repository.id,
               user_id: sessionUserId,
             });
+            fetchFolders();
           } else if (createType === "file") {
             await fileFactory().create({
               name: inputText,
@@ -344,9 +351,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
               repository_id: repository.id,
               user_id: sessionUserId,
             });
+            fetchFiles();
           }
         }
-        fetchRepository();
         setInputText("");
         setCreateType("");
       }
@@ -388,13 +395,14 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
             id: currentFolderOrFileId,
             name: defaultText,
           });
+          fetchFolders();
         } else {
           await fileFactory().update({
             id: currentFolderOrFileId,
             name: defaultText,
           });
+          fetchFiles();
         }
-        fetchRepository();
         setToggleInput(false);
       }
     };

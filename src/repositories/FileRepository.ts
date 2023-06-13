@@ -2,12 +2,18 @@ import { ApiClient } from "@/lib/api-client";
 import { File } from "@/models/File";
 
 export type FileRepository = {
+  getFiles: (id: string, parent_id: string) => Promise<File[]>;
   getFile: (id: string) => Promise<File>;
   createFile: (
     params: Pick<File, "name" | "repository_id" | "parent_id" | "user_id">
   ) => Promise<void>;
   updateFile: (params: Pick<File, "id" | "name">) => Promise<void>;
   deleteFile: (id: string) => Promise<void>;
+};
+
+const getFiles: FileRepository["getFiles"] = async (id, parent_id) => {
+  const response = await ApiClient.get(`/repository/${id}/files/${parent_id}`);
+  return response.data.files;
 };
 
 const getFile: FileRepository["getFile"] = async (id) => {
@@ -28,6 +34,7 @@ const deleteFile: FileRepository["deleteFile"] = async (id) => {
 };
 
 export const fileRepository: FileRepository = {
+  getFiles,
   getFile,
   createFile,
   updateFile,
