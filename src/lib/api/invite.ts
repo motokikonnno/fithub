@@ -71,6 +71,18 @@ export async function createInvite(
         team.name,
         invite.id
       );
+    const user = await prisma.user.findUnique({
+      where: {
+        email: invitee_email,
+      },
+    });
+    if (user)
+      await prisma.activity.create({
+        data: {
+          user_id: user.id,
+          body: `The invitation to join the ${team?.name} has been sent.`,
+        },
+      });
     return res.status(200).json({ id: team_id });
   } catch (error) {
     return res.status(500).end(error);

@@ -25,6 +25,23 @@ export async function updateMention(
         mentioned_user_id,
       },
     });
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: mentioner_id,
+      },
+      select: {
+        name: true,
+      },
+    });
+
+    await prisma.activity.create({
+      data: {
+        user_id: mentioned_user_id,
+        body: `${user?.name} has mentioned you`,
+      },
+    });
+
     return res.status(200).json(response);
   } catch (error) {
     return res.status(500).end(error);

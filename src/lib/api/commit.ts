@@ -80,6 +80,38 @@ export async function createCommit(
         ...deleteOperations,
       ]);
 
+      if (teamId !== "") {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: user_id,
+          },
+        });
+        const team = await prisma.team.findUnique({
+          where: {
+            id: teamId,
+          },
+          include: {
+            team_members: true,
+          },
+        });
+        team &&
+          team.team_members.map(async ({ user_id }) => {
+            await prisma.activity.create({
+              data: {
+                user_id: user_id,
+                body: `${user?.name} merged the ${file?.repository.name} repository`,
+              },
+            });
+          });
+      } else {
+        await prisma.activity.create({
+          data: {
+            user_id: user_id,
+            body: `I merged the ${file?.repository.name} repository`,
+          },
+        });
+      }
+
       return res.status(200).json(response);
     }
   } catch (error) {

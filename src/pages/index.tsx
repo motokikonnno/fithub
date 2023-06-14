@@ -1,20 +1,25 @@
 import { Loading } from "@/components/Loading";
-import { Dashboard } from "@/components/pages/Dashboard";
+import { Dashboard, DashboardProps } from "@/components/pages/Dashboard";
 import useFetchUser from "@/hooks/useFetchUser";
+import { activityFactory } from "@/models/Activity";
+import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
-import { useSession } from "next-auth/react";
+import { GetServerSideProps } from "next";
+import { Session } from "next-auth";
+import { getSession, useSession } from "next-auth/react";
 import ErrorPage from "./404";
 
-const DashboardPage: AuthNextPage = () => {
-  const { data: session } = useSession();
-  const { user } = useFetchUser(session?.user ? session.user.id : null);
-
+const DashboardPage: AuthNextPage<DashboardProps & { session: Session }> = ({
+  activities,
+  user,
+  session,
+}) => {
   if (user?.id !== session?.user.id) {
     <ErrorPage isSession={true} />;
   }
 
   if (user) {
-    return <Dashboard user={user} />;
+    return <Dashboard user={user} activities={activities} />;
   } else {
     return <Loading />;
   }
@@ -22,3 +27,21 @@ const DashboardPage: AuthNextPage = () => {
 
 export default DashboardPage;
 DashboardPage.requireAuth = true;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  if (session) {
+    const user = await userFactory().show(session?.user.id);
+    const activities = await activityFactory().index(user.id);
+    return {
+      props: {
+        user: user,
+        activities: activities,
+        session: session,
+      },
+    };
+  }
+  return {
+    notFound: true,
+  };
+};

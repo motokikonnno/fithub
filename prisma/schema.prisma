@@ -44,6 +44,7 @@ model User {
   mentions       Mention[]
   commits        Commit[]
   curent_commits CurrentCommit[]
+  activities     Activity[]
 }
 
 model Repository {
@@ -129,6 +130,7 @@ model Commit {
   file          File        @relation(fields: [file_id], references: [id], onDelete: Cascade)
   team          Team?       @relation(fields: [team_id], references: [id], onDelete: Cascade)
   user          User        @relation(fields: [user_id], references: [id])
+  activities    Activity[]
 
   @@index([file_id])
   @@index([team_id])
@@ -145,6 +147,7 @@ model CurrentCommit {
   file_id       String
   user          User        @relation(fields: [user_id], references: [id])
   file          File        @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  activities    Activity[]
 
   @@index([file_id])
   @@index([user_id])
@@ -183,6 +186,7 @@ model Mention {
   mentioned_user_id        String
   user                     User           @relation(fields: [mentioned_user_id], references: [id])
   issue                    Issue          @relation(fields: [issue_id], references: [id], onDelete: Cascade)
+  activities               Activity[]
 
   @@index([mentioned_user_id])
   @@index([issue_id])
@@ -195,6 +199,29 @@ model TeamInvitation {
   team_id       String
   created_at    DateTime      @default(now())
   team          Team          @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  activities    Activity[]
 
   @@index([team_id])
+}
+
+model Activity {
+  id                String         @id @default(cuid())
+  body              String
+  created_at        DateTime       @default(now())
+  commit_id         String?
+  mention_id        String?
+  current_commit_id String?
+  user_id           String
+  invitation_id     String?
+  commit            Commit?         @relation(fields: [commit_id], references: [id])
+  mention           Mention?        @relation(fields: [mention_id], references: [id])
+  current_commit    CurrentCommit?  @relation(fields: [current_commit_id], references: [id])
+  user              User            @relation(fields: [user_id], references: [id])
+  invitation        TeamInvitation? @relation(fields: [invitation_id], references: [id])
+
+  @@index([commit_id])
+  @@index([mention_id])
+  @@index([current_commit_id])
+  @@index([user_id])
+  @@index([invitation_id])
 }
