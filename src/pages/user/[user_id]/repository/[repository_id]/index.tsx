@@ -72,6 +72,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const countData = await countFactory().get(`${repository_id}_repository`);
   const user = repository.user && repository.user;
 
+  if (!repository || !folders || !files || countData) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       repository: repository,

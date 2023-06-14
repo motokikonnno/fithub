@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  trailingSlash: true,
   images: {
     domains: [
       "firebasestorage.googleapis.com",

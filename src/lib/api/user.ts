@@ -12,7 +12,6 @@ export async function getUsers(
         id: true,
         name: true,
         email: true,
-        image: true,
       },
     });
     return res.status(200).json({ users: users });

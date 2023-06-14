@@ -34,7 +34,7 @@ export const InviteConfirm: FC<InviteConfirmProps> = ({ inviteData }) => {
     !inviteData ||
     (session && session.user.email !== inviteData.invitee_email)
   ) {
-    return <ErrorPage />;
+    return <ErrorPage isSession={true} />;
   }
 
   return (
