@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { AppLayout } from "../layouts/AppLayout";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
@@ -6,6 +6,7 @@ import styles from "../../styles/components/pages/Dashboard.module.scss";
 import { UserBelongsToTeam } from "@/models/User";
 import { Activity } from "@/models/Activity";
 import { getTimeDiff } from "@/utils/getTime";
+import useFetchActivity from "@/hooks/useFetchActivity";
 
 export type DashboardProps = {
   user: UserBelongsToTeam;
@@ -14,6 +15,36 @@ export type DashboardProps = {
 
 export const Dashboard: FC<DashboardProps> = React.memo(
   ({ user, activities }) => {
+    const { activitiesData, setSize } = useFetchActivity(user.id, activities);
+    const bottomDivRef = useRef<HTMLDivElement>(null);
+    const [fetchMoreFlag, setFetchMoreFlag] = useState(false);
+
+    const getMoreActivities = useCallback(() => {
+      setSize((prevSize) => prevSize + 1);
+    }, [setSize]);
+
+    useEffect(() => {
+      if (!bottomDivRef.current) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setFetchMoreFlag(true);
+          }
+        });
+      });
+      observer.observe(bottomDivRef.current);
+      return () => {
+        observer.disconnect();
+      };
+    }, []);
+
+    useEffect(() => {
+      if (fetchMoreFlag) {
+        getMoreActivities();
+        setFetchMoreFlag(false);
+      }
+    }, [fetchMoreFlag, setFetchMoreFlag, getMoreActivities]);
+
     return (
       <AppLayout user={user}>
         <h2 className={styles.sectionTitle}>Contributions</h2>
@@ -31,11 +62,14 @@ export const Dashboard: FC<DashboardProps> = React.memo(
         {activities.length !== 0 && (
           <>
             <h2 className={styles.sectionTitle}>Activities</h2>
-            {activities.map((activity, index) => (
-              <ActivityItem activity={activity} key={index} />
-            ))}
+            {activitiesData?.flatMap((activityArray) =>
+              activityArray.map((a, index) => (
+                <ActivityItem activity={a} key={index} />
+              ))
+            )}
           </>
         )}
+        <div ref={bottomDivRef} />
       </AppLayout>
     );
   }

@@ -15,8 +15,8 @@ export type Activity = {
 export const activityFactory = (rep?: ActivityRepository) => {
   const repository = rep ?? activityRepository;
   return {
-    index: async (user_id: string): Promise<Activity[]> => {
-      const activities = await repository.getActivities(user_id);
+    index: async (user_id: string, page?: number): Promise<Activity[]> => {
+      const activities = await repository.getActivities(user_id, page);
       return activities;
     },
   };
