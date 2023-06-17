@@ -41,6 +41,8 @@ type bodyPartsType = {
   name: string;
 };
 
+const NUM_COMMITS_PER_PAGE = 10;
+
 export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
   ({
     repository,
@@ -120,6 +122,8 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     const [currentCommitData, setCurrentCommitData] =
       useState<CurrentCommit[]>();
     const [commitData, setCommitData] = useState<Commit[]>();
+    const [page, setPage] = useState(1);
+    const [commitDataNumber, setCommitDataNumber] = useState<Number>();
     const dropDownListRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -163,6 +167,10 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     useEffect(() => {
       setToggleSelectType(false);
     }, [currentFolderName]);
+
+    useEffect(() => {
+      fetchCommits(currentFolderOrFileId, page);
+    }, [page, setPage]);
 
     useEffect(() => {
       const handleClickToCloseInput = (event: MouseEvent) => {
@@ -244,7 +252,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
 
     const handleSetCommitData = useCallback(
       async (id: string) => {
-        fetchCommits(id);
+        fetchCommits(id, page);
         fetchCurrentCommits(id);
         setCurrentFolderOrFileId(id);
         setIsVisible(!isVisible);
@@ -409,12 +417,14 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       }
     };
 
-    const fetchCommits = async (id?: string) => {
+    const fetchCommits = async (id: string, page: number) => {
       if (sessionUserId) {
         const commits = await commitFactory().index(
-          id ? id : currentFolderOrFileId
+          id ? id : currentFolderOrFileId,
+          page
         );
-        setCommitData(commits);
+        setCommitData(commits.commits);
+        setCommitDataNumber(commits.totalNumber);
       }
     };
 
@@ -444,7 +454,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
           user_id: sessionUserId,
         });
         fetchCurrentCommits();
-        fetchCommits();
+        fetchCommits(currentFolderOrFileId, page);
         countMutate();
       }
     };
@@ -629,7 +639,20 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               className={styles.commitListContainer}
                             >
                               <li className={styles.commitMessage}>
-                                {commit.message}
+                                <div>{commit.message}</div>
+                                <div
+                                  className={`${styles.bodyPart} ${
+                                    styles[
+                                      changeBodyPartsNumber(commit.body_parts)
+                                        .color
+                                    ]
+                                  }`}
+                                >
+                                  {
+                                    changeBodyPartsNumber(commit.body_parts)
+                                      .bodyPartName
+                                  }
+                                </div>
                               </li>
                               <li className={styles.rightContainer}>
                                 <div className={styles.commitUser}>
@@ -650,6 +673,15 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               </li>
                             </ul>
                           ))}
+                        {commitDataNumber &&
+                          NUM_COMMITS_PER_PAGE * page < commitDataNumber && (
+                            <div
+                              onClick={() => setPage(page + 1)}
+                              className={styles.moreButton}
+                            >
+                              Show more...
+                            </div>
+                          )}
                       </div>
                       <div className={styles.commitFormLayout}>
                         <textarea
@@ -667,9 +699,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                             {bodyParts ? bodyParts.name : "Body part select"}
                             {isBodyPartsFlag && (
                               <ul className={styles.bodyPartList}>
-                                {bodyPartsList.map((body) => (
+                                {bodyPartsList.map((body, index) => (
                                   <li
-                                    key={body.id}
+                                    key={index}
                                     className={styles.bodyItem}
                                     onClick={() => setBodyParts(body)}
                                   >

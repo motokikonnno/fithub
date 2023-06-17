@@ -2,26 +2,42 @@ import { Commit } from "@/models/Commit";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../prisma";
 
+const NUM_COMMITS_PER_PAGE = 10;
+
 export async function getCommits(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<Commit[]>> {
-  const { id } = req.query;
+  const { id, page: pageIndex } = req.query;
 
   if (typeof id !== "string") {
     return res.status(400).json({ error: "Invalid user_id not string type" });
   }
 
   try {
+    const take = NUM_COMMITS_PER_PAGE * Number(pageIndex);
     const commits = await prisma.commit.findMany({
       where: {
         file_id: id,
       },
+      orderBy: {
+        created_at: "desc",
+      },
+      take,
       include: {
         user: true,
       },
     });
-    return res.status(200).json({ commits: commits });
+
+    const commitsData = await prisma.commit.findMany({
+      where: {
+        file_id: id,
+      },
+    });
+
+    const totalNumber = commitsData.length;
+
+    return res.status(200).json({ commits, totalNumber });
   } catch (error) {
     return res.status(500).end(error);
   }

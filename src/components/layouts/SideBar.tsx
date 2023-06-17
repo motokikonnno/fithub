@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../styles/components/layouts/SideBar.module.scss";
-import { InputSearch } from "../InputSearch";
 
 type SideBarProps = {
   user: UserBelongsToTeam;

@@ -184,6 +184,8 @@
 }
 
 .commitMessage {
+  display: flex;
+  justify-content: space-between;
   align-self: flex-start;
   margin-bottom: 16px;
   padding: 16px;
@@ -545,4 +547,16 @@
 .current {
   font-weight: bold;
   border-bottom: 2px solid #fb8e77;
+}
+
+.moreButton {
+  text-align: center;
+  margin-top: 16px;
+  color: #0969da;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+  }
 }
