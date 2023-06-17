@@ -71,13 +71,22 @@
 }
 
 .sectionTitle {
+  margin: 16px 0;
   font-size: 14px;
+}
+
+.sectionTeamTitle {
+  @extend .sectionTitle;
+  padding: 16px 0;
+  border-bottom: 1px solid #d0d7de;
 }
 
 .sectionTitleContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #d0d7de;
 }
 
 .newRepositoryButton {

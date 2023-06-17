@@ -119,7 +119,20 @@ export const SideBar: FC<SideBarProps> = React.memo(({ user }) => {
       <div>
         <div className={styles.sectionTitleContainer}>
           <h2 className={styles.sectionTitle}>Top Repositories</h2>
-          <Link href={"/repository/new"} className={styles.link}>
+          <Link
+            href={
+              type === "user"
+                ? {
+                    pathname: `/repository/new`,
+                    query: { type: type },
+                  }
+                : {
+                    pathname: `/repository/new`,
+                    query: { type: type, team_id: owner.id },
+                  }
+            }
+            className={styles.link}
+          >
             <div className={styles.newRepositoryButton}>
               <Image
                 src={"/icons/add-repository.svg"}
@@ -131,14 +144,6 @@ export const SideBar: FC<SideBarProps> = React.memo(({ user }) => {
               New
             </div>
           </Link>
-        </div>
-        <div className={styles.inputSearchWrapper}>
-          <InputSearch
-            placeholder={"Find a repository..."}
-            backgroundColor={"#f6f8fa"}
-            color={"#656d76"}
-            borderColor={"#d0d7de"}
-          />
         </div>
         {currentRepositories &&
           currentRepositories.map((repository, index) => (
@@ -178,15 +183,7 @@ export const SideBar: FC<SideBarProps> = React.memo(({ user }) => {
           ))}
       </div>
       <div>
-        <h2 className={styles.sectionTitle}>Your teams</h2>
-        <div className={styles.inputSearchWrapper}>
-          <InputSearch
-            placeholder={"Find a team..."}
-            backgroundColor={"#f6f8fa"}
-            color={"#656d76"}
-            borderColor={"#d0d7de"}
-          />
-        </div>
+        <h2 className={styles.sectionTeamTitle}>Your teams</h2>
         {user.team_members &&
           user.team_members.map(({ team }, index) => (
             <div key={index} className={styles.itemList}>
