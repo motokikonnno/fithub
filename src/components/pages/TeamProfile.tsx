@@ -27,6 +27,7 @@ export type TeamProfileProps = {
   items: itemType[];
   sessionUserName?: string | null;
   count: Count;
+  repositories: { repositories: Repository[]; totalNumber: number };
 };
 
 type editTeamRepositoryType = {
@@ -35,7 +36,14 @@ type editTeamRepositoryType = {
 };
 
 export const TeamProfile: FC<TeamProfileProps> = React.memo(
-  ({ teamData, isSessionUser, items, sessionUserName, count }) => {
+  ({
+    teamData,
+    isSessionUser,
+    items,
+    sessionUserName,
+    count,
+    repositories,
+  }) => {
     const router = useRouter();
     const query = String(router.query.tab);
     const defaultImage =
@@ -301,8 +309,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
               </div>
               {team.repositories && (
                 <Overview
-                  repositories={team.repositories}
-                  isSessionUser={isSessionUser}
+                  repositories={repositories.repositories}
                   count={count}
                   team={teamData}
                 />
@@ -311,7 +318,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
           )}
           {currentTab === "Repositories" && team.repositories && (
             <RepositoryList
-              repositories={team.repositories}
+              repositories={repositories}
               owner={team}
               type={"team"}
               isSessionUser={isSessionUser}
@@ -397,43 +404,25 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
 
 type OverviewProps = {
   repositories: Repository[];
-  isSessionUser: boolean;
   count: Count;
   team: Team;
 };
 
-const Overview: FC<OverviewProps> = ({
-  repositories,
-  isSessionUser,
-  count,
-  team,
-}) => {
-  const sortRepositories = recentSortRepositories(repositories);
-  const privateRepositories = sortRepositories.slice(0, 10);
-  const publicRepositories = sortRepositories
-    .filter(({ is_private }) => is_private === 1)
-    .slice(0, 10);
+const Overview: FC<OverviewProps> = ({ repositories, count, team }) => {
   return (
     <div className={styles.rightContainer}>
-      <h2 className={styles.title}>Recent repositories</h2>
+      {repositories.length !== 0 && (
+        <h2 className={styles.title}>Recent repositories</h2>
+      )}
       <div className={styles.repositoriesContainer}>
-        {isSessionUser
-          ? privateRepositories.map((repository, index) => (
-              <RepositoryCard
-                index={index}
-                repository={repository}
-                key={index}
-                type={"team"}
-              />
-            ))
-          : publicRepositories.map((repository, index) => (
-              <RepositoryCard
-                index={index}
-                repository={repository}
-                key={index}
-                type={"team"}
-              />
-            ))}
+        {repositories.map((repository, index) => (
+          <RepositoryCard
+            index={index}
+            repository={repository}
+            key={index}
+            type={"team"}
+          />
+        ))}
       </div>
       {count && Object.keys(count).length !== 0 && (
         <section className={styles.percentages}>

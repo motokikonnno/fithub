@@ -1,0 +1,40 @@
+.number {
+  padding: 4px 8px;
+  color: #0969da;
+  cursor: pointer;
+  list-style: none;
+}
+
+.activeNumber {
+  @extend .number;
+  color: #fff;
+  background-color: #66ccff;
+  border-radius: 6px;
+}
+
+.paginationContainer {
+  display: flex;
+  padding: 0;
+  gap: 16px;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  gap: 16px;
+}
+
+.dot {
+  list-style: none;
+}
+
+.angleLeftIcon {
+  transform: scale(-1, 1);
+  cursor: pointer;
+}
+
+.angleRightIcon {
+  cursor: pointer;
+}

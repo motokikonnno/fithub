@@ -32,7 +32,7 @@ export const RepositoryListItem: FC<RepositoryListItemProps> = React.memo(
       <div
         className={`${styles.repositoryItemWrapper} ${
           repositories.length - 1 === index && styles.lastItem
-        }`}
+        } ${repositories.length === 1 && styles.firstItem}`}
       >
         <div className={styles.leftContainer}>
           <Link

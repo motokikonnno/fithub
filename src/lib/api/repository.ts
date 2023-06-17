@@ -2,26 +2,79 @@ import { Repository } from "@/models/Repository";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../prisma";
 
+const NUM_REPOSITORIES_PER_PAGE = 8;
+
 export async function getRepositories(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | NextApiResponse<Repository>> {
+): Promise<void | NextApiResponse<Repository[] & { totalNumber: number }>> {
+  const { isPrivate, type, owner_id, page } = req.query;
+
   try {
-    const repositories = await prisma.repository.findMany({
-      select: {
-        id: true,
-        user_id: true,
-        name: true,
-        description: true,
-        is_private: true,
-        is_read_me: true,
-        read_me: true,
-        created_at: true,
-      },
-    });
-    return res.status(200).json({ repositories: repositories });
+    const skip = (Number(page) - 1) * NUM_REPOSITORIES_PER_PAGE;
+    let repositories;
+    let count;
+    if (type === "user") {
+      repositories = await prisma.repository.findMany({
+        where: {
+          user_id: String(owner_id),
+          is_private: {
+            in: isPrivate ? [1, 2] : [1],
+          },
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+        skip,
+        take: NUM_REPOSITORIES_PER_PAGE,
+      });
+      const allRepositories = await prisma.repository.findMany({
+        where: {
+          user_id: String(owner_id),
+        },
+      });
+      count = allRepositories.length;
+    } else if (type === "team") {
+      repositories = await prisma.repository.findMany({
+        where: {
+          team_id: String(owner_id),
+          is_private: isPrivate ? 1 : 2,
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+        skip,
+        take: NUM_REPOSITORIES_PER_PAGE,
+      });
+      const allRepositories = await prisma.repository.findMany({
+        where: {
+          team_id: String(owner_id),
+        },
+      });
+      count = allRepositories.length;
+    }
+    return res
+      .status(200)
+      .json({ repositories: repositories, totalNumber: count });
   } catch (error) {
-    return res.status(500).end(error);
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      "message" in error
+    ) {
+      const code = error.code;
+      const message = error.message;
+
+      if (code === "P2016") {
+        console.error(`Error: ${message}`);
+      } else {
+        throw error;
+      }
+    } else {
+      throw error;
+    }
+    // return res.status(500).end(error);
   }
 }
 

@@ -1,8 +1,11 @@
 import { ApiClient } from "@/lib/api-client";
-import { Repository } from "@/models/Repository";
+import { Repository, repositoryQuery } from "@/models/Repository";
+import { generateQueryString } from "@/utils/queries";
 
 export type RepositoryRepository = {
-  getRepositories: () => Promise<Repository[]>;
+  getRepositories: (params: {
+    queries: repositoryQuery;
+  }) => Promise<{ repositories: Repository[]; totalNumber: number }>;
   getRepository: (id: string) => Promise<Repository>;
   createRepository: (
     params: Omit<Repository, "id" | "created_at" | "next_issue_id">
@@ -13,9 +16,13 @@ export type RepositoryRepository = {
   deleteRepository: (id: string) => Promise<void>;
 };
 
-const getRepositories: RepositoryRepository["getRepositories"] = async () => {
-  const response = await ApiClient.get(`/repository`);
-  return response.data.repositories;
+const getRepositories: RepositoryRepository["getRepositories"] = async (
+  params
+) => {
+  const response = await ApiClient.get(
+    `/repository` + generateQueryString(params.queries)
+  );
+  return response.data;
 };
 
 const getRepository: RepositoryRepository["getRepository"] = async (id) => {

@@ -41,13 +41,19 @@ export const onUploadToFireStorage = (
     (err) => {
       console.log(err);
     },
+
     () => {
-      handleLoadingFile(false);
       // 画像のパスを取得
       getDownloadURL(gsRef)
         .then((url) => {
           const fileArray = [...deleteFile, url];
-          handleSetFile(fileArray, url);
+          return new Promise<void>((resolve) => {
+            handleSetFile(fileArray, url);
+            resolve();
+          });
+        })
+        .then(() => {
+          handleLoadingFile(false);
         })
         .catch((err) => console.log(err));
     }

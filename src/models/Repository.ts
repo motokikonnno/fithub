@@ -29,11 +29,20 @@ export type Repository = {
   commit?: Commit[];
 };
 
+export type repositoryQuery = {
+  isPrivate: boolean;
+  type: "user" | "team";
+  owner_id: string;
+  page?: number;
+};
+
 export const repositoryFactory = (rep?: RepositoryRepository) => {
   const repo = rep ?? repositoryRepository;
   return {
-    index: async (): Promise<Repository[]> => {
-      const repositories = await repo.getRepositories();
+    index: async (params: {
+      queries: repositoryQuery;
+    }): Promise<{ repositories: Repository[]; totalNumber: number }> => {
+      const repositories = await repo.getRepositories(params);
       return repositories;
     },
     show: async (id: string): Promise<Repository> => {

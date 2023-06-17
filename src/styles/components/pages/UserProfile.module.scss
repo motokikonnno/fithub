@@ -9,6 +9,7 @@
   display: flex;
   margin: 0 auto;
   width: 85.4%;
+  gap: 48px;
 }
 
 .leftContainer {
@@ -117,18 +118,6 @@
   font-size: 16px;
   border-radius: 6px;
   border: 1px solid #d0d7de;
-}
-
-.snsLinkContainer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.snsLinkInputForm {
-  @extend .inputForm;
-  width: 82%;
 }
 
 .updateButtonContainer {

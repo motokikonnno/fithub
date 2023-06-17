@@ -8,17 +8,18 @@ import { useSession } from "next-auth/react";
 import useFetchUser from "@/hooks/useFetchUser";
 
 type HeaderProps = {
-  image?: string;
+  is_edit?: boolean;
 };
 
-export const Header: FC<HeaderProps> = React.memo(({ image }) => {
+export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
   const { data: session } = useSession();
   const [isShow, setIsShow] = useState(false);
   const [isShowProfile, setIsShowProfile] = useState(false);
   const dropDownListRef = useRef<HTMLDivElement>(null);
   const profileDropDownListRef = useRef<HTMLDivElement>(null);
-  const { user } = useFetchUser(session?.user.id ? session.user.id : null);
-  const [icon, setIcon] = useState(image);
+  const { user, userMutate } = useFetchUser(
+    session?.user.id ? session.user.id : null
+  );
 
   const dropDownList = {
     newList: [
@@ -72,14 +73,10 @@ export const Header: FC<HeaderProps> = React.memo(({ image }) => {
   }, []);
 
   useEffect(() => {
-    setIcon(image);
-  }, [image]);
-
-  useEffect(() => {
-    if (!image) {
-      setIcon(user?.image);
+    if (is_edit) {
+      userMutate();
     }
-  }, [image, user?.image]);
+  }, [is_edit, userMutate]);
 
   return (
     <header className={styles.container}>
@@ -120,9 +117,9 @@ export const Header: FC<HeaderProps> = React.memo(({ image }) => {
             onClick={toggleIsShowProfile}
             ref={profileDropDownListRef}
           >
-            {icon && (
+            {user?.image && (
               <Image
-                src={icon}
+                src={user.image}
                 width={20}
                 height={20}
                 alt="profile-image"

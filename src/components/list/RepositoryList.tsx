@@ -8,23 +8,22 @@ import { Repository, repositoryFactory } from "@/models/Repository";
 import { Modal } from "../Modal";
 import { User, userFactory } from "@/models/User";
 import { Team, teamFactory } from "@/models/Team";
+import { Pagination } from "../Pagination";
 
 type RepositoryListProps = {
-  repositories: Repository[];
+  repositories: { repositories: Repository[]; totalNumber: number };
   owner: User | Team;
   type: "user" | "team";
   isSessionUser: boolean;
 };
 
+const NUM_REPOSITORIES_PER_PAGE = 8;
+
 export const RepositoryList: FC<RepositoryListProps> = React.memo(
   ({ repositories, owner, type, isSessionUser }) => {
-    const sortRepositories = [...repositories].sort((a, b) => {
-      return Date.parse(b.created_at) - Date.parse(a.created_at);
-    });
-    const privateRepositories = sortRepositories.filter(
-      ({ is_private }) => is_private === 1
+    const [repositoriesData, setRepositoriesData] = useState(
+      repositories.repositories
     );
-    const [repositoriesData, setRepositoriesData] = useState(sortRepositories);
     const [isVisible, setIsVisible] = useState(false);
     const [isDisabled, setIsDisabled] = useState(true);
     const [deleteText, setDeleteText] = useState("");
@@ -64,6 +63,18 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
       setIsVisible(false);
     };
 
+    const handlePaginate = async (page: number) => {
+      const repositories = await repositoryFactory().index({
+        queries: {
+          owner_id: owner.id,
+          isPrivate: isSessionUser,
+          type: "user",
+          page: page,
+        },
+      });
+      setRepositoriesData(repositories.repositories);
+    };
+
     return (
       <div className={styles.repositoryListContainer}>
         <div className={styles.actionContainer}>
@@ -98,8 +109,8 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
                   New
                 </button>
               </Link>
-              {(!isSessionUser && privateRepositories.length > 0) ||
-                (isSessionUser && sortRepositories.length > 0 && (
+              {(!isSessionUser && repositories.repositories.length > 0) ||
+                (isSessionUser && repositories.repositories.length > 0 && (
                   <button
                     className={`${styles.selectButton} ${
                       toggleDelete && styles.redColor
@@ -136,31 +147,23 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             </div>
           </Modal>
         )}
-        {isSessionUser
-          ? repositoriesData.map((repository, index) => (
-              <RepositoryListItem
-                repositories={repositories}
-                repository={repository}
-                index={index}
-                key={index}
-                toggleDelete={toggleDelete}
-                handleClose={handleClose}
-                type={type}
-                ownerId={owner.id}
-              />
-            ))
-          : privateRepositories.map((repository, index) => (
-              <RepositoryListItem
-                repositories={repositories}
-                repository={repository}
-                index={index}
-                key={index}
-                toggleDelete={toggleDelete}
-                handleClose={handleClose}
-                type={type}
-                ownerId={owner.id}
-              />
-            ))}
+        {repositoriesData.map((repository, index) => (
+          <RepositoryListItem
+            repositories={repositories.repositories}
+            repository={repository}
+            index={index}
+            key={index}
+            toggleDelete={toggleDelete}
+            handleClose={handleClose}
+            type={type}
+            ownerId={owner.id}
+          />
+        ))}
+        <Pagination
+          totalNumber={repositories.totalNumber}
+          perPage={NUM_REPOSITORIES_PER_PAGE}
+          onChange={(e) => handlePaginate(e.page)}
+        />
       </div>
     );
   }

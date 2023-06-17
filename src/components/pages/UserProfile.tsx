@@ -14,8 +14,6 @@ import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 import { User, UserBelongsToTeam, userFactory } from "@/models/User";
 import { useForm } from "react-hook-form";
 import { Repository } from "@/models/Repository";
-import { useSession } from "next-auth/react";
-import { recentSortRepositories } from "@/services/recentSortRepositories";
 import { PercentageBar } from "../PercentageBar";
 import { Count } from "@/models/Count";
 
@@ -34,10 +32,11 @@ export type UserProfileProps = {
   userData: UserBelongsToTeam;
   isSessionUser: boolean;
   count: Count;
+  repositories: { repositories: Repository[]; totalNumber: number };
 };
 
 export const UserProfile: FC<UserProfileProps> = React.memo(
-  ({ userData, isSessionUser, count }) => {
+  ({ userData, isSessionUser, count, repositories }) => {
     const items: itemType[] = [
       {
         id: "1",
@@ -52,15 +51,6 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
     const router = useRouter();
     const query = router.query.tab;
     const [user, setUser] = useState<User>(userData);
-    const {
-      register,
-      handleSubmit,
-      reset,
-      formState: { errors },
-    } = useForm<updateUserType>({
-      mode: "onChange",
-      defaultValues: { name: user.name, bio: user.bio },
-    });
     const defaultImage =
       "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
     const [currentTab, setCurrentTab] = useState("Overview");
@@ -76,7 +66,17 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
       user.image ? user.image : defaultImage
     );
     const [isLoading, setLoading] = useState(false);
+    const [is_edit, setIsEdit] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { errors },
+    } = useForm<updateUserType>({
+      mode: "onChange",
+      defaultValues: { name: user.name, bio: user.bio },
+    });
 
     useEffect(() => {
       const handlePopstate = () => {
@@ -137,11 +137,12 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
       setUser(updateUser);
       handleDeleteImage(deleteFile, currentFile);
       setIsToggle(false);
+      setIsEdit(true);
     };
 
     return (
       <>
-        <Header image={user.image} />
+        <Header is_edit={is_edit} />
         <div className={styles.tabsContainer}>
           {items.map((item, index) => (
             <Tabs
@@ -262,14 +263,14 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
           {userData.repositories &&
             (currentTab === "Overview" ? (
               <Overview
-                repositories={userData.repositories}
+                repositories={repositories.repositories}
                 user={userData}
                 count={count}
               />
             ) : (
               <div className={styles.repositoryComponentWrapper}>
                 <RepositoryList
-                  repositories={userData.repositories}
+                  repositories={repositories}
                   owner={userData}
                   type={"user"}
                   isSessionUser={isSessionUser}
@@ -290,40 +291,20 @@ export type ProfileProps = {
 };
 
 const Overview: FC<ProfileProps> = ({ repositories, user, count }) => {
-  const { data: session } = useSession();
-  const sortRepositories = recentSortRepositories(repositories);
-  const publicRepositories = sortRepositories.slice(0, 6);
-  const privateRepositories = sortRepositories
-    .filter(({ is_private }) => is_private === 1)
-    .slice(0, 6);
   return (
     <div className={styles.rightContainer}>
-      {(user?.id &&
-        session?.user.id !== user.id &&
-        privateRepositories.length > 0) ||
-        (user?.id &&
-          session?.user.id === user.id &&
-          sortRepositories.length > 0 && (
-            <h2 className={styles.title}>Recent repositories</h2>
-          ))}
+      {repositories.length !== 0 && (
+        <h2 className={styles.title}>Recent repositories</h2>
+      )}
       <div className={styles.repositoriesContainer}>
-        {user?.id && session?.user.id === user.id
-          ? publicRepositories.map((repository, index) => (
-              <RepositoryCard
-                index={index}
-                repository={repository}
-                key={index}
-                type={"user"}
-              />
-            ))
-          : privateRepositories.map((repository, index) => (
-              <RepositoryCard
-                index={index}
-                repository={repository}
-                key={index}
-                type={"user"}
-              />
-            ))}
+        {repositories.map((repository, index) => (
+          <RepositoryCard
+            index={index}
+            repository={repository}
+            key={index}
+            type={"user"}
+          />
+        ))}
       </div>
       <h2 className={styles.title}>{user?.commits.length} contributions</h2>
       <div className={styles.calendarContainer}>
