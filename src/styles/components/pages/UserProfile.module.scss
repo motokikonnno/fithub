@@ -240,11 +240,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 19px;
   margin: 0;
   padding: 0;
-  top: 37px;
-  left: 30px;
+  top: 40px;
+  left: 0px;
 }
 
 .weekday {
@@ -256,5 +256,5 @@
 
 .calendarContainer {
   position: relative;
-  padding: 4px 30px 30px 60px;
+  padding: 4px 0px 30px 30px;
 }
