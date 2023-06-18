@@ -123,7 +123,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       useState<CurrentCommit[]>();
     const [commitData, setCommitData] = useState<Commit[]>();
     const [page, setPage] = useState(1);
-    const [commitDataNumber, setCommitDataNumber] = useState<Number>();
+    const [commitDataNumber, setCommitDataNumber] = useState<number>();
     const dropDownListRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
