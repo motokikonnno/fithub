@@ -26,7 +26,7 @@ export type Repository = {
   issues?: Issue[];
   user?: User;
   team?: Team;
-  commit?: Commit[];
+  commits?: Commit[];
 };
 
 export type repositoryQuery = {

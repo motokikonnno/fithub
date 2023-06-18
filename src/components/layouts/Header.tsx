@@ -5,6 +5,8 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import useFetchUser from "@/hooks/useFetchUser";
+import { Repository, repositoryFactory } from "@/models/Repository";
+import { useRouter } from "next/router";
 
 type HeaderProps = {
   is_edit?: boolean;
@@ -12,6 +14,7 @@ type HeaderProps = {
 
 export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isShow, setIsShow] = useState(false);
   const [isShowProfile, setIsShowProfile] = useState(false);
   const dropDownListRef = useRef<HTMLDivElement>(null);
@@ -19,6 +22,12 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
   const { user, userMutate } = useFetchUser(
     session?.user.id ? session.user.id : null
   );
+  const [searchText, setSearchText] = useState("");
+  const [isSearch, setIsSearch] = useState(false);
+  const [repositories, setRepositories] = useState<{
+    repositories: Repository[];
+    totalNumber: number;
+  }>();
 
   const dropDownList = {
     newList: [
@@ -64,6 +73,7 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
         return;
       setIsShow(false);
       setIsShowProfile(false);
+      setIsSearch(false);
     };
     window.addEventListener("click", handleClickToCloseDropDown, true);
     return () => {
@@ -77,11 +87,77 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
     }
   }, [is_edit, userMutate]);
 
+  useEffect(() => {
+    if (router.query.search) {
+      setSearchText(String(router.query.search));
+    }
+  }, [router.query.search]);
+
+  const handleChangeInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+    if (e.target.value === "") {
+      setIsSearch(false);
+      return;
+    } else {
+      const repositoriesData = await repositoryFactory().index({
+        queries: {
+          isPrivate: true,
+          type: "user",
+          owner_id: user?.id ? user.id : "",
+          search: e.target.value,
+        },
+      });
+      setIsSearch(true);
+      setRepositories(repositoriesData);
+    }
+  };
+
+  const handleRouterPush = (repository_id: string) => {
+    window.location.href = `/user/${user?.id}/repository/${repository_id}/?search=${searchText}`;
+  };
+
   return (
     <header className={styles.container}>
-      <Link href={"/"}>
-        <Image src={"/logo.png"} width={32} height={32} alt={"ロゴ画像"} />
-      </Link>
+      <div className={styles.leftContainer}>
+        <Link href={"/"}>
+          <Image
+            src={"/logo.png"}
+            width={32}
+            height={32}
+            alt={"ロゴ画像"}
+            className={styles.logoIcon}
+          />
+        </Link>
+        <div className={styles.inputWrapper} ref={dropDownListRef}>
+          <input
+            type="text"
+            className={styles.searchInput}
+            placeholder="find a repository..."
+            value={searchText}
+            onChange={handleChangeInput}
+          />
+          {isSearch && repositories?.repositories.length !== 0 && (
+            <ul className={styles.searchRepositoriesWrapper}>
+              {repositories?.repositories.map((repository, index) => (
+                <li
+                  key={index}
+                  className={styles.repositoryItem}
+                  onClick={() => handleRouterPush(repository.id)}
+                >
+                  <span>{repository.name}</span>
+                  <span className={styles.commitCount}>
+                    {`${repository.commits?.length} ${
+                      repository.commits && repository.commits?.length > 1
+                        ? "commits"
+                        : "commit"
+                    }`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
       <div className={styles.rightContents}>
         <div
           className={styles.chevronDown}

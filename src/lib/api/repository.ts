@@ -28,6 +28,9 @@ export async function getRepositories(
           orderBy: {
             created_at: "desc",
           },
+          include: {
+            commits: true,
+          },
         });
         const allRepositories = await prisma.repository.findMany({
           where: {

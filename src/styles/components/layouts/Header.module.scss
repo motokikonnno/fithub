@@ -48,3 +48,65 @@
   object-position: center;
   border-radius: 50%;
 }
+
+.leftContainer {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.logoIcon {
+  vertical-align: middle;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 272px;
+}
+
+.searchInput {
+  padding: 4px 8px;
+  width: 100%;
+  background-color: #000;
+  border: 1px solid #656d76;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  box-sizing: border-box;
+  &:focus {
+    outline: none;
+  }
+}
+
+.searchRepositoriesWrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  width: 272px;
+  border: 1px solid #656d76;
+  border-top: none;
+  background-color: #fff;
+  z-index: 50;
+}
+
+.repositoryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  border-top: 1px solid #656d76;
+  text-decoration: none;
+  color: #0969da;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    background-color: #f6f8fa;
+  }
+}
+
+.commitCount {
+  color: #656d76;
+  font-size: 12px;
+}
