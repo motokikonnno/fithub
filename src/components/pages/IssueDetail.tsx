@@ -35,6 +35,7 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
     const [toggleEdit, setToggleEdit] = useState(false);
     const [issueTitle, setIssueTitle] = useState(issue.title);
     const [isVisible, setIsVisible] = useState(false);
+    const [isConfirm, setIsConfirm] = useState(false);
     const [memberList, setMemberList] = useState(team?.team_members);
     const dropDownListRef = useRef<HTMLDivElement>(null);
     const {
@@ -98,6 +99,10 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
       setIsVisible(!isVisible);
     };
 
+    const handleConfirmClose = () => {
+      setIsConfirm(false);
+    };
+
     const handleDeleteIssue = async () => {
       await issueFactory().delete(String(issue.id));
       router.push(
@@ -114,6 +119,7 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
           mentioner_id: sessionUserId,
           issue_id: issue.id,
         });
+        setIsConfirm(true);
       }
     };
 
@@ -296,6 +302,23 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                     Assign user
                   </div>
                 </div>
+                {isConfirm && (
+                  <Modal isVisible={isConfirm} handleClose={handleConfirmClose}>
+                    <div className={styles.confirmModalBackground}>
+                      <p className={styles.confirmText}>
+                        The selected user has been assigned!
+                      </p>
+                      <div className={styles.confirmContainer}>
+                        <div
+                          className={styles.okButton}
+                          onClick={() => setIsConfirm(false)}
+                        >
+                          OK
+                        </div>
+                      </div>
+                    </div>
+                  </Modal>
+                )}
               </>
             )}
             <button className={styles.deleteIssueButton} onClick={handleClose}>

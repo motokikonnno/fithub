@@ -303,3 +303,8 @@
   @extend .selectNameContainer;
   justify-content: right;
 }
+
+.okButton {
+  @extend .deleteButton;
+  background-color: #1f883d;
+}
