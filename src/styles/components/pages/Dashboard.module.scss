@@ -1,6 +1,7 @@
 .calendarContainer {
+  position: relative;
   margin: 0 0 50px 0;
-  padding: 30px;
+  padding: 30px 30px 30px 60px;
   width: 90%;
   border-radius: 6px;
   border: 1px solid #d0d7de;
@@ -38,4 +39,46 @@
 
 .activityContent {
   letter-spacing: 1px;
+}
+
+.angleLeftIcon {
+  transform: scale(-1, 1);
+  cursor: pointer;
+}
+
+.angleRightIcon {
+  cursor: pointer;
+}
+
+.yearContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 4px;
+}
+
+.currentYear {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background-color: #0969da;
+  color: #fff;
+}
+
+.weekdayContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  top: 69px;
+  left: 30px;
+}
+
+.weekday {
+  color: #656d76;
+  font-size: 10px;
+  font-weight: bold;
+  list-style: none;
 }

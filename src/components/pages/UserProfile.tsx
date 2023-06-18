@@ -16,6 +16,8 @@ import { useForm } from "react-hook-form";
 import { Repository } from "@/models/Repository";
 import { PercentageBar } from "../PercentageBar";
 import { Count } from "@/models/Count";
+import { Tooltip } from "react-tooltip";
+import { Calender } from "@/models/Calender";
 
 export type itemType = {
   id: string;
@@ -33,10 +35,11 @@ export type UserProfileProps = {
   isSessionUser: boolean;
   count: Count;
   repositories: { repositories: Repository[]; totalNumber: number };
+  calender: Calender[];
 };
 
 export const UserProfile: FC<UserProfileProps> = React.memo(
-  ({ userData, isSessionUser, count, repositories }) => {
+  ({ userData, isSessionUser, count, repositories, calender }) => {
     const items: itemType[] = [
       {
         id: "1",
@@ -266,6 +269,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
                 repositories={repositories.repositories}
                 user={userData}
                 count={count}
+                calender={calender}
               />
             ) : (
               <div className={styles.repositoryComponentWrapper}>
@@ -284,13 +288,23 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
   }
 );
 
-export type ProfileProps = {
+type OverviewProps = {
   repositories: Repository[];
   user?: UserBelongsToTeam;
   count: Count;
+  calender: Calender[];
 };
 
-const Overview: FC<ProfileProps> = ({ repositories, user, count }) => {
+const Overview: FC<OverviewProps> = ({
+  repositories,
+  user,
+  count,
+  calender,
+}) => {
+  const weekdays = ["Mon", "Wed", "Fri"];
+  const currentYear = new Date().getFullYear();
+  const [yearNumber, setYearNumber] = useState(currentYear);
+
   return (
     <div className={styles.rightContainer}>
       {repositories.length !== 0 && (
@@ -307,16 +321,54 @@ const Overview: FC<ProfileProps> = ({ repositories, user, count }) => {
         ))}
       </div>
       <h2 className={styles.title}>{user?.commits.length} contributions</h2>
-      <div className={styles.calendarContainer}>
-        <ReactCalendarHeatmap
-          startDate={new Date("2023-01-01")}
-          endDate={new Date("2023-12-31")}
-          values={[
-            { date: "2023-05-22", count: 12 },
-            { date: "2023-07-24", count: 12 },
-            { date: "2023-11-10", count: 12 },
-          ]}
+      <div className={styles.yearContainer}>
+        <Image
+          src={`/icons/angle-right.svg`}
+          width={18}
+          height={18}
+          alt="angle-left-icon"
+          className={styles.angleLeftIcon}
+          onClick={() => setYearNumber(yearNumber - 1)}
         />
+        <time className={styles.currentYear}>{yearNumber}</time>
+        <Image
+          src={`/icons/angle-right.svg`}
+          width={18}
+          height={18}
+          alt="angle-right-icon"
+          onClick={() => setYearNumber(yearNumber + 1)}
+          className={styles.angleRightIcon}
+        />
+      </div>
+      <div className={styles.calendarContainer}>
+        <ul className={styles.weekdayContainer}>
+          {weekdays.map((weekday, index) => (
+            <li key={index} className={styles.weekday}>
+              {weekday}
+            </li>
+          ))}
+        </ul>
+        <ReactCalendarHeatmap
+          startDate={new Date(`${yearNumber}-01-01`)}
+          endDate={new Date(`${yearNumber}-12-31`)}
+          values={calender}
+          tooltipDataAttrs={(value: Calender) => {
+            if (!value || !value.date) {
+              return null;
+            }
+            return {
+              "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
+              "data-tooltip-id": "tooltip",
+            };
+          }}
+          classForValue={(value) => {
+            if (!value) {
+              return "color-empty";
+            }
+            return `color-github-${value.count}`;
+          }}
+        />
+        <Tooltip id="tooltip" />
       </div>
       {count && Object.keys(count).length !== 0 && (
         <section className={styles.percentages}>

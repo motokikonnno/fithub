@@ -1,6 +1,7 @@
 import { Loading } from "@/components/Loading";
 import { Dashboard, DashboardProps } from "@/components/pages/Dashboard";
 import { activityFactory } from "@/models/Activity";
+import { calenderFactory } from "@/models/Calender";
 import { userFactory } from "@/models/User";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetServerSideProps } from "next";
@@ -12,13 +13,16 @@ const DashboardPage: AuthNextPage<DashboardProps & { session: Session }> = ({
   activities,
   user,
   session,
+  calender,
 }) => {
   if (user?.id !== session?.user.id) {
     <ErrorPage isSession={true} />;
   }
 
   if (user) {
-    return <Dashboard user={user} activities={activities} />;
+    return (
+      <Dashboard user={user} activities={activities} calender={calender} />
+    );
   } else {
     return <Loading />;
   }
@@ -32,11 +36,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (session) {
     const user = await userFactory().show(session?.user.id);
     const activities = await activityFactory().index(user.id, 1);
+    const calender = await calenderFactory().index(user.id);
     return {
       props: {
         user: user,
         activities: activities,
         session: session,
+        calender: calender,
       },
     };
   }

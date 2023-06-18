@@ -210,3 +210,51 @@
   margin: 0 auto;
   width: 70%;
 }
+
+.angleLeftIcon {
+  transform: scale(-1, 1);
+  cursor: pointer;
+}
+
+.angleRightIcon {
+  cursor: pointer;
+}
+
+.yearContainer {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 4px;
+}
+
+.currentYear {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background-color: #0969da;
+  color: #fff;
+}
+
+.weekdayContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  top: 37px;
+  left: 30px;
+}
+
+.weekday {
+  color: #656d76;
+  font-size: 10px;
+  font-weight: bold;
+  list-style: none;
+}
+
+.calendarContainer {
+  position: relative;
+  padding: 4px 30px 30px 60px;
+}

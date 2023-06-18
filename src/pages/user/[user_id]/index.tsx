@@ -1,4 +1,5 @@
 import { UserProfile, UserProfileProps } from "@/components/pages/UserProfile";
+import { calenderFactory } from "@/models/Calender";
 import { countFactory } from "@/models/Count";
 import { repositoryFactory } from "@/models/Repository";
 import { userFactory } from "@/models/User";
@@ -15,6 +16,7 @@ const UserProfilePage: AuthNextPage<UserProfileProps> = ({
   isSessionUser,
   count,
   repositories,
+  calender,
 }) => {
   return (
     <UserProfile
@@ -22,6 +24,7 @@ const UserProfilePage: AuthNextPage<UserProfileProps> = ({
       isSessionUser={isSessionUser}
       count={count}
       repositories={repositories}
+      calender={calender}
     />
   );
 };
@@ -35,6 +38,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
   const isSessionUser = session?.user.id === user.id;
   const count = await countFactory().get(`${user_id}_user`);
+  const calender = await calenderFactory().index(user_id);
   const repositories = await repositoryFactory().index({
     queries: {
       owner_id: user_id,
@@ -50,6 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       isSessionUser: isSessionUser,
       count: count,
       repositories: repositories,
+      calender: calender,
     },
   };
 };
