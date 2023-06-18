@@ -2,6 +2,7 @@ import { TeamProfile, TeamProfileProps } from "@/components/pages/TeamProfile";
 import { countFactory } from "@/models/Count";
 import { repositoryFactory } from "@/models/Repository";
 import { teamFactory } from "@/models/Team";
+import { teamMemberFactory } from "@/models/TeamMember";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
@@ -13,7 +14,7 @@ type QueryParams = {
 
 const TeamProfilePage: AuthNextPage<
   TeamProfileProps & { session: Session }
-> = ({ teamData, count, repositories, isSessionUser, session }) => {
+> = ({ teamData, count, repositories, isSessionUser, session, members }) => {
   const items = isSessionUser
     ? [
         {
@@ -52,6 +53,7 @@ const TeamProfilePage: AuthNextPage<
       sessionUserName={session?.user.name}
       count={count}
       repositories={repositories}
+      members={members}
     />
   );
 };
@@ -75,6 +77,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       page: 1,
     },
   });
+  const members = await teamMemberFactory().index({
+    queries: { team_id: team_id },
+  });
 
   return {
     props: {
@@ -83,6 +88,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       repositories: repositories,
       isSessionUser: isSessionUser,
       session: session,
+      members: members,
     },
   };
 };

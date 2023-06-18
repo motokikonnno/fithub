@@ -14,12 +14,13 @@ import { PeopleList } from "../list/PeopleLIst";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 import { Team, teamFactory } from "@/models/Team";
 import { useForm } from "react-hook-form";
-import { recentSortRepositories } from "@/services/recentSortRepositories";
-import { Repository } from "@/models/Repository";
+import { Repository, repositoryFactory } from "@/models/Repository";
 import { Modal } from "../Modal";
 import { inviteFactory } from "@/models/Invite";
 import { Count } from "@/models/Count";
 import { PercentageBar } from "../PercentageBar";
+import { UserBelongsToTeam } from "@/models/User";
+import { teamMemberFactory } from "@/models/TeamMember";
 
 export type TeamProfileProps = {
   teamData: Team;
@@ -28,6 +29,7 @@ export type TeamProfileProps = {
   sessionUserName?: string | null;
   count: Count;
   repositories: { repositories: Repository[]; totalNumber: number };
+  members: { members: UserBelongsToTeam[]; membersNumber: number };
 };
 
 type editTeamRepositoryType = {
@@ -43,6 +45,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
     sessionUserName,
     count,
     repositories,
+    members,
   }) => {
     const router = useRouter();
     const query = String(router.query.tab);
@@ -64,6 +67,10 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
     const [isLoading, setLoading] = useState(false);
     const [inputText, setInputText] = useState("");
     const [isVisible, setIsVisible] = useState(false);
+    const [isSearch, setIsSearch] = useState(false);
+    const [searchText, setSearchText] = useState("");
+    const [repositoriesData, setRepositoriesData] = useState(repositories);
+    const [teamMembers, setTeamMembers] = useState(members);
     const inputRef = useRef<HTMLInputElement>(null);
     const {
       register,
@@ -109,8 +116,12 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
         router.push(
           `/team/${team.id}/${name === "Overview" ? "" : `?tab=${name}`}`
         );
+        if (isSearch) {
+          setIsSearch(false);
+        }
+        setSearchText("");
       },
-      [router, team.id]
+      [isSearch, router, team.id]
     );
 
     const handleIsToggle = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -164,6 +175,42 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
     const submitInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         handleSendEmail();
+      }
+    };
+
+    const handleChangeSearchText = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+    };
+
+    const submitSearchRepositories = async () => {
+      if (searchText === "") {
+        setRepositoriesData(repositories);
+        setIsSearch(false);
+      } else {
+        const result = await repositoryFactory().index({
+          queries: {
+            owner_id: teamData.id,
+            isPrivate: isSessionUser,
+            type: "team",
+            search: searchText,
+          },
+        });
+        setRepositoriesData(result);
+        setIsSearch(true);
+      }
+    };
+
+    const submitSearchMembers = async () => {
+      if (searchText === "") {
+        setTeamMembers(members);
+      } else {
+        const result = await teamMemberFactory().index({
+          queries: {
+            team_id: teamData.id,
+            search: searchText,
+          },
+        });
+        setTeamMembers(result);
       }
     };
 
@@ -318,10 +365,14 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
           )}
           {currentTab === "Repositories" && team.repositories && (
             <RepositoryList
-              repositories={repositories}
+              repositories={repositoriesData}
               owner={team}
               type={"team"}
               isSessionUser={isSessionUser}
+              isSearch={isSearch}
+              searchText={searchText}
+              handleChangeSearchText={handleChangeSearchText}
+              onSubmit={submitSearchRepositories}
             />
           )}
           {currentTab === "People" && (
@@ -333,6 +384,9 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
                     backgroundColor={"#fff"}
                     color={"#656d76"}
                     borderColor={"#d0d7de"}
+                    searchText={searchText}
+                    handleChangeSearchText={handleChangeSearchText}
+                    onSubmit={submitSearchMembers}
                   />
                 </div>
                 {isSessionUser && (
@@ -344,19 +398,16 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
               <div className={styles.peopleListWrapper}>
                 <div
                   className={styles.peopleNumber}
-                >{`${team.team_members?.length} people`}</div>
-                {team.team_members &&
-                  team.team_members.map(
-                    ({ user }, index) =>
-                      team.team_members && (
-                        <PeopleList
-                          people={user}
-                          index={index}
-                          peoples={team.team_members}
-                          key={index}
-                        />
-                      )
-                  )}
+                >{`${teamMembers.membersNumber} people`}</div>
+                {teamMembers.members &&
+                  teamMembers.members.map((member, index) => (
+                    <PeopleList
+                      people={member}
+                      index={index}
+                      peoples={teamMembers.membersNumber}
+                      key={index}
+                    />
+                  ))}
               </div>
             </div>
           )}

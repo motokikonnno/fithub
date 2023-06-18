@@ -15,12 +15,25 @@ type RepositoryListProps = {
   owner: User | Team;
   type: "user" | "team";
   isSessionUser: boolean;
+  isSearch: boolean;
+  searchText: string;
+  handleChangeSearchText: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: () => Promise<void>;
 };
 
 const NUM_REPOSITORIES_PER_PAGE = 8;
 
 export const RepositoryList: FC<RepositoryListProps> = React.memo(
-  ({ repositories, owner, type, isSessionUser }) => {
+  ({
+    repositories,
+    owner,
+    type,
+    isSessionUser,
+    isSearch,
+    searchText,
+    handleChangeSearchText,
+    onSubmit,
+  }) => {
     const [repositoriesData, setRepositoriesData] = useState(
       repositories.repositories
     );
@@ -30,6 +43,10 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     const [repositoryId, setRepositoryId] = useState("");
     const [currentRepository, setCurrentRepository] = useState("");
     const [toggleDelete, setToggleDelete] = useState(false);
+
+    useEffect(() => {
+      setRepositoriesData(repositories.repositories);
+    }, [repositories]);
 
     useEffect(() => {
       setIsDisabled(currentRepository !== deleteText);
@@ -68,7 +85,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
         queries: {
           owner_id: owner.id,
           isPrivate: isSessionUser,
-          type: "user",
+          type: type,
           page: page,
         },
       });
@@ -84,6 +101,9 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
               backgroundColor={"#fff"}
               color={"#656d76"}
               borderColor={"#d0d7de"}
+              searchText={searchText}
+              handleChangeSearchText={handleChangeSearchText}
+              onSubmit={onSubmit}
             />
           </div>
           {isSessionUser && (
@@ -159,11 +179,13 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             ownerId={owner.id}
           />
         ))}
-        <Pagination
-          totalNumber={repositories.totalNumber}
-          perPage={NUM_REPOSITORIES_PER_PAGE}
-          onChange={(e) => handlePaginate(e.page)}
-        />
+        {!isSearch && (
+          <Pagination
+            totalNumber={repositories.totalNumber}
+            perPage={NUM_REPOSITORIES_PER_PAGE}
+            onChange={(e) => handlePaginate(e.page)}
+          />
+        )}
       </div>
     );
   }

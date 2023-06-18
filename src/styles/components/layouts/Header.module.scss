@@ -1,5 +1,7 @@
 .container {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 14px 32px;
   background-color: #000;
 }
@@ -7,14 +9,6 @@
 .inputSearchWrapper {
   display: flex;
   max-width: 272px;
-  width: 100%;
-}
-
-.contentsWrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: 18px;
   width: 100%;
 }
 

@@ -1,6 +1,5 @@
 import styles from "../../styles/components/layouts/Header.module.scss";
 import Image from "next/image";
-import { InputSearch } from "../InputSearch";
 import { DropDownList } from "../list/DropDownList";
 import React, { FC, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -83,58 +82,48 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
       <Link href={"/"}>
         <Image src={"/logo.png"} width={32} height={32} alt={"ロゴ画像"} />
       </Link>
-      <div className={styles.contentsWrapper}>
-        <div className={styles.inputSearchWrapper}>
-          <InputSearch
-            placeholder={"Search or jump to..."}
-            backgroundColor={"#000"}
-            color={"#fff"}
-            borderColor={"#656d76"}
+      <div className={styles.rightContents}>
+        <div
+          className={styles.chevronDown}
+          onClick={toggleIsShow}
+          ref={dropDownListRef}
+        >
+          <Image
+            src={"/icons/plus.svg"}
+            width={20}
+            height={20}
+            alt="plus-icon"
           />
+          {isShow && (
+            <div className={styles.dropDownList}>
+              {dropDownList.newList.map((item, index) => (
+                <DropDownList item={item} key={index} />
+              ))}
+            </div>
+          )}
         </div>
-        <div className={styles.rightContents}>
-          <div
-            className={styles.chevronDown}
-            onClick={toggleIsShow}
-            ref={dropDownListRef}
-          >
+        <div
+          className={styles.chevronDown}
+          onClick={toggleIsShowProfile}
+          ref={profileDropDownListRef}
+        >
+          {user?.image && (
             <Image
-              src={"/icons/plus.svg"}
+              src={user.image}
               width={20}
               height={20}
-              alt="plus-icon"
+              alt="profile-image"
+              className={styles.userIcon}
             />
-            {isShow && (
-              <div className={styles.dropDownList}>
-                {dropDownList.newList.map((item, index) => (
-                  <DropDownList item={item} key={index} />
-                ))}
-              </div>
-            )}
-          </div>
-          <div
-            className={styles.chevronDown}
-            onClick={toggleIsShowProfile}
-            ref={profileDropDownListRef}
-          >
-            {user?.image && (
-              <Image
-                src={user.image}
-                width={20}
-                height={20}
-                alt="profile-image"
-                className={styles.userIcon}
-              />
-            )}
+          )}
 
-            {isShowProfile && (
-              <div className={styles.dropDownList}>
-                {dropDownList.myProfile.map((item, index) => (
-                  <DropDownList item={item} key={index} />
-                ))}
-              </div>
-            )}
-          </div>
+          {isShowProfile && (
+            <div className={styles.dropDownList}>
+              {dropDownList.myProfile.map((item, index) => (
+                <DropDownList item={item} key={index} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </header>

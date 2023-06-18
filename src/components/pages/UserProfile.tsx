@@ -13,7 +13,7 @@ import { RepositoryList } from "../list/RepositoryList";
 import { handleDeleteImage, onUploadToFireStorage } from "@/lib/storageUpload";
 import { User, UserBelongsToTeam, userFactory } from "@/models/User";
 import { useForm } from "react-hook-form";
-import { Repository } from "@/models/Repository";
+import { Repository, repositoryFactory } from "@/models/Repository";
 import { PercentageBar } from "../PercentageBar";
 import { Count } from "@/models/Count";
 import { Tooltip } from "react-tooltip";
@@ -69,7 +69,10 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
       user.image ? user.image : defaultImage
     );
     const [isLoading, setLoading] = useState(false);
-    const [is_edit, setIsEdit] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
+    const [isSearch, setIsSearch] = useState(false);
+    const [repositoriesData, setRepositoriesData] = useState(repositories);
+    const [searchText, setSearchText] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
     const {
       register,
@@ -107,8 +110,12 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
         router.push(
           `/user/${user.id}/${name === "Repositories" ? `?tab=${name}` : ""}`
         );
+        if (isSearch) {
+          setIsSearch(false);
+        }
+        setSearchText("");
       },
-      [router, user.id]
+      [isSearch, router, user.id]
     );
 
     const handleIsToggle = () => {
@@ -143,9 +150,31 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
       setIsEdit(true);
     };
 
+    const handleChangeSearchText = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
+    };
+
+    const submitSearchRepositories = async () => {
+      if (searchText === "") {
+        setRepositoriesData(repositories);
+        setIsSearch(false);
+      } else {
+        const result = await repositoryFactory().index({
+          queries: {
+            owner_id: userData.id,
+            isPrivate: isSessionUser,
+            type: "user",
+            search: searchText,
+          },
+        });
+        setRepositoriesData(result);
+        setIsSearch(true);
+      }
+    };
+
     return (
       <>
-        <Header is_edit={is_edit} />
+        <Header is_edit={isEdit} />
         <div className={styles.tabsContainer}>
           {items.map((item, index) => (
             <Tabs
@@ -274,10 +303,14 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
             ) : (
               <div className={styles.repositoryComponentWrapper}>
                 <RepositoryList
-                  repositories={repositories}
+                  repositories={repositoriesData}
                   owner={userData}
                   type={"user"}
                   isSessionUser={isSessionUser}
+                  isSearch={isSearch}
+                  searchText={searchText}
+                  handleChangeSearchText={handleChangeSearchText}
+                  onSubmit={submitSearchRepositories}
                 />
               </div>
             ))}

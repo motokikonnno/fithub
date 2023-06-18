@@ -15,9 +15,20 @@ export type TeamMember = {
   team: Team;
 };
 
+export type teamMemberQuery = {
+  team_id: string;
+  search?: string;
+};
+
 export const teamMemberFactory = (rep?: TeamMemberRepository) => {
   const repository = rep ?? teamMemberRepository;
   return {
+    index: async (params: {
+      queries: teamMemberQuery;
+    }): Promise<{ members: UserBelongsToTeam[]; membersNumber: number }> => {
+      const members = await repository.getTeamMembers(params);
+      return members;
+    },
     create: async (
       params: Pick<TeamMember, "team_id" | "user_id">
     ): Promise<void> => {

@@ -8,73 +8,104 @@ export async function getRepositories(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void | NextApiResponse<Repository[] & { totalNumber: number }>> {
-  const { isPrivate, type, owner_id, page } = req.query;
+  const { isPrivate, type, owner_id, page, search } = req.query;
 
   try {
-    const skip = (Number(page) - 1) * NUM_REPOSITORIES_PER_PAGE;
     let repositories;
     let count;
-    if (type === "user") {
-      repositories = await prisma.repository.findMany({
-        where: {
-          user_id: String(owner_id),
-          is_private: {
-            in: isPrivate ? [1, 2] : [1],
+    if (search) {
+      if (type === "user") {
+        repositories = await prisma.repository.findMany({
+          where: {
+            user_id: String(owner_id),
+            is_private: {
+              in: isPrivate ? [1, 2] : [1],
+            },
+            name: {
+              contains: String(search),
+            },
           },
-        },
-        orderBy: {
-          created_at: "desc",
-        },
-        skip,
-        take: NUM_REPOSITORIES_PER_PAGE,
-      });
+          orderBy: {
+            created_at: "desc",
+          },
+        });
+        const allRepositories = await prisma.repository.findMany({
+          where: {
+            user_id: String(owner_id),
+          },
+        });
+        count = allRepositories.length;
+      } else if (type === "team") {
+        repositories = await prisma.repository.findMany({
+          where: {
+            team_id: String(owner_id),
+            is_private: {
+              in: isPrivate ? [1, 2] : [1],
+            },
+            name: {
+              contains: String(search),
+            },
+          },
+          orderBy: {
+            created_at: "desc",
+          },
+        });
+      }
       const allRepositories = await prisma.repository.findMany({
         where: {
-          user_id: String(owner_id),
+          team_id: String(owner_id),
         },
       });
       count = allRepositories.length;
-    } else if (type === "team") {
-      repositories = await prisma.repository.findMany({
-        where: {
-          team_id: String(owner_id),
-          is_private: isPrivate ? 1 : 2,
-        },
-        orderBy: {
-          created_at: "desc",
-        },
-        skip,
-        take: NUM_REPOSITORIES_PER_PAGE,
-      });
-      const allRepositories = await prisma.repository.findMany({
-        where: {
-          team_id: String(owner_id),
-        },
-      });
-      count = allRepositories.length;
+    } else {
+      const skip = (Number(page) - 1) * NUM_REPOSITORIES_PER_PAGE;
+      if (type === "user") {
+        repositories = await prisma.repository.findMany({
+          where: {
+            user_id: String(owner_id),
+            is_private: {
+              in: isPrivate ? [1, 2] : [1],
+            },
+          },
+          orderBy: {
+            created_at: "desc",
+          },
+          skip,
+          take: NUM_REPOSITORIES_PER_PAGE,
+        });
+        const allRepositories = await prisma.repository.findMany({
+          where: {
+            user_id: String(owner_id),
+          },
+        });
+        count = allRepositories.length;
+      } else if (type === "team") {
+        repositories = await prisma.repository.findMany({
+          where: {
+            team_id: String(owner_id),
+            is_private: {
+              in: isPrivate ? [1, 2] : [1],
+            },
+          },
+          orderBy: {
+            created_at: "desc",
+          },
+          skip,
+          take: NUM_REPOSITORIES_PER_PAGE,
+        });
+        const allRepositories = await prisma.repository.findMany({
+          where: {
+            team_id: String(owner_id),
+          },
+        });
+        count = allRepositories.length;
+      }
     }
     return res
       .status(200)
       .json({ repositories: repositories, totalNumber: count });
   } catch (error) {
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      "message" in error
-    ) {
-      const code = error.code;
-      const message = error.message;
-
-      if (code === "P2016") {
-        console.error(`Error: ${message}`);
-      } else {
-        throw error;
-      }
-    } else {
-      throw error;
-    }
-    // return res.status(500).end(error);
+    return res.status(500).end(error);
   }
 }
 

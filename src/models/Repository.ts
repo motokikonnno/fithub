@@ -34,6 +34,7 @@ export type repositoryQuery = {
   type: "user" | "team";
   owner_id: string;
   page?: number;
+  search?: string;
 };
 
 export const repositoryFactory = (rep?: RepositoryRepository) => {

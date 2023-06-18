@@ -3,12 +3,11 @@ import styles from "../../styles/components/list/PeopleList.module.scss";
 import Image from "next/image";
 import Link from "next/link";
 import { UserBelongsToTeam } from "@/models/User";
-import { TeamMember } from "@/models/TeamMember";
 
 type PeopleListProps = {
   people: UserBelongsToTeam;
   index: number;
-  peoples: TeamMember[];
+  peoples: number;
 };
 
 export const PeopleList: FC<PeopleListProps> = React.memo(
@@ -16,7 +15,7 @@ export const PeopleList: FC<PeopleListProps> = React.memo(
     return (
       <div
         className={`${styles.peopleDetailContainer} ${
-          peoples.length - 1 !== index && styles.peopleDetailLast
+          peoples - 1 !== index && styles.peopleDetailLast
         }`}
       >
         <div className={styles.rightContainer}>
