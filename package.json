@@ -17,6 +17,7 @@
     "@tiptap/pm": "^2.0.0-beta.210",
     "@tiptap/react": "2.0.0-beta.199",
     "@tiptap/starter-kit": "2.0.0-beta.199",
+    "@types/gtag.js": "^0.0.12",
     "@types/node": "18.15.11",
     "@types/react": "18.0.31",
     "@types/react-dom": "18.0.11",
