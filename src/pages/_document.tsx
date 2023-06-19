@@ -5,6 +5,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        <title>FitHub</title>
         {GA_ID && (
           <>
             <script

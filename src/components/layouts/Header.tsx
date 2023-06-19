@@ -3,7 +3,7 @@ import Image from "next/image";
 import { DropDownList } from "../list/DropDownList";
 import React, { FC, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import useFetchUser from "@/hooks/useFetchUser";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import { useRouter } from "next/router";
@@ -17,8 +17,10 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
   const router = useRouter();
   const [isShow, setIsShow] = useState(false);
   const [isShowProfile, setIsShowProfile] = useState(false);
+  const [isNav, setIsNav] = useState(false);
   const dropDownListRef = useRef<HTMLDivElement>(null);
   const profileDropDownListRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLLIElement>(null);
   const { user, userMutate } = useFetchUser(
     session?.user.id ? session.user.id : null
   );
@@ -45,6 +47,18 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
     ],
   };
 
+  const navigationSp = [
+    { title: "New repository", link: "/repository/new" },
+    { title: "New team", link: "/team/new" },
+    { title: "Your profile", link: `/user/${user?.id}` },
+    {
+      title: "Your repositories",
+      link: `/user/${user?.id}?tab=Repositories`,
+    },
+    { title: "Your teams", link: "/team" },
+    { title: "Sign out", link: "/sign_in" },
+  ];
+
   const toggleIsShow = () => {
     if (isShowProfile) {
       setIsShowProfile(!isShowProfile);
@@ -66,14 +80,17 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
       }
       const element = dropDownListRef.current;
       const profileElement = profileDropDownListRef.current;
+      const navElement = navRef.current;
       if (
         (element && element?.contains(event.target)) ||
+        (navElement && navElement?.contains(event.target)) ||
         (profileElement && profileElement?.contains(event.target))
       )
         return;
       setIsShow(false);
       setIsShowProfile(false);
       setIsSearch(false);
+      setIsNav(false);
     };
     window.addEventListener("click", handleClickToCloseDropDown, true);
     return () => {
@@ -92,6 +109,18 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
       setSearchText(String(router.query.search));
     }
   }, [router.query.search]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (isNav) {
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "visible";
+        document.documentElement.style.overflow = "visible";
+      }
+    }
+  }, [isNav]);
 
   const handleChangeInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -202,6 +231,43 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
           )}
         </div>
       </div>
+      <div className={styles.rightContentsSp} onClick={() => setIsNav(!isNav)}>
+        <Image src={"/icons/bars.svg"} width={20} height={20} alt="bar-icon" />
+      </div>
+      {isNav && (
+        <nav className={styles.spNav}>
+          <ul className={styles.spNavContainer}>
+            {navigationSp.map((nav, index) => (
+              <Link
+                key={index}
+                href={
+                  nav.title === "New repository"
+                    ? {
+                        pathname: nav.link,
+                        query: { type: "user" },
+                      }
+                    : nav.link
+                }
+                className={styles.link}
+              >
+                {nav.title === "Sign out" ? (
+                  <li
+                    className={styles.spNavItem}
+                    onClick={() => signOut({ callbackUrl: "/sign_in" })}
+                    ref={navRef}
+                  >
+                    {nav.title}
+                  </li>
+                ) : (
+                  <li className={styles.spNavItem} ref={navRef}>
+                    {nav.title}
+                  </li>
+                )}
+              </Link>
+            ))}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 });

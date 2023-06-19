@@ -1,14 +1,17 @@
-@mixin sp {
-  @media screen and (max-width: (1024px)) {
-    @content;
-  }
-}
-@mixin pc {
-  @media screen and (min-width: (1024px)) {
-    @content;
-  }
-}
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1100px;
 
-// @include sp {
-//   padding: 20px;
-// }
+$breakpoints: (
+  "sm": "screen and (max-width: #{$sm})",
+  "md": "screen and (max-width: #{$md})",
+  "lg": "screen and (max-width: #{$lg})",
+  "xl": "screen and (max-width: #{$xl})",
+);
+
+@mixin mq($size) {
+  @media #{map-get($breakpoints, $size)} {
+    @content;
+  }
+}

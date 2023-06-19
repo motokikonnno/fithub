@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .container {
   display: flex;
   justify-content: space-between;
@@ -15,6 +17,9 @@
 .rightContents {
   display: flex;
   gap: 30px;
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .chevronDown {
@@ -76,6 +81,9 @@
   &:focus {
     outline: none;
   }
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .searchRepositoriesWrapper {
@@ -109,4 +117,49 @@
 .commitCount {
   color: #656d76;
   font-size: 12px;
+}
+
+.rightContentsSp {
+  display: none;
+  @include mq(md) {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+}
+
+.spNav {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  display: block;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  transition: all 0.2s ease-in-out;
+  z-index: 1;
+}
+
+.spNavContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: calc(100% - 60px);
+}
+
+.spNavItem {
+  padding: 16px 0;
+  font-size: 18px;
+  color: #fff;
+  list-style: none;
+}
+
+.link {
+  text-decoration: none;
 }
