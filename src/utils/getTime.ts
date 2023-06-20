@@ -11,10 +11,8 @@ export const getTimeDiff = (createdAt: string) => {
     return progress.getUTCDate() - 1 + " days ago";
   } else if (progress.getUTCHours()) {
     return progress.getUTCHours() + " hour ago";
-  } else if (progress.getUTCMinutes()) {
-    return progress.getUTCMinutes() + " minute ago";
   } else {
-    return progress.getUTCSeconds() + " second ago";
+    return progress.getUTCMinutes() + " minute ago";
   }
 };
 
