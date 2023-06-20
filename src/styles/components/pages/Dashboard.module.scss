@@ -1,15 +1,23 @@
+@import "@/styles/mixin";
+
 .calendarContainer {
   position: relative;
   margin: 0 0 50px 0;
   padding: 30px 30px 30px 60px;
   width: 90%;
+  max-width: 905px;
+  min-width: 905px;
   border-radius: 6px;
   border: 1px solid #d0d7de;
   background-color: #fff;
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .sectionTitle {
   margin-bottom: 30px;
+  margin-right: 0;
   padding-bottom: 15px;
   width: 96%;
   border-bottom: 1px solid #d0d7de;
@@ -34,6 +42,10 @@
     height: 10px;
     background-color: #d0d7de;
     border-radius: 50%;
+  }
+  @include mq(md) {
+    padding-left: 20px;
+    font-size: 14px;
   }
 }
 
@@ -62,6 +74,9 @@
   border-radius: 6px;
   background-color: #0969da;
   color: #fff;
+  @include mq(md) {
+    font-size: 14px;
+  }
 }
 
 .weekdayContainer {
@@ -81,4 +96,38 @@
   font-size: 10px;
   font-weight: bold;
   list-style: none;
+}
+
+.calendarContainerSp {
+  display: none;
+  @include mq(md) {
+    display: flex;
+    margin: 0 auto;
+    width: 30%;
+    max-width: 123px;
+  }
+}
+
+.monthContainer {
+  @extend .yearContainer;
+  display: none;
+  @include mq(md) {
+    display: flex;
+    font-size: 12px;
+  }
+}
+
+.weekdaysSp {
+  display: none;
+  @include mq(md) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    gap: 15px;
+    font-size: 6px;
+    font-weight: bold;
+    list-style: none;
+  }
 }

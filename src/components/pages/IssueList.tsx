@@ -101,6 +101,7 @@ export const IssueList: React.FC<IssuePropsType> = React.memo(
         setIssueData(issueData);
       }
     };
+
     return (
       <>
         <Header />

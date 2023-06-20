@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .teamDetailContainer {
   display: flex;
   align-items: center;
@@ -85,6 +87,9 @@
   padding-bottom: 16px;
   border-bottom: 1px solid #d0d7de;
   font-size: 14px;
+  @include mq(md) {
+    justify-content: space-between;
+  }
 }
 
 .issueTypeContainer {
@@ -115,10 +120,16 @@
   color: #656d76;
   font-weight: bold;
   text-decoration: none;
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .createdAt {
   color: #656d76;
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .tiptapContainer {
@@ -158,6 +169,9 @@
   border: 1px solid #d0d7de;
   border-top: none;
   border-bottom: none;
+  @include mq(md) {
+    width: 198px;
+  }
 }
 
 .memberName {
@@ -185,6 +199,11 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  @include mq(md) {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
 
 .assignButton {
@@ -196,6 +215,9 @@
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+  @include mq(md) {
+    font-size: 8px;
+  }
 }
 
 .deleteIssueButton {
@@ -227,6 +249,10 @@
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
+  @include mq(md) {
+    margin: 0;
+    font-size: 12px;
+  }
 }
 
 .cancelButton {
@@ -241,6 +267,10 @@
   &:hover {
     background-color: #f6f8fa;
   }
+  @include mq(md) {
+    margin-right: 0;
+    font-size: 12px;
+  }
 }
 
 .errorMessage {
@@ -251,12 +281,19 @@
 
 .confirmModalBackground {
   padding: 64px;
+  @include mq(md) {
+    padding: 32px;
+    width: 300px;
+  }
 }
 
 .confirmText {
   margin: 0 0 16px 0;
   margin-bottom: 32px;
   font-size: 32px;
+  @include mq(md) {
+    font-size: 24px;
+  }
 }
 
 .confirmContainer {
@@ -277,6 +314,10 @@
   cursor: pointer;
   &:hover {
     opacity: 0.8;
+  }
+  @include mq(md) {
+    padding: 8px 40px;
+    font-size: 18px;
   }
 }
 
@@ -307,4 +348,30 @@
 .okButton {
   @extend .deleteButton;
   background-color: #1f883d;
+}
+
+.rightContainerSp {
+  display: none;
+  @include mq(md) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+.createdUserSp {
+  @extend .createdUser;
+  display: block;
+}
+
+.createdAtSp {
+  @extend .createdAt;
+  display: block;
+}
+
+.actionButtonContainerSp {
+  @include mq(md) {
+    display: flex;
+    margin-left: 16px;
+  }
 }

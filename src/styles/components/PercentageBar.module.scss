@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .bar {
   display: flex;
   width: 100%;
@@ -11,6 +13,11 @@
   justify-content: center;
   margin-top: 16px;
   gap: 48px;
+  white-space: nowrap;
+  @include mq(md) {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 
 .keyItem {
@@ -39,6 +46,11 @@
     border-radius: 6px;
     content: "";
     background-color: #ff3300;
+  }
+  @include mq(md) {
+    &::before {
+      left: 150px;
+    }
   }
 }
 

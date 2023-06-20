@@ -1,5 +1,10 @@
+@import "@/styles/mixin";
+
 .mainContents {
   display: flex;
+  @include mq(md) {
+    flex: 1;
+  }
 }
 
 .layoutRight {
@@ -7,4 +12,16 @@
   width: 80%;
   border-left: 1px solid #d0d7de;
   background-color: #f6f8fa;
+  @include mq(md) {
+    width: 100%;
+    min-height: 100%;
+  }
+}
+
+.wrapper {
+  @include mq(md) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
 }

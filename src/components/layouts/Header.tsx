@@ -231,7 +231,11 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
           )}
         </div>
       </div>
-      <div className={styles.rightContentsSp} onClick={() => setIsNav(!isNav)}>
+      <div
+        className={styles.rightContentsSp}
+        onClick={() => setIsNav(!isNav)}
+        ref={profileDropDownListRef}
+      >
         <Image src={"/icons/bars.svg"} width={20} height={20} alt="bar-icon" />
       </div>
       {isNav && (

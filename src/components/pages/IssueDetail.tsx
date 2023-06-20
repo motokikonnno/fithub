@@ -173,7 +173,7 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
                     className={styles.titleEdit}
                     {...register("title", { required: "※ Title is required" })}
                   />
-                  <div className={styles.actionButtonContainer}>
+                  <div className={styles.actionButtonContainerSp}>
                     <button className={styles.saveButton} type="submit">
                       Save
                     </button>
@@ -245,6 +245,17 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
             <span className={styles.createdAt}>
               opened this issue on {created_at}
             </span>
+            <div className={styles.rightContainerSp}>
+              <Link
+                href={`/user/${issue.user.id}`}
+                className={styles.createdUserSp}
+              >
+                {issue.user.name}
+              </Link>
+              <span className={styles.createdAtSp}>
+                opened this issue on {created_at}
+              </span>
+            </div>
           </div>
           <div className={styles.tiptapContainer}>
             {team && typeof assignUser === "string" ? (

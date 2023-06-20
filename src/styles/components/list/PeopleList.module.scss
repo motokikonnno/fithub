@@ -1,8 +1,13 @@
+@import "@/styles/mixin";
+
 .peopleDetailContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px;
+  @include mq(md) {
+    padding: 12px;
+  }
 }
 
 .peopleDetailLast {

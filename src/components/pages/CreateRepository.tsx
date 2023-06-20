@@ -205,9 +205,11 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
               />
               <label className={styles.label}>Add a README file</label>
             </div>
-            <button className={styles.createButton} type="submit">
-              Create repository
-            </button>
+            <div className={styles.centerSp}>
+              <button className={styles.createButton} type="submit">
+                Create repository
+              </button>
+            </div>
           </form>
         </div>
       </>

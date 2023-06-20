@@ -1,6 +1,11 @@
+@import "@/styles/mixin";
+
 .layoutContainer {
   margin: 64px auto;
   width: 28%;
+  @include mq(md) {
+    width: 70%;
+  }
 }
 
 .pageTitle {

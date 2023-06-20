@@ -723,7 +723,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                   )}
                   {modalHeader === "merge" && (
                     <>
-                      <div className={styles.commitBackground}>
+                      <div className={styles.mergeBackground}>
                         {currentCommitData &&
                           currentCommitData.map((commit, index) => (
                             <div

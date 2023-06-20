@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .inputWrapper {
   width: 56%;
 }
@@ -32,6 +34,9 @@
     transition: all 0.3s ease-in-out;
     opacity: 0.7;
   }
+  @include mq(md) {
+    padding: 6px 8px;
+  }
 }
 
 .link {
@@ -48,6 +53,9 @@
   &:hover {
     opacity: 0.7;
   }
+  @include mq(md) {
+    padding: 6px 8px;
+  }
 }
 
 .rightContainer {
@@ -61,6 +69,9 @@
 
 .background {
   padding: 32px;
+  @include mq(md) {
+    width: 300px;
+  }
 }
 
 .description {
@@ -98,6 +109,10 @@
   cursor: pointer;
   &:hover {
     opacity: 0.7;
+  }
+  @include mq(md) {
+    text-align: center;
+    width: auto;
   }
 }
 

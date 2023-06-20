@@ -12,13 +12,13 @@ type AppLayoutProps = {
 export const AppLayout: React.FC<AppLayoutProps> = React.memo(
   ({ children, user }) => {
     return (
-      <>
+      <div className={styles.wrapper}>
         <Header />
         <div className={styles.mainContents}>
           <SideBar user={user} />
           <div className={styles.layoutRight}>{children}</div>
         </div>
-      </>
+      </div>
     );
   }
 );

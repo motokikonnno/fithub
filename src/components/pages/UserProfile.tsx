@@ -18,6 +18,7 @@ import { PercentageBar } from "../PercentageBar";
 import { Count } from "@/models/Count";
 import { Tooltip } from "react-tooltip";
 import { Calender } from "@/models/Calender";
+import { formatMonthEnglish } from "@/utils/getTime";
 
 export type itemType = {
   id: string;
@@ -186,8 +187,16 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
           ))}
         </div>
         <div className={styles.layoutContainer}>
-          <div className={styles.leftContainer}>
-            <div className={styles.userIcon}>
+          <div
+            className={`${styles.leftContainer} ${
+              currentTab === "Repositories" && styles.noneStyle
+            }`}
+          >
+            <div
+              className={
+                currentTab === "Overview" ? styles.userIcon : styles.noneStyle
+              }
+            >
               {isLoading ? (
                 <div className={styles.skeltonImage}></div>
               ) : (
@@ -337,6 +346,15 @@ const Overview: FC<OverviewProps> = ({
   const weekdays = ["Mon", "Wed", "Fri"];
   const currentYear = new Date().getFullYear();
   const [yearNumber, setYearNumber] = useState(currentYear);
+  const currentMonth = new Date().getMonth() + 1;
+  const [monthNumber, setMonthNumber] = useState(currentMonth);
+  const endDay = monthNumber === 2 || 4 || 6 || 9 || 11 ? 30 : 31;
+  const [endDayNumber, setEndDayNumber] = useState(endDay);
+
+  useEffect(() => {
+    const endDay = monthNumber === 2 || 4 || 6 || 9 || 11 ? 30 : 31;
+    setEndDayNumber(endDay);
+  }, [monthNumber, setMonthNumber]);
 
   return (
     <div className={styles.rightContainer}>
@@ -373,6 +391,40 @@ const Overview: FC<OverviewProps> = ({
           className={styles.angleRightIcon}
         />
       </div>
+      <div className={styles.monthContainer}>
+        <Image
+          src={`/icons/angle-right.svg`}
+          width={18}
+          height={18}
+          alt="angle-left-icon"
+          className={styles.angleLeftIcon}
+          onClick={() =>
+            monthNumber === 1
+              ? setMonthNumber(12)
+              : setMonthNumber(monthNumber - 1)
+          }
+        />
+        <time className={styles.currentYear}>
+          {formatMonthEnglish(monthNumber)}
+        </time>
+        <Image
+          src={`/icons/angle-right.svg`}
+          width={18}
+          height={18}
+          alt="angle-right-icon"
+          onClick={() =>
+            monthNumber === 12
+              ? setMonthNumber(1)
+              : setMonthNumber(monthNumber + 1)
+          }
+          className={styles.angleRightIcon}
+        />
+      </div>
+      <ul className={styles.weekdaysSp}>
+        {weekdays.map((weekday, index) => (
+          <li key={index}>{weekday}</li>
+        ))}
+      </ul>
       <div className={styles.calendarContainer}>
         <ul className={styles.weekdayContainer}>
           {weekdays.map((weekday, index) => (
@@ -401,8 +453,32 @@ const Overview: FC<OverviewProps> = ({
             return `color-github-${value.count}`;
           }}
         />
-        <Tooltip id="tooltip" />
       </div>
+      <div className={styles.calendarContainerSp}>
+        <ReactCalendarHeatmap
+          startDate={new Date(`${yearNumber}-0${monthNumber}-01`)}
+          endDate={new Date(`${yearNumber}-0${monthNumber}-${endDayNumber}`)}
+          values={calender}
+          horizontal={false}
+          showMonthLabels={false}
+          tooltipDataAttrs={(value: Calender) => {
+            if (!value || !value.date) {
+              return null;
+            }
+            return {
+              "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
+              "data-tooltip-id": "tooltip",
+            };
+          }}
+          classForValue={(value) => {
+            if (!value) {
+              return "color-empty";
+            }
+            return `color-github-${value.count}`;
+          }}
+        />
+      </div>
+      <Tooltip id="tooltip" />
       {count && Object.keys(count).length !== 0 && (
         <section className={styles.percentages}>
           <h2 className={styles.sectionTitle}>Body parts percentages</h2>

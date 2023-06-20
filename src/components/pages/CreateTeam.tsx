@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { teamFactory } from "@/models/Team";
 import { useSession } from "next-auth/react";
+import { Footer } from "../layouts/Footer";
 
 type createTeam = {
   name: string;
@@ -137,6 +138,7 @@ export const CreateTeam = React.memo(() => {
           </button>
         </form>
       </div>
+      <Footer />
     </>
   );
 });

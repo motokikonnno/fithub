@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .backgroundColor {
   background-color: #f6f8fa;
 }
@@ -24,6 +26,9 @@
   display: flex;
   padding-left: 422px;
   border-bottom: 1px solid #d0d7de;
+  @include mq(md) {
+    padding-left: 24px;
+  }
 }
 
 .layoutContainer {
@@ -31,17 +36,27 @@
   margin: 0 auto;
   width: 85.4%;
   gap: 48px;
+  @include mq(md) {
+    flex-direction: column;
+    gap: 0;
+  }
 }
 
 .tabRepositoryContainer {
   margin: 0 auto;
   width: 70%;
+  @include mq(md) {
+    width: 80%;
+  }
 }
 
 .leftContainer {
   margin-top: 24px;
   margin-bottom: 40px;
   width: 296px;
+  @include mq(md) {
+    margin: 24px auto 40px auto;
+  }
 }
 
 .icon {
@@ -107,6 +122,9 @@
   margin-left: 24px;
   margin-bottom: 40px;
   width: 100%;
+  @include mq(md) {
+    margin-left: 0;
+  }
 }
 
 .title {
@@ -120,6 +138,10 @@
   grid-template-columns: repeat(2, 50%);
   gap: 16px;
   margin-bottom: 32px;
+  @include mq(md) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .inputContainer {
@@ -253,12 +275,19 @@
 
 .confirmModalBackground {
   padding: 64px;
+  @include mq(md) {
+    padding: 32px;
+    width: 300px;
+  }
 }
 
 .confirmText {
   margin: 0 0 16px 0;
   margin-bottom: 32px;
   font-size: 32px;
+  @include mq(md) {
+    font-size: 24px;
+  }
 }
 
 .confirmContainer {
@@ -280,6 +309,10 @@
   &:hover {
     opacity: 0.8;
   }
+  @include mq(md) {
+    padding: 8px 40px;
+    font-size: 18px;
+  }
 }
 
 .percentages {
@@ -287,6 +320,9 @@
   padding: 16px 32px;
   border: 1px solid #656d76;
   border-radius: 10px;
+  @include mq(md) {
+    padding: 8px 16px;
+  }
 }
 
 .sectionTitle {
@@ -299,6 +335,9 @@
 .percentageBarWrapper {
   margin: 0 auto;
   width: 70%;
+  @include mq(md) {
+    width: 85%;
+  }
 }
 
 .commitNumber {

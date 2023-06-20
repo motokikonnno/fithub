@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .backgroundColor {
   background-color: #f6f8fa;
 }
@@ -37,6 +39,9 @@
   margin: 0 auto;
   padding-top: 24px;
   width: 70%;
+  @include mq(md) {
+    width: 80%;
+  }
 }
 
 .logListWrapper {
@@ -118,17 +123,14 @@
 .modalBackground {
   width: 1050px;
   height: 500px;
+  @include mq(md) {
+    width: 400px;
+    height: 570px;
+  }
 }
 
 .headerContainer {
   display: flex;
-}
-
-.xmarkIcon {
-  margin: 16px;
-  border-radius: 50%;
-  background-color: #fc635c;
-  cursor: pointer;
 }
 
 .headerItemContainer {
@@ -154,6 +156,9 @@
 .itemTitle {
   margin: 0;
   padding-bottom: 4px;
+  @include mq(md) {
+    font-size: 12px;
+  }
 }
 
 .activeBackground {
@@ -181,6 +186,10 @@
   width: 70%;
   gap: 24px;
   list-style: none;
+  @include mq(md) {
+    width: 85%;
+    gap: 16px;
+  }
 }
 
 .commitMessage {
@@ -214,6 +223,10 @@
     background-color: #d0d7de;
     border-radius: 50%;
   }
+  @include mq(md) {
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 
 .commitUpdatedAt {
@@ -234,6 +247,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  @include mq(md) {
+    font-size: 12px;
+  }
 }
 
 .commitFormLayout {
@@ -242,6 +258,11 @@
   padding-top: 16px;
   width: 80%;
   gap: 32px;
+  @include mq(md) {
+    width: 90%;
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 .commitRightContainer {
@@ -258,6 +279,10 @@
   border: 1px solid #d0d7de;
   border-radius: 6px;
   cursor: pointer;
+  @include mq(md) {
+    width: 60%;
+    font-size: 12px;
+  }
 }
 
 .bodyPartList {
@@ -289,6 +314,10 @@
   width: 70%;
   height: 70px;
   border: 1px solid #d0d7de;
+  @include mq(md) {
+    width: 90%;
+    height: 40px;
+  }
 }
 
 .commitButton {
@@ -315,6 +344,9 @@
   color: #fff;
   border-radius: 50%;
   font-size: 12px;
+  @include mq(md) {
+    right: 75px;
+  }
 }
 
 .xmarkIconWrapper {
@@ -364,6 +396,17 @@
   cursor: pointer;
   &:hover {
     opacity: 0.8;
+  }
+  @include mq(md) {
+    margin-top: 40px;
+    font-size: 24px;
+  }
+}
+
+.mergeBackground {
+  @extend .commitBackground;
+  @include mq(md) {
+    height: 260px;
   }
 }
 
@@ -419,12 +462,19 @@
 
 .confirmModalBackground {
   padding: 64px;
+  @include mq(md) {
+    padding: 32px;
+    width: 300px;
+  }
 }
 
 .confirmText {
   margin: 0 0 16px 0;
   margin-bottom: 32px;
   font-size: 32px;
+  @include mq(md) {
+    font-size: 24px;
+  }
 }
 
 .confirmContainer {
@@ -445,6 +495,9 @@
   cursor: pointer;
   &:hover {
     opacity: 0.8;
+  }
+  @include mq(md) {
+    font-size: 18px;
   }
 }
 
@@ -481,6 +534,9 @@
   font-size: 12px;
   font-weight: bold;
   color: #fff;
+  @include mq(md) {
+    font-size: 10px;
+  }
 }
 
 .percentages {
@@ -488,6 +544,9 @@
   padding: 16px 32px;
   border: 1px solid #656d76;
   border-radius: 10px;
+  @include mq(md) {
+    padding: 16px 16px;
+  }
 }
 
 .sectionTitle {
@@ -500,6 +559,9 @@
 .percentageBarWrapper {
   margin: 0 auto;
   width: 70%;
+  @include mq(md) {
+    width: 85%;
+  }
 }
 
 .red {
@@ -558,5 +620,8 @@
   transition: all 0.1s ease-in-out;
   &:hover {
     opacity: 0.8;
+  }
+  @include mq(md) {
+    font-size: 16px;
   }
 }

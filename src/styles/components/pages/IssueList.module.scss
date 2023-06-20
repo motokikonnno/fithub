@@ -1,8 +1,14 @@
+@import "@/styles/mixin";
+
 .issueTypeContainer {
   display: flex;
   align-items: flex-start;
   margin-top: 16px;
   gap: 24px;
+  @include mq(md) {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .issueStateContainer {
@@ -54,6 +60,9 @@
 .buttonContainer {
   display: flex;
   justify-content: right;
+  @include mq(md) {
+    justify-content: center;
+  }
 }
 
 .issueLayoutContainer {

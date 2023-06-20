@@ -1,8 +1,13 @@
+@import "@/styles/mixin";
+
 .tabsContainer {
   display: flex;
   margin-top: 24px;
   padding-left: 422px;
   border-bottom: 1px solid #d0d7de;
+  @include mq(md) {
+    padding-left: 24px;
+  }
 }
 
 .layoutContainer {
@@ -10,12 +15,19 @@
   margin: 0 auto;
   width: 85.4%;
   gap: 48px;
+  @include mq(md) {
+    flex-direction: column;
+    gap: 0;
+  }
 }
 
 .leftContainer {
   margin-top: 24px;
   margin-bottom: 40px;
   width: 296px;
+  @include mq(md) {
+    margin: 24px auto 40px auto;
+  }
 }
 
 .icon {
@@ -86,6 +98,9 @@
   margin-left: 24px;
   margin-bottom: 40px;
   width: 100%;
+  @include mq(md) {
+    margin-left: 0;
+  }
 }
 
 .title {
@@ -99,6 +114,10 @@
   grid-template-columns: repeat(2, 50%);
   gap: 16px;
   margin-bottom: 32px;
+  @include mq(md) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .inputContainer {
@@ -147,6 +166,10 @@
 .repositoryComponentWrapper {
   margin-left: 32px;
   width: 100%;
+  @include mq(md) {
+    margin-top: 24px;
+    margin-left: 0;
+  }
 }
 
 .skeltonImage {
@@ -197,6 +220,9 @@
   padding: 16px 32px;
   border: 1px solid #656d76;
   border-radius: 10px;
+  @include mq(md) {
+    padding: 8px 16px;
+  }
 }
 
 .sectionTitle {
@@ -209,6 +235,9 @@
 .percentageBarWrapper {
   margin: 0 auto;
   width: 70%;
+  @include mq(md) {
+    width: 85%;
+  }
 }
 
 .angleLeftIcon {
@@ -226,6 +255,9 @@
   align-items: center;
   margin-bottom: 8px;
   gap: 4px;
+  @include mq(md) {
+    justify-content: left;
+  }
 }
 
 .currentYear {
@@ -233,6 +265,9 @@
   border-radius: 6px;
   background-color: #0969da;
   color: #fff;
+  @include mq(md) {
+    font-size: 12px;
+  }
 }
 
 .weekdayContainer {
@@ -257,4 +292,49 @@
 .calendarContainer {
   position: relative;
   padding: 4px 0px 30px 30px;
+  max-width: 879.5px;
+  min-width: 879.5px;
+  @include mq(md) {
+    display: none;
+  }
+}
+
+.calendarContainerSp {
+  display: none;
+  @include mq(md) {
+    display: flex;
+    margin: 0 auto;
+    width: 30%;
+    max-width: 123px;
+  }
+}
+
+.monthContainer {
+  @extend .yearContainer;
+  display: none;
+  @include mq(md) {
+    display: flex;
+    font-size: 12px;
+  }
+}
+
+.weekdaysSp {
+  display: none;
+  @include mq(md) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    gap: 15px;
+    font-size: 6px;
+    font-weight: bold;
+    list-style: none;
+  }
+}
+
+.noneStyle {
+  @include mq(md) {
+    display: none;
+  }
 }

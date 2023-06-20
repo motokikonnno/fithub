@@ -1,3 +1,5 @@
+@import "@/styles/mixin";
+
 .layoutContainer {
   margin: 0 auto;
   width: 70%;
@@ -12,6 +14,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  @include mq(md) {
+    margin-bottom: 8px;
+  }
 }
 
 .newTeamButton {
@@ -110,12 +115,19 @@
 
 .confirmModalBackground {
   padding: 64px;
+  @include mq(md) {
+    padding: 32px;
+    width: 300px;
+  }
 }
 
 .confirmText {
   margin: 0 0 16px 0;
   margin-bottom: 32px;
   font-size: 32px;
+  @include mq(md) {
+    font-size: 24px;
+  }
 }
 
 .confirmContainer {
@@ -136,6 +148,10 @@
   cursor: pointer;
   &:hover {
     opacity: 0.8;
+  }
+  @include mq(md) {
+    font-size: 18px;
+    padding: 8px 40px;
   }
 }
 
