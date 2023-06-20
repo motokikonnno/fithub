@@ -1,17 +1,9 @@
-import { BuiltInProviderType } from "next-auth/providers";
-import { ClientSafeProvider, LiteralUnion, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
-import React, { FC } from "react";
+import React from "react";
 import styles from "../../styles/components/pages/SignIn.module.scss";
 
-export type SignInProps = {
-  providers: Record<
-    LiteralUnion<BuiltInProviderType, string>,
-    ClientSafeProvider
-  > | null;
-};
-
-export const SignIn: FC<SignInProps> = React.memo(({ providers }) => {
+export const SignIn = React.memo(() => {
   return (
     <div className={styles.elem}>
       <div className={styles.inner}>
@@ -25,25 +17,40 @@ export const SignIn: FC<SignInProps> = React.memo(({ providers }) => {
           />
           <h1 className={styles.title}>Sign in to FitHub</h1>
           <div className={styles.signInButtonContainer}>
-            {providers &&
-              Object.values(providers).map((provider) => {
-                return (
-                  <button
-                    key={provider.id}
-                    className={styles.signInButton}
-                    onClick={() => signIn(provider.id, { callbackUrl: "/" })}
-                  >
-                    <Image
-                      src={`/icons/${provider.id}.svg`}
-                      width={24}
-                      height={24}
-                      alt="service-icon"
-                      className={styles.serviceIcon}
-                    />
-                    Sign in with {provider.name}
-                  </button>
-                );
-              })}
+            <button
+              className={styles.signInButton}
+              onClick={() =>
+                signIn("google", {
+                  callbackUrl: "/",
+                })
+              }
+            >
+              <Image
+                src={`/icons/google.svg`}
+                width={24}
+                height={24}
+                alt="service-icon"
+                className={styles.serviceIcon}
+              />
+              Sign in with Google
+            </button>
+            <button
+              className={styles.signInButton}
+              onClick={() =>
+                signIn("github", {
+                  callbackUrl: "/",
+                })
+              }
+            >
+              <Image
+                src={`/icons/github.svg`}
+                width={24}
+                height={24}
+                alt="service-icon"
+                className={styles.serviceIcon}
+              />
+              Sign in with GitHub
+            </button>
           </div>
         </div>
       </div>

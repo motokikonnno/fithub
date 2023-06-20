@@ -5,16 +5,20 @@ import { teamFactory } from "@/models/Team";
 import { teamMemberFactory } from "@/models/TeamMember";
 import { AuthNextPage } from "@/types/auth-next-page";
 import { GetServerSideProps } from "next";
-import { Session } from "next-auth";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 
 type QueryParams = {
   team_id: string;
 };
 
-const TeamProfilePage: AuthNextPage<
-  TeamProfileProps & { session: Session }
-> = ({ teamData, count, repositories, isSessionUser, session, members }) => {
+const TeamProfilePage: AuthNextPage<TeamProfileProps> = ({
+  teamData,
+  count,
+  repositories,
+  isSessionUser,
+  members,
+}) => {
+  const { data: session } = useSession();
   const items = isSessionUser
     ? [
         {
@@ -87,7 +91,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       count: count,
       repositories: repositories,
       isSessionUser: isSessionUser,
-      session: session,
       members: members,
     },
   };
