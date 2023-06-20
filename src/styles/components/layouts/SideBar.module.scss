@@ -20,6 +20,7 @@
   margin-bottom: 16px;
   padding: 16px 0;
   border-bottom: 1px solid #d0d7de;
+  white-space: nowrap;
 }
 
 .profileName {
@@ -27,8 +28,12 @@
   display: inline-block;
   vertical-align: top;
   margin-left: 8px;
+  width: 237px;
   font-weight: bold;
   font-size: 14px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   &::before {
     content: "";
     position: absolute;
@@ -56,6 +61,7 @@
   padding: 5px 16px;
   gap: 8px;
   cursor: pointer;
+  white-space: normal;
   list-style: none;
   &:hover {
     background-color: #f6f8f6;

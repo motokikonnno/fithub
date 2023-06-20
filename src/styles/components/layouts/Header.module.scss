@@ -97,6 +97,9 @@
   border-top: none;
   background-color: #fff;
   z-index: 50;
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .repositoryItem {
@@ -108,6 +111,8 @@
   text-decoration: none;
   color: #0969da;
   font-weight: bold;
+  overflow-x: auto;
+  white-space: nowrap;
   cursor: pointer;
   &:hover {
     background-color: #f6f8fa;

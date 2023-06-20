@@ -309,6 +309,10 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
                         className={styles.inputForm}
                         {...register("name", {
                           required: "※ Name is required",
+                          maxLength: {
+                            value: 50,
+                            message: "Please enter within 50 characters",
+                          },
                         })}
                       />
                       <p className={styles.errorMessage}>

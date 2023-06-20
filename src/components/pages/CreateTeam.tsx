@@ -78,7 +78,13 @@ export const CreateTeam = React.memo(() => {
             <div className={styles.formSection}>Team name</div>
             <input
               className={styles.inputForm}
-              {...register("name", { required: "※ Name is required" })}
+              {...register("name", {
+                required: "※ Name is required",
+                maxLength: {
+                  value: 50,
+                  message: "Please enter within 50 characters",
+                },
+              })}
             />
             <p className={styles.errorMessage}>{errors.name?.message}</p>
           </div>

@@ -284,24 +284,26 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
             {team && (
               <>
                 <div className={styles.leftContainer}>
-                  <div
-                    className={styles.selectName}
-                    onClick={() => setToggleSelectUser(!toggleSelectUser)}
-                  >
-                    <>
-                      {typeof assignUser !== "string" && assignUser.image && (
-                        <Image
-                          src={assignUser.image}
-                          width={16}
-                          height={16}
-                          alt="user-icon"
-                          className={styles.memberIcon}
-                        />
-                      )}
-                      {assignUser === ""
-                        ? "Select user"
-                        : typeof assignUser !== "string" && assignUser.name}
-                    </>
+                  <div className={styles.flex}>
+                    <div
+                      className={styles.selectName}
+                      onClick={() => setToggleSelectUser(!toggleSelectUser)}
+                    >
+                      <>
+                        {typeof assignUser !== "string" && assignUser.image && (
+                          <Image
+                            src={assignUser.image}
+                            width={16}
+                            height={16}
+                            alt="user-icon"
+                            className={styles.memberIcon}
+                          />
+                        )}
+                        {assignUser === ""
+                          ? "Select user"
+                          : typeof assignUser !== "string" && assignUser.name}
+                      </>
+                    </div>
                   </div>
                   <div
                     className={styles.assignButton}

@@ -54,11 +54,14 @@
   }
 }
 
-.ownerContainer {
-  position: relative;
+.flex {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.ownerContainer {
+  position: relative;
   padding: 5px 18px 5px 16px;
   width: 200px;
   border: 1px solid rgba(31, 35, 40, 0.15);
@@ -67,6 +70,9 @@
   font-weight: bold;
   line-height: 20px;
   box-sizing: border-box;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   white-space: nowrap;
   cursor: pointer;
   &::before {
@@ -80,7 +86,11 @@
 }
 
 .userIcon {
+  vertical-align: middle;
+  margin-right: 4px;
   border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .listWrapper {
@@ -176,7 +186,6 @@
 }
 
 .centerSp {
-  display: none;
   @include mq(md) {
     display: flex;
     justify-content: center;

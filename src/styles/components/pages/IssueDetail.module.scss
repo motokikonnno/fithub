@@ -99,6 +99,7 @@
   margin-right: 8px;
   padding: 4px 8px;
   border-radius: 20px;
+  white-space: nowrap;
 }
 
 .purple {
@@ -152,14 +153,18 @@
   font-weight: bold;
 }
 
-.selectName {
+.flex {
   display: flex;
   align-items: center;
+}
+
+.selectName {
   padding: 8px 16px;
   width: 200px;
   border: 1px solid #d0d7de;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   box-sizing: border-box;
   cursor: pointer;
 }
@@ -169,14 +174,14 @@
   border: 1px solid #d0d7de;
   border-top: none;
   border-bottom: none;
-  @include mq(md) {
-    width: 198px;
-  }
 }
 
 .memberName {
   padding: 8px 16px;
   border-bottom: 1px solid #d0d7de;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: pointer;
   &:hover {
     background-color: #f6f8fa;

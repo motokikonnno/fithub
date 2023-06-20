@@ -23,6 +23,7 @@
 .createdAt {
   font-size: 14px;
   color: #656d76;
+  white-space: nowrap;
   cursor: default;
   @include mq(md) {
     display: none;
@@ -58,6 +59,7 @@
 .createBy {
   font-size: 14px;
   color: #656d76;
+  white-space: nowrap;
 }
 
 .userName {

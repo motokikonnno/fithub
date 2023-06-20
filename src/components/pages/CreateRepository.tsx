@@ -102,18 +102,20 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
                 <div className={styles.formSection}>Owner</div>
                 <div className={styles.relative} ref={dropDownListRef}>
                   {owner.image && (
-                    <div
-                      className={styles.ownerContainer}
-                      onClick={() => setToggleOwnerList(!toggleOwnerList)}
-                    >
-                      <Image
-                        src={owner.image}
-                        width={16}
-                        height={16}
-                        alt="user-icon"
-                        className={styles.userIcon}
-                      />
-                      {owner.name}
+                    <div className={styles.flex}>
+                      <div
+                        className={styles.ownerContainer}
+                        onClick={() => setToggleOwnerList(!toggleOwnerList)}
+                      >
+                        <Image
+                          src={owner.image}
+                          width={16}
+                          height={16}
+                          alt="user-icon"
+                          className={styles.userIcon}
+                        />
+                        {owner.name}
+                      </div>
                     </div>
                   )}
                   {toggleOwnerList && (
@@ -145,7 +147,13 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
                 <div className={styles.formSection}>Repository name</div>
                 <input
                   className={styles.inputFormRepository}
-                  {...register("name", { required: "※ Name is required" })}
+                  {...register("name", {
+                    required: "※ Name is required",
+                    maxLength: {
+                      value: 50,
+                      message: "Please enter within 50 characters",
+                    },
+                  })}
                 />
                 <p className={styles.errorMessage}>{errors.name?.message}</p>
               </div>

@@ -639,7 +639,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               className={styles.commitListContainer}
                             >
                               <li className={styles.commitMessage}>
-                                <div>{commit.message}</div>
+                                <div className={styles.message}>
+                                  {commit.message}
+                                </div>
                                 <div
                                   className={`${styles.bodyPart} ${
                                     styles[
@@ -673,7 +675,8 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                               </li>
                             </ul>
                           ))}
-                        {commitDataNumber &&
+                        {commitDataNumber !== undefined &&
+                          commitDataNumber !== 0 &&
                           NUM_COMMITS_PER_PAGE * page < commitDataNumber && (
                             <div
                               onClick={() => setPage(page + 1)}
