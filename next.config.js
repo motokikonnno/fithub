@@ -9,6 +9,7 @@ const nextConfig = {
       "avatars.githubusercontent.com",
     ],
   },
+  swcMinify: false,
 };
 
 module.exports = nextConfig;
