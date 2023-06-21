@@ -189,8 +189,10 @@
 }
 
 .memberIcon {
+  vertical-align: middle;
   margin-right: 8px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .selectNameContainer {
