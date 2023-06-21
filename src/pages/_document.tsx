@@ -2,10 +2,20 @@ import { Html, Head, Main, NextScript } from "next/document";
 import { GA_ID } from "@/lib/gtag";
 
 export default function Document() {
+  const url = process.env.NEXTAUTH_URL;
   return (
     <Html lang="ja">
       <Head>
         <link rel="icon" href="/logo.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={"FitHub"} />
+        <meta
+          name="twitter:description"
+          content={
+            "It's a strength training tracking app designed for engineers."
+          }
+        />
+        <meta name="twitter:image" content={`${url}/logo.png`} />
         {GA_ID && (
           <>
             <script
