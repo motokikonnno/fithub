@@ -1301,6 +1301,13 @@
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
 
+"@types/react-tooltip@^4.2.4":
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/@types/react-tooltip/-/react-tooltip-4.2.4.tgz#d0acad2a3061806e10aab91dd26a95a77fd35125"
+  integrity sha512-UzjzmgY/VH3Str6DcAGTLMA1mVVhGOyARNTANExrirtp+JgxhaIOVDxq4TIRmpSi4voLv+w4HA9CC5GvhhCA0A==
+  dependencies:
+    react-tooltip "*"
+
 "@types/react@*":
   version "18.2.12"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.12.tgz#95d584338610b78bb9ba0415e3180fb03debdf97"
@@ -3647,7 +3654,7 @@ react-redux@^7.2.0:
     prop-types "^15.7.2"
     react-is "^17.0.2"
 
-react-tooltip@^5.14.0:
+react-tooltip@*, react-tooltip@^5.14.0:
   version "5.14.0"
   resolved "https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-5.14.0.tgz#710ee8b832908989af78f27bc35a671a5bb0d751"
   integrity sha512-fvHgZKSdDC/Zv7G7IL6kPJi99Fqty6zkQsYQZGSkhMmmDQhVnsBLAmY8s14Nh8bshgPmR5EvbjUDZg0yMsp1hg==
