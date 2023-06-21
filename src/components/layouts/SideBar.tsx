@@ -115,7 +115,7 @@ export const SideBar: FC<SideBarProps> = React.memo(({ user }) => {
           </ul>
         )}
       </div>
-      <div>
+      <div className={styles.sectionWrapper}>
         <div className={styles.sectionTitleContainer}>
           <h2 className={styles.sectionTitle}>Top Repositories</h2>
           <Link
@@ -181,7 +181,7 @@ export const SideBar: FC<SideBarProps> = React.memo(({ user }) => {
             </div>
           ))}
       </div>
-      <div>
+      <div className={styles.teamsWrapper}>
         <h2 className={styles.sectionTeamTitle}>Your teams</h2>
         {user.team_members &&
           user.team_members.map(({ team }, index) => (

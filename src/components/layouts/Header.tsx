@@ -21,6 +21,7 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
   const dropDownListRef = useRef<HTMLDivElement>(null);
   const profileDropDownListRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLLIElement>(null);
+  const searchRef = useRef<HTMLUListElement>(null);
   const { user, userMutate } = useFetchUser(
     session?.user.id ? session.user.id : null
   );
@@ -81,9 +82,11 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
       const element = dropDownListRef.current;
       const profileElement = profileDropDownListRef.current;
       const navElement = navRef.current;
+      const searchElement = searchRef.current;
       if (
         (element && element?.contains(event.target)) ||
         (navElement && navElement?.contains(event.target)) ||
+        (searchElement && searchElement?.contains(event.target)) ||
         (profileElement && profileElement?.contains(event.target))
       )
         return;
@@ -166,14 +169,16 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
             onChange={handleChangeInput}
           />
           {isSearch && repositories?.repositories.length !== 0 && (
-            <ul className={styles.searchRepositoriesWrapper}>
+            <ul className={styles.searchRepositoriesWrapper} ref={searchRef}>
               {repositories?.repositories.map((repository, index) => (
                 <li
                   key={index}
                   className={styles.repositoryItem}
                   onClick={() => handleRouterPush(repository.id)}
                 >
-                  <span>{repository.name}</span>
+                  <span className={styles.repositoryName}>
+                    {repository.name}
+                  </span>
                   <span className={styles.commitCount}>
                     {`${repository.commits?.length} ${
                       repository.commits && repository.commits?.length > 1

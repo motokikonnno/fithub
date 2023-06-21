@@ -87,7 +87,7 @@ export const Dashboard: FC<DashboardProps> = React.memo(
               className={styles.angleRightIcon}
             />
           </div>
-          <div>
+          <div className={styles.monthWrapper}>
             <div className={styles.monthContainer}>
               <Image
                 src={`/icons/angle-right.svg`}
