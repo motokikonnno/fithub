@@ -9,8 +9,7 @@ import { formatMonthEnglish, getTimeDiff } from "@/utils/getTime";
 import useFetchActivity from "@/hooks/useFetchActivity";
 import { Calender } from "@/models/Calender";
 import Image from "next/image";
-// import { Tooltip } from "react-tooltip";
-import { Tooltip as ReactTooltip } from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import { Footer } from "../layouts/Footer";
 import { SEO } from "../SEO";
 
@@ -179,7 +178,7 @@ export const Dashboard: FC<DashboardProps> = React.memo(
               }}
             />
           </div>
-          <ReactTooltip id="tooltip" />
+          <Tooltip id="tooltip" />
           {activities.length !== 0 && (
             <>
               <h2 className={styles.sectionTitle}>Activities</h2>
