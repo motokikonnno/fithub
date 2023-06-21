@@ -11,6 +11,7 @@ import { Calender } from "@/models/Calender";
 import Image from "next/image";
 import { Tooltip } from "react-tooltip";
 import { Footer } from "../layouts/Footer";
+import { SEO } from "../SEO";
 
 export type DashboardProps = {
   user: UserBelongsToTeam;
@@ -63,128 +64,135 @@ export const Dashboard: FC<DashboardProps> = React.memo(
     }, [monthNumber, setMonthNumber]);
 
     return (
-      <AppLayout user={user}>
-        <h2 className={styles.sectionTitle}>Contributions</h2>
-        <div className={styles.yearContainer}>
-          <Image
-            src={`/icons/angle-right.svg`}
-            width={18}
-            height={18}
-            alt="angle-left-icon"
-            className={styles.angleLeftIcon}
-            onClick={() => setYearNumber(yearNumber - 1)}
-          />
-          <time className={styles.currentYear}>{yearNumber}</time>
-          <Image
-            src={`/icons/angle-right.svg`}
-            width={18}
-            height={18}
-            alt="angle-right-icon"
-            onClick={() => setYearNumber(yearNumber + 1)}
-            className={styles.angleRightIcon}
-          />
-        </div>
-        <div>
-          <div className={styles.monthContainer}>
+      <>
+        {user.name && <SEO title={user.name} url={"/"} />}
+        <AppLayout user={user}>
+          <h2 className={styles.sectionTitle}>Contributions</h2>
+          <div className={styles.yearContainer}>
             <Image
               src={`/icons/angle-right.svg`}
               width={18}
               height={18}
               alt="angle-left-icon"
               className={styles.angleLeftIcon}
-              onClick={() =>
-                monthNumber === 1
-                  ? setMonthNumber(12)
-                  : setMonthNumber(monthNumber - 1)
-              }
+              onClick={() => setYearNumber(yearNumber - 1)}
             />
-            <time className={styles.currentYear}>
-              {formatMonthEnglish(monthNumber)}
-            </time>
+            <time className={styles.currentYear}>{yearNumber}</time>
             <Image
               src={`/icons/angle-right.svg`}
               width={18}
               height={18}
               alt="angle-right-icon"
-              onClick={() =>
-                monthNumber === 12
-                  ? setMonthNumber(1)
-                  : setMonthNumber(monthNumber + 1)
-              }
+              onClick={() => setYearNumber(yearNumber + 1)}
               className={styles.angleRightIcon}
             />
           </div>
-          <ul className={styles.weekdaysSp}>
-            {weekdays.map((weekday, index) => (
-              <li key={index}>{weekday}</li>
-            ))}
-          </ul>
-        </div>
-        <div className={styles.calendarContainer}>
-          <ul className={styles.weekdayContainer}>
-            {weekdays.map((weekday, index) => (
-              <li key={index} className={styles.weekday}>
-                {weekday}
-              </li>
-            ))}
-          </ul>
-          <CalendarHeatmap
-            startDate={new Date(`${yearNumber}-01-01`)}
-            endDate={new Date(`${yearNumber}-12-31`)}
-            values={calender}
-            tooltipDataAttrs={(value: Calender) => {
-              if (!value || !value.date) {
-                return null;
+          <div>
+            <div className={styles.monthContainer}>
+              <Image
+                src={`/icons/angle-right.svg`}
+                width={18}
+                height={18}
+                alt="angle-left-icon"
+                className={styles.angleLeftIcon}
+                onClick={() =>
+                  monthNumber === 1
+                    ? setMonthNumber(12)
+                    : setMonthNumber(monthNumber - 1)
+                }
+              />
+              <time className={styles.currentYear}>
+                {formatMonthEnglish(monthNumber)}
+              </time>
+              <Image
+                src={`/icons/angle-right.svg`}
+                width={18}
+                height={18}
+                alt="angle-right-icon"
+                onClick={() =>
+                  monthNumber === 12
+                    ? setMonthNumber(1)
+                    : setMonthNumber(monthNumber + 1)
+                }
+                className={styles.angleRightIcon}
+              />
+            </div>
+            <ul className={styles.weekdaysSp}>
+              {weekdays.map((weekday, index) => (
+                <li key={index}>{weekday}</li>
+              ))}
+            </ul>
+          </div>
+          <div className={styles.calendarContainer}>
+            <ul className={styles.weekdayContainer}>
+              {weekdays.map((weekday, index) => (
+                <li key={index} className={styles.weekday}>
+                  {weekday}
+                </li>
+              ))}
+            </ul>
+            <CalendarHeatmap
+              startDate={new Date(`${yearNumber}-01-01`)}
+              endDate={new Date(`${yearNumber}-12-31`)}
+              values={calender}
+              tooltipDataAttrs={(value: Calender) => {
+                if (!value || !value.date) {
+                  return null;
+                }
+                return {
+                  "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
+                  "data-tooltip-id": "tooltip",
+                };
+              }}
+              classForValue={(value) => {
+                if (!value) {
+                  return "color-empty";
+                }
+                return `color-github-${value.count}`;
+              }}
+            />
+          </div>
+          <div className={styles.calendarContainerSp}>
+            <CalendarHeatmap
+              startDate={new Date(`${yearNumber}-0${monthNumber}-01`)}
+              endDate={
+                new Date(`${yearNumber}-0${monthNumber}-${endDayNumber}`)
               }
-              return {
-                "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
-                "data-tooltip-id": "tooltip",
-              };
-            }}
-            classForValue={(value) => {
-              if (!value) {
-                return "color-empty";
-              }
-              return `color-github-${value.count}`;
-            }}
-          />
-        </div>
-        <div className={styles.calendarContainerSp}>
-          <CalendarHeatmap
-            startDate={new Date(`${yearNumber}-0${monthNumber}-01`)}
-            endDate={new Date(`${yearNumber}-0${monthNumber}-${endDayNumber}`)}
-            values={calender}
-            horizontal={false}
-            showMonthLabels={false}
-            tooltipDataAttrs={(value: Calender) => {
-              if (!value || !value.date) {
-                return null;
-              }
-              return {
-                "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
-                "data-tooltip-id": "tooltip",
-              };
-            }}
-            classForValue={(value) => {
-              if (!value) {
-                return "color-empty";
-              }
-              return `color-github-${value.count}`;
-            }}
-          />
-        </div>
-        <Tooltip id="tooltip" />
-        {activities.length !== 0 && (
-          <>
-            <h2 className={styles.sectionTitle}>Activities</h2>
-            {activitiesData?.flatMap((activityArray) =>
-              activityArray.map((a) => <ActivityItem activity={a} key={a.id} />)
-            )}
-          </>
-        )}
-        <div ref={bottomDivRef} />
-        <Footer />
-      </AppLayout>
+              values={calender}
+              horizontal={false}
+              showMonthLabels={false}
+              tooltipDataAttrs={(value: Calender) => {
+                if (!value || !value.date) {
+                  return null;
+                }
+                return {
+                  "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
+                  "data-tooltip-id": "tooltip",
+                };
+              }}
+              classForValue={(value) => {
+                if (!value) {
+                  return "color-empty";
+                }
+                return `color-github-${value.count}`;
+              }}
+            />
+          </div>
+          <Tooltip id="tooltip" />
+          {activities.length !== 0 && (
+            <>
+              <h2 className={styles.sectionTitle}>Activities</h2>
+              {activitiesData?.flatMap((activityArray) =>
+                activityArray.map((a) => (
+                  <ActivityItem activity={a} key={a.id} />
+                ))
+              )}
+            </>
+          )}
+          <div ref={bottomDivRef} />
+          <Footer />
+        </AppLayout>
+      </>
     );
   }
 );

@@ -15,6 +15,7 @@ import { Team } from "@/models/Team";
 import { mentionFactory } from "@/models/Mention";
 import { UserBelongsToTeam } from "@/models/User";
 import { itemType } from "./UserProfile";
+import { SEO } from "../SEO";
 
 export type IssueDetailProps = {
   repository: Repository;
@@ -125,6 +126,7 @@ export const IssueDetail: FC<IssueDetailProps> = React.memo(
 
     return (
       <>
+        <SEO title={issue.title} url={router.asPath} />
         <Header />
         <div className={styles.backgroundColor}>
           <div className={styles.teamDetailContainer}>

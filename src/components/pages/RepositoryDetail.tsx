@@ -23,6 +23,7 @@ import { getTimeDiff } from "@/utils/getTime";
 import { PercentageBar } from "../PercentageBar";
 import useFetchCount from "@/hooks/useFetchCount";
 import { Count } from "@/models/Count";
+import { SEO } from "../SEO";
 
 export type RepositoryDetailProps = {
   repository: Repository;
@@ -461,6 +462,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
 
     return (
       <>
+        {owner.name && <SEO title={owner.name} url={router.asPath} />}
         <Header />
         <nav className={styles.backgroundColor}>
           <h1 className={styles.teamDetailContainer}>

@@ -19,6 +19,7 @@ import { Count } from "@/models/Count";
 import { Tooltip } from "react-tooltip";
 import { Calender } from "@/models/Calender";
 import { formatMonthEnglish } from "@/utils/getTime";
+import { SEO } from "../SEO";
 
 export type itemType = {
   id: string;
@@ -175,6 +176,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(
 
     return (
       <>
+        {userData.name && <SEO title={userData.name} url={router.asPath} />}
         <Header is_edit={isEdit} />
         <div className={styles.tabsContainer}>
           {items.map((item, index) => (

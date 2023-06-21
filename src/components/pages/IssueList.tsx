@@ -3,6 +3,7 @@ import { Repository } from "@/models/Repository";
 import { Team } from "@/models/Team";
 import { User } from "@/models/User";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import {
   DragDropContext,
@@ -14,6 +15,7 @@ import styles from "../../styles/components/pages/IssueList.module.scss";
 import { IssueItem } from "../item/IssueItem";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
+import { SEO } from "../SEO";
 import { itemType } from "./UserProfile";
 
 export type IssuePropsType = {
@@ -32,6 +34,7 @@ type IssueListType = {
 
 export const IssueList: React.FC<IssuePropsType> = React.memo(
   ({ issues, owner, repository, ownerType, items }) => {
+    const router = useRouter();
     const issueTodo = issues.filter(({ type }) => type === "To do");
     const issueDoing = issues.filter(({ type }) => type === "Doing");
     const issueDone = issues.filter(({ type }) => type === "Done");
@@ -104,6 +107,7 @@ export const IssueList: React.FC<IssuePropsType> = React.memo(
 
     return (
       <>
+        {owner.name && <SEO title={owner.name} url={router.asPath} />}
         <Header />
         <nav className={styles.backgroundColor}>
           <h1 className={styles.teamDetailContainer}>

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { repositoryFactory } from "@/models/Repository";
 import { useRouter } from "next/router";
 import { Owner } from "@/types/owner";
+import { SEO } from "../SEO";
 
 export type CreateRepositoryProps = {
   ownerList: Owner[];
@@ -93,6 +94,7 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
 
     return (
       <>
+        <SEO title={"FitHub"} url={router.asPath} />
         <Header />
         <div className={styles.container}>
           <h1 className={styles.title}>Create a new repository</h1>

@@ -3,9 +3,9 @@ import { GA_ID } from "@/lib/gtag";
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="ja">
       <Head>
-        <title>FitHub</title>
+        <link rel="icon" href="/logo.png" />
         {GA_ID && (
           <>
             <script

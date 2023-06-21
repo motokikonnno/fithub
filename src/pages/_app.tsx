@@ -4,9 +4,6 @@ import { NextComponentType } from "next";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { AuthGuard } from "@/components/layouts/AuthGuard";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Loading } from "@/components/Loading";
 import { usePageView } from "@/hooks/usePageView";
 
 export type AuthAppProps = AppProps<{ session: Session }> & {

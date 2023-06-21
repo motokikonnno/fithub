@@ -21,6 +21,7 @@ import { Count } from "@/models/Count";
 import { PercentageBar } from "../PercentageBar";
 import { UserBelongsToTeam } from "@/models/User";
 import { teamMemberFactory } from "@/models/TeamMember";
+import { SEO } from "../SEO";
 
 export type TeamProfileProps = {
   teamData: Team;
@@ -250,6 +251,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
         >
           {currentTab === "Overview" && (
             <>
+              <SEO title={teamData.name} url={router.asPath} />
               <div className={styles.leftContainer}>
                 <div className={styles.teamIcon}>
                   <Image

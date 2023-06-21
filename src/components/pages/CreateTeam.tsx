@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { teamFactory } from "@/models/Team";
 import { useSession } from "next-auth/react";
 import { Footer } from "../layouts/Footer";
+import { SEO } from "../SEO";
 
 type createTeam = {
   name: string;
@@ -70,6 +71,7 @@ export const CreateTeam = React.memo(() => {
 
   return (
     <>
+      <SEO title={"FitHub"} url={"/team/new"} />
       <Header />
       <div className={styles.layoutContainer}>
         <h1 className={styles.pageTitle}>Set up your team</h1>

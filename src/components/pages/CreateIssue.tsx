@@ -4,10 +4,12 @@ import { Team } from "@/models/Team";
 import { UserBelongsToTeam } from "@/models/User";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { FC, useState } from "react";
 import styles from "../../styles/components/pages/CreateIssue.module.scss";
 import { Footer } from "../layouts/Footer";
 import { Header } from "../layouts/Header";
+import { SEO } from "../SEO";
 import { Tiptap } from "../Tiptap";
 import { itemType } from "./UserProfile";
 
@@ -20,6 +22,7 @@ export type CreateIssueProps = {
 
 export const CreateIssue: FC<CreateIssueProps> = React.memo(
   ({ repository, owner, type, items }) => {
+    const router = useRouter();
     const { data: session } = useSession();
     const { user } = useFetchUser(session?.user ? session.user.id : null);
     const [titleText, setTitleText] = useState("");
@@ -30,6 +33,7 @@ export const CreateIssue: FC<CreateIssueProps> = React.memo(
 
     return (
       <>
+        <SEO title={"FitHub"} url={router.asPath} />
         <Header />
         <div className={styles.backgroundColor}>
           <div className={styles.teamDetailContainer}>
