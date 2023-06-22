@@ -50,16 +50,22 @@ export default UserIssueListPage;
 UserIssueListPage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { user_id, repository_id } = context.query as QueryParams;
-  const user = await userFactory().show(user_id);
-  const repository = await repositoryFactory().show(repository_id);
-  const issues = repository.issues;
-  return {
-    props: {
-      owner: user,
-      repository: repository,
-      issues: issues,
-      ownerType: "user",
-    },
-  };
+  try {
+    const { user_id, repository_id } = context.query as QueryParams;
+    const user = await userFactory().show(user_id);
+    const repository = await repositoryFactory().show(repository_id);
+    const issues = repository.issues;
+    return {
+      props: {
+        owner: user,
+        repository: repository,
+        issues: issues,
+        ownerType: "user",
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };

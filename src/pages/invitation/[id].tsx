@@ -17,9 +17,15 @@ const InvitePage: AuthNextPage<InviteConfirmProps> = ({ inviteData }) => {
 export default InvitePage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query as QueryParams;
-  const inviteData = await inviteFactory().show(id);
-  return {
-    props: { inviteData: inviteData },
-  };
+  try {
+    const { id } = context.query as QueryParams;
+    const inviteData = await inviteFactory().show(id);
+    return {
+      props: { inviteData: inviteData },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };

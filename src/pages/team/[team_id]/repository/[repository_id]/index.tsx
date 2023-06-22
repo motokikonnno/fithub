@@ -64,29 +64,29 @@ export default RepositoryDetailPage;
 RepositoryDetailPage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { repository_id } = context.query as QueryParams;
-  const repository = await repositoryFactory().show(repository_id);
-  const folders = await folderFactory().index(
-    repository_id,
-    `${repository_id}_`
-  );
-  const files = await fileFactory().index(repository_id, `${repository_id}_`);
-  const countData = await countFactory().get(`${repository_id}_repository`);
-  const team = repository.team && repository.team;
+  try {
+    const { repository_id } = context.query as QueryParams;
+    const repository = await repositoryFactory().show(repository_id);
+    const folders = await folderFactory().index(
+      repository_id,
+      `${repository_id}_`
+    );
+    const files = await fileFactory().index(repository_id, `${repository_id}_`);
+    const countData = await countFactory().get(`${repository_id}_repository`);
+    const team = repository.team && repository.team;
 
-  if (!repository || !folders || !files || !countData) {
+    return {
+      props: {
+        repository: repository,
+        folders: folders,
+        files: files,
+        owner: team,
+        countData: countData,
+      },
+    };
+  } catch {
     return {
       notFound: true,
     };
   }
-
-  return {
-    props: {
-      repository: repository,
-      folders: folders,
-      files: files,
-      owner: team,
-      countData: countData,
-    },
-  };
 };

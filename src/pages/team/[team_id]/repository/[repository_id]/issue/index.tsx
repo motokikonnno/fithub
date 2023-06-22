@@ -52,16 +52,22 @@ export default TeamIssueListPage;
 TeamIssueListPage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { team_id, repository_id } = context.query as QueryParams;
-  const team = await teamFactory().show(team_id);
-  const repository = await repositoryFactory().show(repository_id);
-  const issues = repository.issues;
-  return {
-    props: {
-      owner: team,
-      repository: repository,
-      issues: issues,
-      ownerType: "team",
-    },
-  };
+  try {
+    const { team_id, repository_id } = context.query as QueryParams;
+    const team = await teamFactory().show(team_id);
+    const repository = await repositoryFactory().show(repository_id);
+    const issues = repository.issues;
+    return {
+      props: {
+        owner: team,
+        repository: repository,
+        issues: issues,
+        ownerType: "team",
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };

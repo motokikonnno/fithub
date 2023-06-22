@@ -49,14 +49,20 @@ export default IssueDetailPage;
 IssueDetailPage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { repository_id, id, user_id } = context.query as QueryParams;
-  const repository = await repositoryFactory().show(repository_id);
-  const issue = await issueFactory().show(id);
-  return {
-    props: {
-      repository: repository,
-      issue: issue,
-      user_id: user_id,
-    },
-  };
+  try {
+    const { repository_id, id, user_id } = context.query as QueryParams;
+    const repository = await repositoryFactory().show(repository_id);
+    const issue = await issueFactory().show(id);
+    return {
+      props: {
+        repository: repository,
+        issue: issue,
+        user_id: user_id,
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };

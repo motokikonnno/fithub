@@ -66,32 +66,38 @@ export default TeamProfilePage;
 TeamProfilePage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { team_id } = context.query as QueryParams;
-  const session = await getSession(context);
-  const teamData = await teamFactory().show(team_id);
-  const isSessionUser = teamData.team_members
-    ? teamData.team_members.some(({ user }) => user.id === session?.user.id)
-    : false;
-  const count = await countFactory().get(`${teamData.id}_team`);
-  const repositories = await repositoryFactory().index({
-    queries: {
-      owner_id: team_id,
-      isPrivate: isSessionUser,
-      type: "team",
-      page: 1,
-    },
-  });
-  const members = await teamMemberFactory().index({
-    queries: { team_id: team_id },
-  });
+  try {
+    const { team_id } = context.query as QueryParams;
+    const session = await getSession(context);
+    const teamData = await teamFactory().show(team_id);
+    const isSessionUser = teamData.team_members
+      ? teamData.team_members.some(({ user }) => user.id === session?.user.id)
+      : false;
+    const count = await countFactory().get(`${teamData.id}_team`);
+    const repositories = await repositoryFactory().index({
+      queries: {
+        owner_id: team_id,
+        isPrivate: isSessionUser,
+        type: "team",
+        page: 1,
+      },
+    });
+    const members = await teamMemberFactory().index({
+      queries: { team_id: team_id },
+    });
 
-  return {
-    props: {
-      teamData: teamData,
-      count: count,
-      repositories: repositories,
-      isSessionUser: isSessionUser,
-      members: members,
-    },
-  };
+    return {
+      props: {
+        teamData: teamData,
+        count: count,
+        repositories: repositories,
+        isSessionUser: isSessionUser,
+        members: members,
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };

@@ -59,33 +59,39 @@ export default CreateRepositoryPage;
 CreateRepositoryPage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
-  if (session) {
-    const { type, team_id } = context.query;
-    const teamId = Array.isArray(team_id) ? team_id[0] : team_id;
-    const user = await userFactory().show(session?.user.id);
-    const teamList = (user && shapeOwnerDataList(user).teamData) || [];
-    const ownerList: Owner[] = [
-      {
-        id: user?.id ?? "",
-        name: user?.name,
-        image: user?.image,
-        type: "user",
-      },
-      ...teamList,
-    ];
-    const team = await teamFactory().show(teamId ? teamId : "");
+  try {
+    const session = await getSession(context);
+    if (session) {
+      const { type, team_id } = context.query;
+      const teamId = Array.isArray(team_id) ? team_id[0] : team_id;
+      const user = await userFactory().show(session?.user.id);
+      const teamList = (user && shapeOwnerDataList(user).teamData) || [];
+      const ownerList: Owner[] = [
+        {
+          id: user?.id ?? "",
+          name: user?.name,
+          image: user?.image,
+          type: "user",
+        },
+        ...teamList,
+      ];
+      const team = await teamFactory().show(teamId ? teamId : "");
+      return {
+        props: {
+          type: type,
+          ownerList: ownerList,
+          team: team || null,
+          user: user,
+        },
+      };
+    } else {
+      return {
+        props: {},
+      };
+    }
+  } catch {
     return {
-      props: {
-        type: type,
-        ownerList: ownerList,
-        team: team || null,
-        user: user,
-      },
-    };
-  } else {
-    return {
-      props: {},
+      notFound: true,
     };
   }
 };

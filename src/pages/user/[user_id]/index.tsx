@@ -33,28 +33,34 @@ export default UserProfilePage;
 UserProfilePage.requireAuth = true;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { user_id } = context.query as QueryParams;
-  const user = await userFactory().show(user_id);
-  const session = await getSession(context);
-  const isSessionUser = session?.user.id === user.id;
-  const count = await countFactory().get(`${user_id}_user`);
-  const calender = await calenderFactory().index(user_id);
-  const repositories = await repositoryFactory().index({
-    queries: {
-      owner_id: user_id,
-      isPrivate: isSessionUser,
-      type: "user",
-      page: 1,
-    },
-  });
+  try {
+    const { user_id } = context.query as QueryParams;
+    const user = await userFactory().show(user_id);
+    const session = await getSession(context);
+    const isSessionUser = session?.user.id === user.id;
+    const count = await countFactory().get(`${user_id}_user`);
+    const calender = await calenderFactory().index(user_id);
+    const repositories = await repositoryFactory().index({
+      queries: {
+        owner_id: user_id,
+        isPrivate: isSessionUser,
+        type: "user",
+        page: 1,
+      },
+    });
 
-  return {
-    props: {
-      userData: user,
-      isSessionUser: isSessionUser,
-      count: count,
-      repositories: repositories,
-      calender: calender,
-    },
-  };
+    return {
+      props: {
+        userData: user,
+        isSessionUser: isSessionUser,
+        count: count,
+        repositories: repositories,
+        calender: calender,
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };
