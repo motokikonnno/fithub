@@ -18,3 +18,21 @@ body {
 h1 {
   margin: 0;
 }
+
+@keyframes barstart {
+  from {
+    width: 30%;
+  }
+  to {
+    width: 90%;
+  }
+}
+
+@keyframes barcomp {
+  from {
+    width: 90%;
+  }
+  to {
+    width: 100%;
+  }
+}
