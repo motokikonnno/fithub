@@ -87,6 +87,7 @@ src/
         ├─Modal.tsx
         ├─Pagination.tsx
         ├─PercentageBar.tsx
+        ├─Progressbar.tsx
         ├─SEO.tsx
         ├─Tabs.tsx
         ├─Tiptap.tsx
@@ -214,6 +215,7 @@ src/
           ├─Modal.module.scss
           ├─Pagination.module.scss
           ├─PerventageBar.module.scss
+          ├─Progressbar.module.scss
           ├─Tabs.module.scss
           ├─Tiptap.module.scss
         ├─globals.scss
