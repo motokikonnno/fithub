@@ -2,9 +2,6 @@
 ### 概要
 エンジニア向けの筋トレ記録アプリ
 
-### 目的
-エンジニアが運動習慣を取り入れやすくするため
-
 ## 目次
 - [システム構成](#use-tech-1)
 - [ER図](#use-tech-2)
@@ -22,20 +19,16 @@
 <h2 id="use-tech-3">使用技術</h2>
 
 ### フロントエンド
-
 - Next.js(v.13.4)
 - TypeScript 使用
 - スタイリングは CSS Modules (Scss)
 - SGとSSRを使用 
 
 ### サーバーサイド
-
 - Prisma
 
-### 外部サービス
-- SendGrid
-- firebaseStorage(画像保存先)
-- GoogleAnalytics4
+### ストレージ
+- firebaseStorage
 
 ### 認証
 - NextAuth(Google,GitHubアカウント認証)
@@ -44,5 +37,9 @@
 
 - Vercel (フロントエンド)
 - PlanetScale(データベース)
+
+### 外部サービス
+- SendGrid
+- GoogleAnalytics4
 
 <h2 id="use-tech-4">ディレクトリ構成</h2>
