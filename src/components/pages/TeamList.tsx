@@ -29,6 +29,7 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
     await teamMemberFactory().delete(memberId);
     const data = await userFactory().show(user.id);
     setUserData(data);
+    setIsVisible(false);
   };
 
   return (
