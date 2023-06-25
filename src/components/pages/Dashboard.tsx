@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import { AppLayout } from "../layouts/AppLayout";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
@@ -13,12 +13,15 @@ import { Footer } from "../layouts/Footer";
 import { SEO } from "../SEO";
 import useFetchCalender from "@/hooks/useFetchCalender";
 import { useSession } from "next-auth/react";
-import useFetchUser from "@/hooks/useFetchUser";
+import { UserBelongsToTeam } from "@/models/User";
 
-export const Dashboard = React.memo(() => {
+export type DashboardProps = {
+  user: UserBelongsToTeam;
+};
+
+export const Dashboard: FC<DashboardProps> = React.memo(({ user }) => {
   const weekdays = ["Mon", "Wed", "Fri"];
   const { data: session } = useSession();
-  const { user } = useFetchUser(session ? session.user.id : null);
   const { calender } = useFetchCalender(session ? session.user.id : null);
   const { activitiesData, setSize } = useFetchActivity(
     session ? session.user.id : null
