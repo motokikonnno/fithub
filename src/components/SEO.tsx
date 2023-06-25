@@ -14,6 +14,7 @@ export const SEO: FC<SEOProps> = ({ title, description, url, imgUrl }) => {
   return (
     <Head>
       <title>{title}</title>
+      <link rel="icon" href="/favicon.ico" />
       {description && <meta name="description" content={description} />}
       <meta property="og:url" content={defaultURL + url} />
       <meta property="og:title" content={title} />
