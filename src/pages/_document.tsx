@@ -6,14 +6,12 @@ export default function Document() {
   return (
     <Html lang="ja">
       <Head>
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="https://fithub-dev.vercel.app/logo.png" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={"FitHub"} />
         <meta
           name="twitter:description"
-          content={
-            "It's a strength training tracking app designed for engineers."
-          }
+          content={"FitHub is a workout tracking app designed for engineers."}
         />
         <meta name="twitter:image" content={`${url}/logo.png`} />
         {GA_ID && (

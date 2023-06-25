@@ -34,7 +34,6 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
 
   return (
     <>
-      {" "}
       {user?.name && <SEO title={user.name} url={"/team"} />}
       <AppLayout user={userData}>
         <div className={styles.layoutContainer}>

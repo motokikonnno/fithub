@@ -217,6 +217,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
 
     return (
       <>
+        <SEO title={team.name} url={router.asPath} />
         <Header />
         <div className={styles.backgroundColor}>
           <div className={styles.teamDetailContainer}>
