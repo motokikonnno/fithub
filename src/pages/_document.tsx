@@ -6,7 +6,7 @@ export default function Document() {
   return (
     <Html lang="ja">
       <Head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="https://fithub-dev.vercel.app/favicon.ico" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={"FitHub"} />
         <meta
