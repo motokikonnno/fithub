@@ -10,7 +10,7 @@ const activityFetcher: (
   return data;
 };
 
-const useFetchActivity = (user_id: string, initialData: Activity[]) => {
+const useFetchActivity = (user_id: string | null) => {
   const getKey: SWRInfiniteKeyLoader = (
     pageIndex: number,
     previousPageData: Activity[]
@@ -18,12 +18,10 @@ const useFetchActivity = (user_id: string, initialData: Activity[]) => {
     if (previousPageData && !previousPageData.length) return null;
     return ["activities", user_id, pageIndex + 1];
   };
-  const fallbackData: Activity[][] = [initialData];
   const { data: activitiesData, setSize } = useSWRInfinite<Activity[]>(
     getKey,
     activityFetcher,
     {
-      fallbackData,
       revalidateFirstPage: false,
     }
   );

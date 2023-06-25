@@ -6,7 +6,7 @@ import { UserBelongsToTeam } from "@/models/User";
 
 type AppLayoutProps = {
   children: React.ReactNode;
-  user: UserBelongsToTeam;
+  user?: UserBelongsToTeam;
 };
 
 export const AppLayout: React.FC<AppLayoutProps> = React.memo(
@@ -15,7 +15,7 @@ export const AppLayout: React.FC<AppLayoutProps> = React.memo(
       <div className={styles.wrapper}>
         <Header />
         <div className={styles.mainContents}>
-          <SideBar user={user} />
+          {user && <SideBar user={user} />}
           <div className={styles.layoutRight}>{children}</div>
         </div>
       </div>
