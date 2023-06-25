@@ -4,8 +4,6 @@ import { NextComponentType } from "next";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { AuthGuard } from "@/components/layouts/AuthGuard";
-import { usePageView } from "@/hooks/usePageView";
-import { Progressbar } from "@/components/Progressbar";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/Loading";
@@ -18,7 +16,6 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AuthAppProps) {
-  // usePageView();
   const router = useRouter();
   const [pageLoading, setPageLoading] = useState(false);
 
@@ -39,7 +36,6 @@ export default function App({
   });
   return (
     <SessionProvider session={session}>
-      {/* <Progressbar /> */}
       {pageLoading && <Loading />}
       {Component.requireAuth ? (
         <AuthGuard>
