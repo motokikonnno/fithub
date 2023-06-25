@@ -65,7 +65,7 @@ export const Dashboard: FC<DashboardProps> = React.memo(
 
     return (
       <>
-        {user.name && <SEO title={user.name} url={"/"} />}
+        {user.name && <SEO title={"FitHub"} url={"/"} />}
         <AppLayout user={user}>
           <h2 className={styles.sectionTitle}>Contributions</h2>
           <div className={styles.yearContainer}>

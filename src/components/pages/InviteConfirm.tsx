@@ -40,7 +40,7 @@ export const InviteConfirm: FC<InviteConfirmProps> = ({ inviteData }) => {
 
   return (
     <>
-      <SEO title={"invite"} url={router.asPath} />
+      <SEO title={"Invite"} url={router.asPath} />
       <div className={styles.elem}>
         <div className={styles.inner}>
           <div className={styles.layoutContainer}>

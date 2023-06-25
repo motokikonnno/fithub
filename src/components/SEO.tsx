@@ -20,7 +20,10 @@ export const SEO: FC<SEOProps> = ({ title, description, url, imgUrl }) => {
       <meta property="og:site_name" content={title} />
       {description && <meta property="og:description" content={description} />}
       <meta property="og:type" content="website" />
-      <meta property="og:image" content={imgUrl ? imgUrl : "/logo.png"} />
+      <meta
+        property="og:image"
+        content={imgUrl ? imgUrl : "https://fithub-dev.vercel.app/logo.png"}
+      />
     </Head>
   );
 };
