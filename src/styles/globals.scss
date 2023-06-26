@@ -11,6 +11,10 @@ body {
   box-sizing: border-box;
 }
 
+html {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont;
+}
+
 #__next {
   min-height: 100%;
 }

@@ -13,6 +13,8 @@ export default function Document() {
           content={"FitHub is a workout tracking app designed for engineers."}
         />
         <meta name="twitter:image" content={`${url}/logo.png`} />
+        <link rel="preconnect" href="https://rsms.me/" />
+        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
         {GA_ID && (
           <>
             <script
