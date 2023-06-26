@@ -23,7 +23,7 @@ export const PercentageBar: FC<PercentageBarProps> = ({ count }) => {
     1: "#ff3300",
     2: "#3333ff",
     3: "#00dd00",
-    4: "#ffff11",
+    4: "#FFD700",
     5: "#7b3cff",
     6: "#a0522d",
     7: "#d3d3d3",
