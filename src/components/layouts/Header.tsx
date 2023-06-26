@@ -164,7 +164,7 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
           <input
             type="text"
             className={styles.searchInput}
-            placeholder="find a repository..."
+            placeholder="Find a repository..."
             value={searchText}
             onChange={handleChangeInput}
           />
