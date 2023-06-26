@@ -509,6 +509,7 @@
 
 .backButton {
   @extend .deleteButton;
+  text-align: center;
   color: #000;
   background-color: #fff;
   border: 1px solid #d0d7de;

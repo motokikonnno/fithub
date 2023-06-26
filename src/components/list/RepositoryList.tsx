@@ -64,6 +64,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     );
 
     const deleteRepository = async () => {
+      setIsDisabled(true);
       await repositoryFactory().delete(repositoryId);
       if (type === "user") {
         const userData = await userFactory().show(owner.id);
@@ -78,6 +79,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
       }
       setDeleteText("");
       setIsVisible(false);
+      setIsDisabled(false);
     };
 
     const handlePaginate = async (page: number) => {

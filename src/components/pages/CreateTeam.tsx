@@ -9,6 +9,7 @@ import { teamFactory } from "@/models/Team";
 import { useSession } from "next-auth/react";
 import { Footer } from "../layouts/Footer";
 import { SEO } from "../SEO";
+import { Loading } from "../Loading";
 
 type createTeam = {
   name: string;
@@ -21,6 +22,7 @@ export const CreateTeam = React.memo(() => {
   const defaultImage =
     "https://firebasestorage.googleapis.com/v0/b/fithub-a295f.appspot.com/o/default%2Fif2dmi1ea10tfgha.png?alt=media&token=6b1fa117-48f3-4858-9383-7b86e70685b0";
   const { data: session } = useSession();
+  const [isDisable, setIsDisable] = useState(false);
   const [deleteFile, setDeleteFile] = useState<string[]>([]);
   const [currentFile, setCurrentFile] = useState<string>(defaultImage);
   const [isLoading, setLoading] = useState(false);
@@ -60,18 +62,21 @@ export const CreateTeam = React.memo(() => {
 
   const onSubmit = async (data: createTeam) => {
     if (session?.user.id) {
+      setIsDisable(true);
       const newTeam = await teamFactory().create({
         user_id: session.user.id,
         image: currentFile,
         ...data,
       });
       if (newTeam) router.push(`/team/${newTeam}`);
+      setIsDisable(false);
     }
   };
 
   return (
     <>
       <SEO title={"FitHub"} url={"/team/new"} />
+      {isDisable && <Loading />}
       <Header />
       <div className={styles.layoutContainer}>
         <h1 className={styles.pageTitle}>Set up your team</h1>
@@ -139,8 +144,11 @@ export const CreateTeam = React.memo(() => {
           />
           <button
             className={styles.createTeamButton}
-            onClick={() => handleDeleteImage(deleteFile, currentFile)}
+            onClick={() =>
+              !isDisable && handleDeleteImage(deleteFile, currentFile)
+            }
             type="submit"
+            disabled={isDisable}
           >
             Create team
           </button>

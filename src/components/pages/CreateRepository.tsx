@@ -7,6 +7,7 @@ import { repositoryFactory } from "@/models/Repository";
 import { useRouter } from "next/router";
 import { Owner } from "@/types/owner";
 import { SEO } from "../SEO";
+import { Loading } from "../Loading";
 
 export type CreateRepositoryProps = {
   ownerList: Owner[];
@@ -24,6 +25,7 @@ type createRepositoryType = {
 export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
   ({ ownerList, currentOwner, type }) => {
     const router = useRouter();
+    const [isDisable, setIsDisable] = useState(false);
     const [owner, setOwner] = useState<Owner>(currentOwner);
     const [toggleOwnerList, setToggleOwnerList] = useState(false);
     const [currentType, setCurrentType] = useState(type);
@@ -65,6 +67,7 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
     };
 
     const onSubmit = async (data: createRepositoryType) => {
+      setIsDisable(true);
       if (owner.id && currentType === "user") {
         const createData: createRepositoryType = {
           ...data,
@@ -90,11 +93,13 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
           router.push(`/team/${owner.id}/repository/${newRepository}`);
         }
       }
+      setIsDisable(false);
     };
 
     return (
       <>
         <SEO title={"FitHub"} url={router.asPath} />
+        {isDisable && <Loading />}
         <Header />
         <div className={styles.container}>
           <h1 className={styles.title}>Create a new repository</h1>
@@ -216,7 +221,11 @@ export const CreateRepository: FC<CreateRepositoryProps> = React.memo(
               <label className={styles.label}>Add a README file</label>
             </div>
             <div className={styles.centerSp}>
-              <button className={styles.createButton} type="submit">
+              <button
+                className={styles.createButton}
+                type="submit"
+                disabled={isDisable}
+              >
                 Create repository
               </button>
             </div>

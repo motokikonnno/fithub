@@ -6,6 +6,7 @@ import React, { FC, useState } from "react";
 import styles from "../../styles/components/pages/TeamList.module.scss";
 import { AppLayout } from "../layouts/AppLayout";
 import { Footer } from "../layouts/Footer";
+import { Loading } from "../Loading";
 import { Modal } from "../Modal";
 import { SEO } from "../SEO";
 
@@ -17,6 +18,7 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
   const [userData, setUserData] = useState(user);
   const [isVisible, setIsVisible] = useState(false);
   const [memberId, setMemberId] = useState("");
+  const [isDisable, setIsDisable] = useState(false);
 
   const handleClose = (id?: string) => {
     if (id) {
@@ -26,15 +28,19 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
   };
 
   const handleLeaveTeam = async () => {
+    if (isDisable) return;
+    setIsDisable(true);
     await teamMemberFactory().delete(memberId);
     const data = await userFactory().show(user.id);
     setUserData(data);
     setIsVisible(false);
+    setIsDisable(false);
   };
 
   return (
     <>
       {user?.name && <SEO title={user.name} url={"/team"} />}
+      {isDisable && <Loading />}
       <AppLayout user={userData}>
         <div className={styles.layoutContainer}>
           <div className={styles.userLinkContainer}>
@@ -52,10 +58,11 @@ export const TeamList: FC<TeamListProps> = React.memo(({ user }) => {
                 {userData.name}
               </Link>
             </div>
-            <Link href={`/user/${userData.id}`}>
-              <button className={styles.profileButton}>
-                Go to your profile
-              </button>
+            <Link
+              href={`/user/${userData.id}`}
+              className={styles.profileButton}
+            >
+              Go to your profile
             </Link>
           </div>
           <div className={styles.teamListContainer}>

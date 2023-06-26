@@ -24,6 +24,7 @@ import { PercentageBar } from "../PercentageBar";
 import useFetchCount from "@/hooks/useFetchCount";
 import { Count } from "@/models/Count";
 import { SEO } from "../SEO";
+import { Loading } from "../Loading";
 
 export type RepositoryDetailProps = {
   repository: Repository;
@@ -125,6 +126,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     const [commitData, setCommitData] = useState<Commit[]>();
     const [page, setPage] = useState(1);
     const [commitDataNumber, setCommitDataNumber] = useState<number>();
+    const [isDisable, setIsDisable] = useState(false);
     const dropDownListRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -290,6 +292,8 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     };
 
     const handleDeleteFolder = async () => {
+      if (isDisable) return;
+      setIsDisable(true);
       if (currentType === "file") {
         await fileFactory().delete(currentFolderOrFileId);
         fetchFiles();
@@ -298,6 +302,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         fetchFolders();
       }
       setConfirmModal(false);
+      setIsDisable(false);
     };
 
     const fetchFolders = async () => {
@@ -463,6 +468,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     return (
       <>
         {owner.name && <SEO title={owner.name} url={router.asPath} />}
+        {isDisable && <Loading />}
         <Header />
         <nav className={styles.backgroundColor}>
           <h1 className={styles.teamDetailContainer}>
@@ -552,12 +558,12 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
                     >
                       Delete
                     </button>
-                    <button
+                    <div
                       className={styles.backButton}
                       onClick={() => handleConfirmModal()}
                     >
                       Back
-                    </button>
+                    </div>
                   </div>
                 </div>
               </Modal>
