@@ -435,6 +435,8 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     };
 
     const handleCreateCurrentCommit = async () => {
+      if (isDisable) return;
+      setIsDisable(true);
       if (commitText === "") return;
       if (sessionUserId)
         await currentCommitFactory().create({
@@ -446,6 +448,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
       fetchCurrentCommits();
       setBodyParts(undefined);
       setCommitText("");
+      setIsDisable(false);
     };
 
     const handleDeleteCurrentCommit = async (id: string) => {
@@ -454,7 +457,9 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
     };
 
     const handleMergeCommit = async () => {
+      if (isDisable) return;
       if (currentCommitData && sessionUserId) {
+        setIsDisable(true);
         await commitFactory().create({
           file_id: currentFolderOrFileId,
           user_id: sessionUserId,
@@ -462,6 +467,7 @@ export const RepositoryDetail: FC<RepositoryDetailProps> = React.memo(
         fetchCurrentCommits();
         fetchCommits(currentFolderOrFileId, page);
         countMutate();
+        setIsDisable(false);
       }
     };
 
