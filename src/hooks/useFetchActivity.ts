@@ -18,14 +18,14 @@ const useFetchActivity = (user_id: string | null) => {
     if (previousPageData && !previousPageData.length) return null;
     return ["activities", user_id, pageIndex + 1];
   };
-  const { data: activitiesData, setSize } = useSWRInfinite<Activity[]>(
-    getKey,
-    activityFetcher,
-    {
-      revalidateFirstPage: false,
-    }
-  );
-  return { activitiesData, setSize };
+  const {
+    data: activitiesData,
+    setSize,
+    isValidating,
+  } = useSWRInfinite<Activity[]>(getKey, activityFetcher, {
+    revalidateFirstPage: false,
+  });
+  return { activitiesData, setSize, isValidating };
 };
 
 export default useFetchActivity;

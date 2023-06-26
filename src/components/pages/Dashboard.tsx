@@ -19,11 +19,13 @@ export type DashboardProps = {
   calender: Calender[];
 };
 
+const NUM_ACTIVITIES_PER_PAGE = 5;
+
 export const Dashboard: FC<DashboardProps> = React.memo(
   ({ user, calender }) => {
     const weekdays = ["Mon", "Wed", "Fri"];
     const { data: session } = useSession();
-    const { activitiesData, setSize } = useFetchActivity(
+    const { activitiesData, setSize, isValidating } = useFetchActivity(
       session ? session.user.id : null
     );
     const bottomDivRef = useRef<HTMLDivElement>(null);
@@ -34,6 +36,7 @@ export const Dashboard: FC<DashboardProps> = React.memo(
     const [monthNumber, setMonthNumber] = useState(currentMonth);
     const endDay = monthNumber === 2 || 4 || 6 || 9 || 11 ? 30 : 31;
     const [endDayNumber, setEndDayNumber] = useState(endDay);
+    const temp = new Array(NUM_ACTIVITIES_PER_PAGE).fill(0);
 
     const getMoreActivities = useCallback(() => {
       setSize((prevSize) => prevSize + 1);
@@ -197,6 +200,13 @@ export const Dashboard: FC<DashboardProps> = React.memo(
             </>
           )}
           <div ref={bottomDivRef} />
+          {isValidating &&
+            temp.map((_, i) => (
+              <div className={styles.skeltonActivityWrapper} key={i}>
+                <div className={styles.skeltonCreatedAt}></div>
+                <div className={styles.skeltonActivityContent}></div>
+              </div>
+            ))}
           <Footer />
         </AppLayout>
       </>

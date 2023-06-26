@@ -131,3 +131,55 @@
     list-style: none;
   }
 }
+
+.skeltonActivityWrapper {
+  @extend .activityWrapper;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    display: none;
+  }
+  &::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(#fff, 0.5),
+      transparent
+    );
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-name: skelton;
+    animation-timing-function: linear;
+  }
+}
+
+.skeltonCreatedAt {
+  margin-bottom: 4px;
+  width: 80px;
+  height: 20px;
+  background: #e4ebee;
+  border-radius: 6px;
+}
+
+.skeltonActivityContent {
+  width: 300px;
+  height: 20px;
+  background: #e4ebee;
+  border-radius: 6px;
+}
+
+@keyframes skelton {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
