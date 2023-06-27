@@ -1,10 +1,13 @@
 # FitHub
+
 ### 概要
+
 エンジニア向けの筋トレ記録アプリ
 
 ## 目次
+
 - [システム構成](#use-tech-1)
-- [ER図](#use-tech-2)
+- [ER 図](#use-tech-2)
 - [使用技術](#use-tech-3)
 - [ディレクトリ構成](#use-tech-4)
 
@@ -19,19 +22,23 @@
 <h2 id="use-tech-3">使用技術</h2>
 
 ### フロントエンド
+
 - Next.js(v.13.4)
 - TypeScript 使用
 - スタイリングは CSS Modules (Scss)
-- SGとSSRを使用 
+- SG と SSR を使用
 
 ### サーバーサイド
+
 - Prisma
 
 ### ストレージ
+
 - firebaseStorage
 
 ### 認証
-- NextAuth(Google,GitHubアカウント認証)
+
+- NextAuth(Google,GitHub アカウント認証)
 
 ### ホスティング
 
@@ -39,6 +46,7 @@
 - PlanetScale(データベース)
 
 ### 外部サービス
+
 - SendGrid
 - GoogleAnalytics4
 
