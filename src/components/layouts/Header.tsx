@@ -217,7 +217,7 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
           onClick={toggleIsShowProfile}
           ref={profileDropDownListRef}
         >
-          {user?.image && (
+          {user?.image ? (
             <Image
               src={user.image}
               width={20}
@@ -225,6 +225,8 @@ export const Header: FC<HeaderProps> = React.memo(({ is_edit }) => {
               alt="profile-image"
               className={styles.userIcon}
             />
+          ) : (
+            <div className={styles.skeltonIcon}></div>
           )}
 
           {isShowProfile && (
