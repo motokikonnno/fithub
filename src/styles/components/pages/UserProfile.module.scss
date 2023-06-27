@@ -328,7 +328,7 @@
 .calendarContainerSp {
   display: none;
   @include mq(md) {
-    display: flex;
+    display: block;
     margin: 0 auto;
     width: 30%;
     max-width: 123px;
@@ -350,7 +350,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0;
+    margin: 0 0 4px 0;
     padding: 0;
     gap: 15px;
     font-size: 6px;

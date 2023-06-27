@@ -454,7 +454,9 @@ const Overview: FC<OverviewProps> = ({ repositories, user, isValidating }) => {
         <>
           <ul className={styles.weekdaysSp}>
             {weekdays.map((weekday, index) => (
-              <li key={index}>{weekday}</li>
+              <li key={index} className={styles.weekday}>
+                {weekday}
+              </li>
             ))}
           </ul>
           <div className={styles.calendarContainer}>

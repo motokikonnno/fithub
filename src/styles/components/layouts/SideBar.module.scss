@@ -31,7 +31,7 @@
   width: 237px;
   font-weight: bold;
   font-size: 14px;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   &::before {
@@ -116,6 +116,7 @@
 .itemList {
   @extend .profileNameWrapper;
   display: flex;
+  align-items: center;
   margin-bottom: 10px;
   padding: 0;
   width: 100%;
@@ -138,6 +139,8 @@
 }
 
 .contentWrap {
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
 
