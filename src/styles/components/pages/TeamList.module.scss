@@ -111,6 +111,9 @@
   font-weight: bold;
   color: #000;
   text-decoration: none;
+  @include mq(md) {
+    display: none;
+  }
 }
 
 .teamImage {
