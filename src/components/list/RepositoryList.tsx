@@ -11,7 +11,7 @@ import { Team } from "@/models/Team";
 import { Pagination } from "../Pagination";
 
 type RepositoryListProps = {
-  repositories: { repositories: Repository[]; totalNumber: number };
+  repositories?: { repositories: Repository[]; totalNumber: number };
   owner: User | Team;
   type: "user" | "team";
   isSessionUser: boolean;
@@ -37,7 +37,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     isValidating,
   }) => {
     const [repositoriesData, setRepositoriesData] = useState(
-      repositories.repositories
+      repositories?.repositories
     );
     const [isVisible, setIsVisible] = useState(false);
     const [isDisabled, setIsDisabled] = useState(true);
@@ -49,7 +49,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     const temp = new Array(NUM_REPOSITORIES_PER_PAGE).fill(0);
 
     useEffect(() => {
-      setRepositoriesData(repositories.repositories);
+      setRepositoriesData(repositories?.repositories);
     }, [repositories]);
 
     useEffect(() => {
@@ -136,17 +136,21 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
                   New
                 </button>
               </Link>
-              {(!isSessionUser && repositories.repositories.length > 0) ||
-                (isSessionUser && repositories.repositories.length > 0 && (
-                  <button
-                    className={`${styles.selectButton} ${
-                      toggleDelete && styles.redColor
-                    }`}
-                    onClick={() => setToggleDelete(!toggleDelete)}
-                  >
-                    Select
-                  </button>
-                ))}
+              {(!isSessionUser &&
+                repositories &&
+                repositories.repositories.length > 0) ||
+                (isSessionUser &&
+                  repositories &&
+                  repositories.repositories.length > 0 && (
+                    <button
+                      className={`${styles.selectButton} ${
+                        toggleDelete && styles.redColor
+                      }`}
+                      onClick={() => setToggleDelete(!toggleDelete)}
+                    >
+                      Select
+                    </button>
+                  ))}
             </div>
           )}
         </div>
@@ -181,7 +185,8 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             ))}
           </div>
         ) : (
-          repositoriesData.map((repository, index) => (
+          repositories &&
+          repositoriesData?.map((repository, index) => (
             <RepositoryListItem
               repositories={repositories.repositories}
               repository={repository}
@@ -194,9 +199,9 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             />
           ))
         )}
-        {!isSearch && (
+        {!isSearch && repositories && (
           <Pagination
-            totalNumber={repositories.totalNumber}
+            totalNumber={repositories?.totalNumber}
             perPage={NUM_REPOSITORIES_PER_PAGE}
             onChange={(e) => handlePaginate(e.page)}
           />

@@ -37,7 +37,6 @@ type updateUserType = {
 
 export type UserProfileProps = {
   userData: UserBelongsToTeam;
-  // repositories: { repositories: Repository[]; totalNumber: number };
 };
 
 export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
@@ -324,16 +323,14 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
         </div>
         {userData.repositories &&
           (currentTab === "Overview" ? (
-            repository?.repositories && (
-              <Overview
-                repositories={repository.repositories}
-                user={userData}
-                isValidating={isLoad}
-              />
-            )
+            <Overview
+              repositories={repository?.repositories}
+              user={userData}
+              isValidating={isLoad}
+            />
           ) : (
             <div className={styles.repositoryComponentWrapper}>
-              {repositoriesData && (
+              {
                 <RepositoryList
                   repositories={repositoriesData}
                   owner={userData}
@@ -345,7 +342,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
                   onSubmit={submitSearchRepositories}
                   isValidating={isLoad}
                 />
-              )}
+              }
             </div>
           ))}
       </div>
@@ -355,7 +352,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
 });
 
 type OverviewProps = {
-  repositories: Repository[];
+  repositories?: Repository[];
   user?: UserBelongsToTeam;
   isValidating: boolean;
 };
@@ -381,7 +378,7 @@ const Overview: FC<OverviewProps> = ({ repositories, user, isValidating }) => {
 
   return (
     <div className={styles.rightContainer}>
-      {repositories.length !== 0 && (
+      {repositories?.length !== 0 && (
         <h2 className={styles.title}>Recent repositories</h2>
       )}
       {isValidating ? (
@@ -392,7 +389,7 @@ const Overview: FC<OverviewProps> = ({ repositories, user, isValidating }) => {
         </div>
       ) : (
         <div className={styles.repositoriesContainer}>
-          {repositories.map((repository, index) => (
+          {repositories?.map((repository, index) => (
             <RepositoryCard
               index={index}
               repository={repository}
