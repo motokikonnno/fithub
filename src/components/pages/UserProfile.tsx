@@ -360,7 +360,7 @@ type OverviewProps = {
 const NUM_REPOSITORIES_PER_PAGE = 8;
 
 const Overview: FC<OverviewProps> = ({ repositories, user, isValidating }) => {
-  const { calender } = useFetchCalender(user ? user.id : null);
+  const { calender, calenderLoading } = useFetchCalender(user ? user.id : null);
   const { count } = useFetchCount(user ? `${user.id}_user` : null);
   const weekdays = ["Mon", "Wed", "Fri"];
   const currentYear = new Date().getFullYear();
@@ -448,68 +448,76 @@ const Overview: FC<OverviewProps> = ({ repositories, user, isValidating }) => {
           className={styles.angleRightIcon}
         />
       </div>
-      <ul className={styles.weekdaysSp}>
-        {weekdays.map((weekday, index) => (
-          <li key={index}>{weekday}</li>
-        ))}
-      </ul>
-      <div className={styles.calendarContainer}>
-        <ul className={styles.weekdayContainer}>
-          {weekdays.map((weekday, index) => (
-            <li key={index} className={styles.weekday}>
-              {weekday}
-            </li>
-          ))}
-        </ul>
-        {calender && (
-          <ReactCalendarHeatmap
-            startDate={new Date(`${yearNumber}-01-01`)}
-            endDate={new Date(`${yearNumber}-12-31`)}
-            values={calender}
-            tooltipDataAttrs={(value: Calender) => {
-              if (!value || !value.date) {
-                return null;
-              }
-              return {
-                "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
-                "data-tooltip-id": "tooltip",
-              };
-            }}
-            classForValue={(value) => {
-              if (!value) {
-                return "color-empty";
-              }
-              return `color-github-${value.count}`;
-            }}
-          />
-        )}
-      </div>
-      <div className={styles.calendarContainerSp}>
-        {calender && (
-          <ReactCalendarHeatmap
-            startDate={new Date(`${yearNumber}-0${monthNumber}-01`)}
-            endDate={new Date(`${yearNumber}-0${monthNumber}-${endDayNumber}`)}
-            values={calender}
-            horizontal={false}
-            showMonthLabels={false}
-            tooltipDataAttrs={(value: Calender) => {
-              if (!value || !value.date) {
-                return null;
-              }
-              return {
-                "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
-                "data-tooltip-id": "tooltip",
-              };
-            }}
-            classForValue={(value) => {
-              if (!value) {
-                return "color-empty";
-              }
-              return `color-github-${value.count}`;
-            }}
-          />
-        )}
-      </div>
+      {calenderLoading ? (
+        <div className={styles.skeltonCalender}></div>
+      ) : (
+        <>
+          <ul className={styles.weekdaysSp}>
+            {weekdays.map((weekday, index) => (
+              <li key={index}>{weekday}</li>
+            ))}
+          </ul>
+          <div className={styles.calendarContainer}>
+            <ul className={styles.weekdayContainer}>
+              {weekdays.map((weekday, index) => (
+                <li key={index} className={styles.weekday}>
+                  {weekday}
+                </li>
+              ))}
+            </ul>
+            {calender && (
+              <ReactCalendarHeatmap
+                startDate={new Date(`${yearNumber}-01-01`)}
+                endDate={new Date(`${yearNumber}-12-31`)}
+                values={calender}
+                tooltipDataAttrs={(value: Calender) => {
+                  if (!value || !value.date) {
+                    return null;
+                  }
+                  return {
+                    "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
+                    "data-tooltip-id": "tooltip",
+                  };
+                }}
+                classForValue={(value) => {
+                  if (!value) {
+                    return "color-empty";
+                  }
+                  return `color-github-${value.count}`;
+                }}
+              />
+            )}
+          </div>
+          <div className={styles.calendarContainerSp}>
+            {calender && (
+              <ReactCalendarHeatmap
+                startDate={new Date(`${yearNumber}-0${monthNumber}-01`)}
+                endDate={
+                  new Date(`${yearNumber}-0${monthNumber}-${endDayNumber}`)
+                }
+                values={calender}
+                horizontal={false}
+                showMonthLabels={false}
+                tooltipDataAttrs={(value: Calender) => {
+                  if (!value || !value.date) {
+                    return null;
+                  }
+                  return {
+                    "data-tooltip-content": `${value.date} commit： ${value.commitNumber}`,
+                    "data-tooltip-id": "tooltip",
+                  };
+                }}
+                classForValue={(value) => {
+                  if (!value) {
+                    return "color-empty";
+                  }
+                  return `color-github-${value.count}`;
+                }}
+              />
+            )}
+          </div>
+        </>
+      )}
       <Tooltip id="tooltip" />
       {count && Object.keys(count).length !== 0 && (
         <section className={styles.percentages}>

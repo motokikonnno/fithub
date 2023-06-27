@@ -8,11 +8,11 @@ const calenderFetcher = async (key: string): Promise<Calender[]> => {
 };
 
 const useFetchCalender = (id: string | null) => {
-  const { data: calender, isLoading } = useSWR<Calender[]>(
+  const { data: calender, isLoading: calenderLoading } = useSWR<Calender[]>(
     id ? `${id}_calender` : null,
     calenderFetcher
   );
-  return { calender };
+  return { calender, calenderLoading };
 };
 
 export default useFetchCalender;
