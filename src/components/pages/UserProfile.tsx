@@ -54,7 +54,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
 
   const { data: session } = useSession();
   const isSessionUser = session?.user.id === userData.id;
-  const { repository, isValidating } = useFetchRepositories({
+  const { repository, isLoad } = useFetchRepositories({
     queries: {
       owner_id: userData.id,
       isPrivate: isSessionUser,
@@ -328,7 +328,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
               <Overview
                 repositories={repository.repositories}
                 user={userData}
-                isValidating={isValidating}
+                isValidating={isLoad}
               />
             )
           ) : (
@@ -343,7 +343,7 @@ export const UserProfile: FC<UserProfileProps> = React.memo(({ userData }) => {
                   searchText={searchText}
                   handleChangeSearchText={handleChangeSearchText}
                   onSubmit={submitSearchRepositories}
-                  isValidating={isValidating}
+                  isValidating={isLoad}
                 />
               )}
             </div>

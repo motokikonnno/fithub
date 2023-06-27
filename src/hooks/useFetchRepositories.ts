@@ -16,11 +16,11 @@ const repositoryFetcher = async (key: {
 };
 
 const useFetchRepositories = (params: { queries: repositoryQuery }) => {
-  const { data: repository, isValidating } = useSWR<{
+  const { data: repository, isLoading: isLoad } = useSWR<{
     repositories: Repository[];
     totalNumber: number;
   }>(params, repositoryFetcher);
-  return { repository, isValidating };
+  return { repository, isLoad };
 };
 
 export default useFetchRepositories;
