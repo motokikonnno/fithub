@@ -124,3 +124,47 @@
     opacity: 1;
   }
 }
+
+.skeltonRepository {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    display: none;
+  }
+  &::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(#fff, 0.5),
+      transparent
+    );
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-name: skelton;
+    animation-timing-function: linear;
+  }
+}
+
+.skeltonRepositoryItem {
+  margin-bottom: 8px;
+  height: 80px;
+  background-color: #e4ebee;
+  border-radius: 6px;
+}
+
+@keyframes skelton {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

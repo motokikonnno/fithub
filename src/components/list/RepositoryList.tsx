@@ -6,8 +6,8 @@ import Link from "next/link";
 import { RepositoryListItem } from "../item/RepositoryListItem";
 import { Repository, repositoryFactory } from "@/models/Repository";
 import { Modal } from "../Modal";
-import { User, userFactory } from "@/models/User";
-import { Team, teamFactory } from "@/models/Team";
+import { User } from "@/models/User";
+import { Team } from "@/models/Team";
 import { Pagination } from "../Pagination";
 
 type RepositoryListProps = {
@@ -19,6 +19,7 @@ type RepositoryListProps = {
   searchText: string;
   handleChangeSearchText: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => Promise<void>;
+  isValidating: boolean;
 };
 
 const NUM_REPOSITORIES_PER_PAGE = 8;
@@ -33,6 +34,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     searchText,
     handleChangeSearchText,
     onSubmit,
+    isValidating,
   }) => {
     const [repositoriesData, setRepositoriesData] = useState(
       repositories.repositories
@@ -43,6 +45,8 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     const [repositoryId, setRepositoryId] = useState("");
     const [currentRepository, setCurrentRepository] = useState("");
     const [toggleDelete, setToggleDelete] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const temp = new Array(NUM_REPOSITORIES_PER_PAGE).fill(0);
 
     useEffect(() => {
       setRepositoriesData(repositories.repositories);
@@ -66,16 +70,16 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
     const deleteRepository = async () => {
       setIsDisabled(true);
       await repositoryFactory().delete(repositoryId);
-      if (type === "user") {
-        const userData = await userFactory().show(owner.id);
-        if (userData.repositories) {
-          setRepositoriesData(userData.repositories);
-        }
-      } else if (type === "team") {
-        const teamData = await teamFactory().show(owner.id);
-        if (teamData.repositories) {
-          setRepositoriesData(teamData.repositories);
-        }
+      const data = await repositoryFactory().index({
+        queries: {
+          owner_id: owner.id,
+          isPrivate: isSessionUser,
+          type: type,
+          page: currentPage,
+        },
+      });
+      if (data.repositories) {
+        setRepositoriesData(data.repositories);
       }
       setDeleteText("");
       setIsVisible(false);
@@ -92,6 +96,7 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
         },
       });
       setRepositoriesData(repositories.repositories);
+      setCurrentPage(page);
     };
 
     return (
@@ -169,18 +174,26 @@ export const RepositoryList: FC<RepositoryListProps> = React.memo(
             </div>
           </Modal>
         )}
-        {repositoriesData.map((repository, index) => (
-          <RepositoryListItem
-            repositories={repositories.repositories}
-            repository={repository}
-            index={index}
-            key={index}
-            toggleDelete={toggleDelete}
-            handleClose={handleClose}
-            type={type}
-            ownerId={owner.id}
-          />
-        ))}
+        {isValidating ? (
+          <div className={styles.skeltonRepository}>
+            {temp.map((_, i) => (
+              <div className={styles.skeltonRepositoryItem} key={i}></div>
+            ))}
+          </div>
+        ) : (
+          repositoriesData.map((repository, index) => (
+            <RepositoryListItem
+              repositories={repositories.repositories}
+              repository={repository}
+              index={index}
+              key={index}
+              toggleDelete={toggleDelete}
+              handleClose={handleClose}
+              type={type}
+              ownerId={owner.id}
+            />
+          ))
+        )}
         {!isSearch && (
           <Pagination
             totalNumber={repositories.totalNumber}

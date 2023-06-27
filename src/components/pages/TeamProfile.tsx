@@ -380,6 +380,7 @@ export const TeamProfile: FC<TeamProfileProps> = React.memo(
               searchText={searchText}
               handleChangeSearchText={handleChangeSearchText}
               onSubmit={submitSearchRepositories}
+              isValidating={false}
             />
           )}
           {currentTab === "People" && (

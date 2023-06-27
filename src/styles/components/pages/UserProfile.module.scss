@@ -109,6 +109,40 @@
   font-weight: normal;
 }
 
+.skeltonRepositoriesContainer {
+  @extend .repositoriesContainer;
+  position: relative;
+  overflow: hidden;
+  &::before {
+    display: none;
+  }
+  &::after {
+    content: "";
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(#fff, 0.5),
+      transparent
+    );
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-name: skelton;
+    animation-timing-function: linear;
+  }
+}
+
+.skeltonRepositoryCard {
+  height: 100px;
+  background: #e4ebee;
+  border-radius: 6px;
+}
+
 .repositoriesContainer {
   display: grid;
   grid-template-columns: repeat(2, 50%);
@@ -336,5 +370,14 @@
 .noneStyle {
   @include mq(md) {
     display: none;
+  }
+}
+
+@keyframes skelton {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

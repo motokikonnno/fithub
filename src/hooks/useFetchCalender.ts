@@ -8,7 +8,7 @@ const calenderFetcher = async (key: string): Promise<Calender[]> => {
 };
 
 const useFetchCalender = (id: string | null) => {
-  const { data: calender } = useSWR<Calender[]>(
+  const { data: calender, isLoading } = useSWR<Calender[]>(
     id ? `${id}_calender` : null,
     calenderFetcher
   );
