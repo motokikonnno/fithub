@@ -279,6 +279,7 @@
   justify-content: right;
   align-items: center;
   margin-bottom: 8px;
+  max-width: 879.5px;
   gap: 4px;
   @include mq(md) {
     justify-content: left;
