@@ -191,7 +191,7 @@ export const Dashboard: FC<DashboardProps> = React.memo(
             </>
           )}
           <Tooltip id="tooltip" />
-          {activitiesData && activitiesData.length !== 0 && (
+          {activitiesData && activitiesData[0].length !== 0 && (
             <>
               <h2 className={styles.sectionTitle}>Activities</h2>
               {activitiesData?.flatMap((activityArray) =>
