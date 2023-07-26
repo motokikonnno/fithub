@@ -4,6 +4,12 @@
 
 エンジニア向けの筋トレ記録アプリ
 
+アプリ紹介をしているZenn記事(techトレンド1位獲得)→
+[「大学生がGitHubのパチモンを作ってみた」](https://zenn.dev/motukun/articles/f3b5de6949b75e)
+
+ユーザー登録してもらうための工夫を述べたZenn記事(ideasトレンド1位獲得)→
+[「大学生がアプリをリリースして2日でユーザー登録者数300人超えた話」](https://zenn.dev/motukun/articles/80a845bbe78410)
+
 ## 目次
 
 - [システム構成](#use-tech-1)
