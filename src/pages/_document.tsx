@@ -1,11 +1,16 @@
 import { Html, Head, Main, NextScript } from "next/document";
 import { GA_ID } from "@/lib/gtag";
+import { randomBytes } from "crypto";
 
 export default function Document() {
   const url = process.env.NEXTAUTH_URL;
+  const nonce = randomBytes(128).toString("base64");
+  const csp = `object-src 'none'; base-uri 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https: http: 'nonce-${nonce}' 'strict-dynamic'`;
+
   return (
     <Html lang="ja">
-      <Head>
+      <Head nonce={nonce}>
+        <meta httpEquiv="Content-Security-Policy" content={csp} />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={"FitHub"} />
         <meta
@@ -37,7 +42,7 @@ export default function Document() {
       </Head>
       <body>
         <Main />
-        <NextScript />
+        <NextScript nonce={nonce} />
       </body>
     </Html>
   );
